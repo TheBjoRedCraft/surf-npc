@@ -11,6 +11,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/surf-npc-api" />
             <option value="$PROJECT_DIR$/surf-npc-bukkit" />
+            <option value="$PROJECT_DIR$/surf-npc-core" />
             <option value="$PROJECT_DIR$/surf-npc-example" />
           </set>
         </option>
