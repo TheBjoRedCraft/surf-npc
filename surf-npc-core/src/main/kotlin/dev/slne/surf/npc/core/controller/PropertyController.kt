@@ -1,4 +1,5 @@
 import dev.slne.surf.npc.core.npc.CoreNpc
+import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 
 /**
@@ -72,4 +73,16 @@ interface PropertyController {
      * @return True if the NPC has any properties, false otherwise.
      */
     fun hasProperties(npc: CoreNpc): Boolean
+
+    companion object {
+        /**
+         * The instance of the PropertyController.
+         */
+        val INSTANCE = requiredService<PropertyController>()
+    }
 }
+
+/**
+ * The instance of the PropertyController
+ */
+val propertyController get() = PropertyController.INSTANCE
