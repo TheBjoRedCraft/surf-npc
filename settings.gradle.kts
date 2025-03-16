@@ -5,3 +5,5 @@ plugins {
 rootProject.name = "surf-npc"
 include("surf-npc-example")
 include("surf-npc-api")
+include("surf-npc-bukkit")
+include("surf-npc-core")
