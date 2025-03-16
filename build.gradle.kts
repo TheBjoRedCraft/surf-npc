@@ -1,21 +1,14 @@
-plugins {
-    kotlin("jvm") version "2.1.10"
+buildscript {
+    repositories {
+        gradlePluginPortal()
+        maven("https://repo.slne.dev/repository/maven-public/") { name = "maven-public" }
+    }
+    dependencies {
+        classpath("dev.slne.surf:surf-api-gradle-plugin:1.21.4+")
+    }
 }
 
-group = "dev.slne"
-version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    testImplementation(kotlin("test"))
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-kotlin {
-    jvmToolchain(21)
+allprojects {
+    group = "dev.slne"
+    version = "1.0-SNAPSHOT"
 }

@@ -1,17 +1,22 @@
 plugins {
     kotlin("jvm")
+    id("dev.slne.surf.surfapi.gradle.paper-plugin")
 }
-
-group = "dev.slne"
-version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-
+    implementation("com.github.retrooper:packetevents-spigot:2.7.0")
 }
+
+surfPaperPluginApi {
+    mainClass("dev.slne.surf.npc.example.ExamplePlugin")
+    authors.add("TheBjoRedCraft")
+}
+
+
 
 kotlin {
     jvmToolchain(21)
