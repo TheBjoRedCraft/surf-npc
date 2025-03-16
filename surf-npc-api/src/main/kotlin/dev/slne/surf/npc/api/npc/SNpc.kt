@@ -1,6 +1,8 @@
 package dev.slne.surf.npc.api.npc
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
+import it.unimi.dsi.fastutil.objects.ObjectList
+import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
 import java.util.UUID
@@ -13,6 +15,11 @@ interface SNpc {
      * The unique identifier of the NPC.
      */
     val id: UUID
+
+    /**
+     * The entity ID of the NPC.
+     */
+    val entityId: Int
 
     /**
      * The name of the NPC.
@@ -33,6 +40,12 @@ interface SNpc {
      * The skin of the NPC, represented as a string.
      */
     val skin: String
+
+    /**
+     * The properties of the NPC.
+     */
+
+    val properties: ObjectSet<SNpcProperty>
 
     /**
      * Adds a property to the NPC.
