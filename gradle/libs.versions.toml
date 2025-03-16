@@ -1,0 +1,3 @@
+[libraries]
+paper = { module = "io.papermc.paper:paper-api", version = "1.21.4-R0.1-SNAPSHOT" }
+surf-database = { module = "dev.slne.surf:surf-database", version = "1.0.4-SNAPSHOT" }
