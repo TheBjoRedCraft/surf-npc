@@ -10,22 +10,21 @@ import com.github.retrooper.packetevents.util.crypto.SignatureData
 import com.github.retrooper.packetevents.wrapper.play.server.*
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfo.PlayerData
 import com.google.auto.service.AutoService
+import dev.slne.surf.npc.api.npc.SNpc
 import dev.slne.surf.npc.api.result.*
 import dev.slne.surf.npc.bukkit.database.DatabaseService
 import dev.slne.surf.npc.core.controller.NpcController
 import dev.slne.surf.npc.core.npc.CoreNpc
-import dev.slne.surf.surfapi.core.api.util.random
 import dev.slne.surf.surfapi.core.api.util.toObjectList
 import it.unimi.dsi.fastutil.objects.ObjectList
 import net.kyori.adventure.util.Services.Fallback
 import org.bukkit.Bukkit
 import org.bukkit.Location
-import org.gradle.internal.extensions.stdlib.uncheckedCast
 import java.util.*
 
 @AutoService(NpcController::class)
 class BukkitNpcController(): NpcController, Fallback {
-    override fun create(npc: CoreNpc): NpcCreationResult {
+    override fun create(npc: SNpc): NpcCreationResult {
         val spawnResult = this.spawn(npc)
 
         DatabaseService.getLoadedNpcs().add(npc)
@@ -45,7 +44,7 @@ class BukkitNpcController(): NpcController, Fallback {
         return NpcCreationResult.FAILED_OTHER
     }
 
-    override fun remove(npc: CoreNpc): NpcDeletionResult {
+    override fun remove(npc: SNpc): NpcDeletionResult {
         val despawnResult = this.despawn(npc)
 
         DatabaseService.getLoadedNpcs().remove(npc)
@@ -61,15 +60,23 @@ class BukkitNpcController(): NpcController, Fallback {
         return NpcDeletionResult.FAILED_OTHER
     }
 
-    override fun getNpc(id: UUID): CoreNpc? {
+    override fun getNpc(id: UUID): SNpc? {
         return DatabaseService.getLoadedNpcs().find { it.id == id }
     }
 
-    override fun getNpcs(): ObjectList<CoreNpc> {
+    override fun getNpc(entityId: Int): SNpc? {
+        return DatabaseService.getLoadedNpcs().find { it.entityId == entityId }
+    }
+
+    override fun getNpc(name: String): SNpc? {
+        return DatabaseService.getLoadedNpcs().find { it.name == name }
+    }
+
+    override fun getNpcs(): ObjectList<SNpc> {
         return DatabaseService.getLoadedNpcs().toObjectList()
     }
 
-    override fun spawn(npc: CoreNpc): NpcSpawnResult {
+    override fun spawn(npc: SNpc): NpcSpawnResult {
         val userProfile = UserProfile(npc.id, npc.name)
 
         val playerInfoPacket = WrapperPlayServerPlayerInfo(
@@ -97,7 +104,7 @@ class BukkitNpcController(): NpcController, Fallback {
     }
 
 
-    override fun respawn(npc: CoreNpc): NpcRespawnResult {
+    override fun respawn(npc: SNpc): NpcRespawnResult {
         val despawnResult = this.despawn(npc)
         val spawnResult = this.spawn(npc)
 
@@ -116,7 +123,7 @@ class BukkitNpcController(): NpcController, Fallback {
         return NpcRespawnResult.FAILED_OTHER
     }
 
-    override fun despawn(npc: CoreNpc): NpcDespawnResult {
+    override fun despawn(npc: SNpc): NpcDespawnResult {
         val userProfile = UserProfile(npc.id, npc.name)
 
         val removePlayerPacket = WrapperPlayServerPlayerInfo(

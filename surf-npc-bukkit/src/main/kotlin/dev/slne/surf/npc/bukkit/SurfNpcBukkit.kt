@@ -12,6 +12,8 @@ class SurfNpcBukkit():  SuspendingJavaPlugin() {
     }
 
     override fun onLoad() {
+        instance = this
+
         saveDefaultConfig()
     }
 

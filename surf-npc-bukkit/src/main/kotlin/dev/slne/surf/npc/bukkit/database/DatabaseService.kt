@@ -1,11 +1,10 @@
 package dev.slne.surf.npc.bukkit.database
 
 import dev.slne.surf.database.DatabaseProvider
+import dev.slne.surf.npc.api.npc.SNpc
 import dev.slne.surf.npc.api.npc.SNpcProperty
 import dev.slne.surf.npc.bukkit.SurfNpcBukkit.Companion.instance
 import dev.slne.surf.npc.core.npc.CoreNpc
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectArraySet
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
@@ -17,7 +16,7 @@ import java.util.*
 import kotlin.io.path.div
 
 object DatabaseService {
-    private val loadedNpcs = ObjectArraySet<CoreNpc>()
+    private val loadedNpcs = ObjectArraySet<SNpc>()
 
     object Npcs : Table() {
         val id = char("id", 36).transform({ UUID.fromString(it) }, { it.toString() })
@@ -26,7 +25,7 @@ object DatabaseService {
         val displayName = text("display_name").transform( { instance.gson.fromJson(it, Component::class.java) }, { instance.gson.toJson(it) })
         val location = text("location").transform( { instance.gson.fromJson(it, Location::class.java) }, { instance.gson.toJson(it) })
         val skin = text("skin")
-        val properties = text("properties").transform( { instance.gson.fromJson(it, ObjectSet::class.java) as ObjectSet<SNpcProperty>}, { instance.gson.toJson(it)})
+        val properties = text("properties").transform( { instance.gson.fromJson(it, ObjectSet::class.java) as ObjectSet<*>}, { instance.gson.toJson(it)})
 
         override val primaryKey = PrimaryKey(id)
     }
@@ -52,7 +51,7 @@ object DatabaseService {
                 val skin = it[Npcs.skin]
                 val properties = it[Npcs.properties]
 
-                loadedNpcs.add(CoreNpc(id, name, displayName, location, skin, properties, entityId))
+                loadedNpcs.add(CoreNpc(id, name, displayName, location, skin, properties as ObjectSet<SNpcProperty>, entityId))
             }
         }
     }
@@ -73,7 +72,7 @@ object DatabaseService {
         }
     }
 
-    fun getLoadedNpcs(): ObjectSet<CoreNpc> {
+    fun getLoadedNpcs(): ObjectSet<SNpc> {
         return loadedNpcs
     }
 }

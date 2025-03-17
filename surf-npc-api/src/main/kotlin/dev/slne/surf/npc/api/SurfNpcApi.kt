@@ -7,6 +7,8 @@ import java.util.UUID
 
 interface SurfNpcApi {
     fun getNpc(id: UUID): SNpc?
+    fun getNpc(entityId: Int): SNpc?
+    fun getNpc(name: String): SNpc?
     fun getNpcs(): ObjectList<SNpc>
     fun spawnNpc(npc: SNpc)
     fun despawnNpc(npc: SNpc)
