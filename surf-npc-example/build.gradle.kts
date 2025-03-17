@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.retrooper:packetevents-spigot:2.7.0")
+    implementation(libs.packetevents)
 }
 
 surfPaperPluginApi {
