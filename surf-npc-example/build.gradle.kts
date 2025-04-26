@@ -13,7 +13,7 @@ dependencies {
 
 surfPaperPluginApi {
     mainClass("dev.slne.surf.npc.example.ExamplePlugin")
-    authors.add("TheBjoRedCraft")
+    authors.add("red")
 }
 
 
