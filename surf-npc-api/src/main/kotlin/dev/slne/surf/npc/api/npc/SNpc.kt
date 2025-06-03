@@ -13,12 +13,16 @@ import java.util.UUID
  */
 interface SNpc {
     val id: Int
+    val npcUuid: UUID
     val data: SNpcData
     val properties: ObjectSet<SNpcProperty>
+    val viewers: ObjectSet<UUID>
 
     fun show(uuid: UUID)
     fun hide(uuid: UUID)
-    fun isVisible(uuid: UUID): Boolean
+
+    fun refresh()
+    fun refreshRotation(uuid: UUID)
 
     fun delete()
 
@@ -28,7 +32,7 @@ interface SNpc {
      * @param key The key of the property.
      * @param value The value of the property.
      */
-    fun addProperty(key: String, value: String)
+    fun addProperty(property: SNpcProperty)
 
     /**
      * Retrieves the value of a property.
@@ -36,7 +40,7 @@ interface SNpc {
      * @param key The key of the property.
      * @return The value of the property.
      */
-    fun getProperty(key: String): String
+    fun getProperty(key: String): SNpcProperty?
 
     /**
      * Removes a property from the NPC.
@@ -64,11 +68,4 @@ interface SNpc {
      * @return True if the NPC has properties, false otherwise.
      */
     fun hasProperties(): Boolean
-
-    /**
-     * Retrieves all properties of the NPC.
-     *
-     * @return A map containing all properties of the NPC.
-     */
-    fun getProperties(): Object2ObjectMap<String, String>
 }

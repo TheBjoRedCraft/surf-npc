@@ -6,10 +6,12 @@ import dev.slne.surf.npc.api.skin.SNpcSkinData
 import net.kyori.adventure.text.Component
 
 interface SNpcData {
-    val name: Component
-    val skin: SNpcSkinData
-    val location: SNpcLocation
+    var name: Component
+    var skin: SNpcSkinData
+    var location: SNpcLocation
 
-    val rotationType: SNpcRotationType
-    val fixedRotation: SNpcRotation?
+    var rotationType: SNpcRotationType
+    var fixedRotation: SNpcRotation?
+
+    var global: Boolean
 }
