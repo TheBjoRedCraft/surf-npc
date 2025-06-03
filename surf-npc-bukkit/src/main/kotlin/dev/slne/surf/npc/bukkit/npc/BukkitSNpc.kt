@@ -68,12 +68,17 @@ class BukkitSNpc (
             listOf(EntityData(17, EntityDataTypes.BYTE, 0x7F.toByte()))
         )
 
+        val rotationPair = Pair(
+            data.fixedRotation?.yaw ?: 0f,
+            data.fixedRotation?.pitch ?: 0f
+        )
+
         val spawnPacket = WrapperPlayServerSpawnEntity (
             id,
             npcUuid,
             EntityTypes.PLAYER,
-            Location(Vector3d(player.x, player.y, player.z), player.yaw, player.pitch),
-            player.yaw,
+            Location(Vector3d(data.location.x, data.location.y, data.location.z), rotationPair.first, rotationPair.second),
+            rotationPair.first,
             0,
             null
         )
