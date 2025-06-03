@@ -33,14 +33,6 @@ interface NpcController {
     fun getNpc(id: UUID): SNpc?
 
     /**
-     * Retrieves an NPC by its entity ID.
-     *
-     * @param entityId The entity ID of the NPC.
-     * @return The NPC with the specified entity ID, or null if not found.
-     */
-    fun getNpc(entityId: Int): SNpc?
-
-    /**
      * Retrieves an NPC by its name.
      *
      * @param name The name of the NPC.

@@ -1,5 +1,6 @@
 package dev.slne.surf.npc.api.npc
 
+import dev.slne.surf.npc.api.skin.SNpcSkinData
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -11,41 +12,15 @@ import java.util.UUID
  * Represents a non-player character (NPC) in the game.
  */
 interface SNpc {
-    /**
-     * The unique identifier of the NPC.
-     */
-    val id: UUID
-
-    /**
-     * The entity ID of the NPC.
-     */
-    val entityId: Int
-
-    /**
-     * The name of the NPC.
-     */
-    val name: String
-
-    /**
-     * The display name of the NPC, shown to players.
-     */
-    val displayName: Component
-
-    /**
-     * The location of the NPC in the game world.
-     */
-    val location: Location
-
-    /**
-     * The skin of the NPC, represented as a string.
-     */
-    val skin: String
-
-    /**
-     * The properties of the NPC.
-     */
-
+    val id: Int
+    val data: SNpcData
     val properties: ObjectSet<SNpcProperty>
+
+    fun show(uuid: UUID)
+    fun hide(uuid: UUID)
+    fun isVisible(uuid: UUID): Boolean
+
+    fun delete()
 
     /**
      * Adds a property to the NPC.

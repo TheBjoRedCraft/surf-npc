@@ -6,7 +6,7 @@ package dev.slne.surf.npc.api.skin
  * @property value The value of the skin data.
  * @property signature The signature of the skin data.
  */
-data class SkinData (
-    val value: String,
+interface SNpcSkinData {
+    val value: String
     val signature: String
-)
+}

@@ -4,7 +4,6 @@ import PropertyController
 import dev.slne.surf.npc.api.npc.SNpc
 import dev.slne.surf.npc.api.npc.SNpcProperty
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
@@ -16,8 +15,7 @@ class CoreNpc (
     override val displayName: Component,
     override val location: Location,
     override val skin: String,
-    override val properties: ObjectSet<SNpcProperty>,
-    override val entityId: Int
+    override val properties: ObjectSet<SNpcProperty>
 ) : SNpc {
     override fun addProperty(key: String, value: String) {
         PropertyController.INSTANCE.addProperty(this, key, value)
