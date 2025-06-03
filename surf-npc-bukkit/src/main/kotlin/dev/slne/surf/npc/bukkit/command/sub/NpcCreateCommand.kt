@@ -18,6 +18,7 @@ import dev.slne.surf.npc.bukkit.rotation.BukkitSNpcRotation
 import dev.slne.surf.npc.bukkit.util.PermissionRegistry
 import dev.slne.surf.npc.bukkit.util.skinDataFromName
 import dev.slne.surf.npc.core.controller.npcController
+import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -61,7 +62,9 @@ class NpcCreateCommand(commandName: String) : CommandAPICommand(commandName) {
                     return@launch
                 }
 
-                npc.show(player.uniqueId)
+                forEachPlayer {
+                    npc.show(it.uniqueId)
+                }
 
                 if(npcResult == NpcCreationResult.SUCCESS) {
                     player.sendText {
