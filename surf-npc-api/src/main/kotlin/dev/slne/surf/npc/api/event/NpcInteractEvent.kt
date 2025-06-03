@@ -7,18 +7,20 @@ import org.bukkit.event.HandlerList
 
 class NpcInteractEvent (
     val npc: SNpc
-) : Event(), Cancellable{
+) : Event(), Cancellable {
     private val handlerList = HandlerList()
+
+    var cancelled = false
 
     override fun getHandlers(): HandlerList {
         return handlerList
     }
 
     override fun isCancelled(): Boolean {
-        TODO("Not yet implemented")
+        return cancelled
     }
 
     override fun setCancelled(cancel: Boolean) {
-        TODO("Not yet implemented")
+        cancelled = cancel
     }
 }
