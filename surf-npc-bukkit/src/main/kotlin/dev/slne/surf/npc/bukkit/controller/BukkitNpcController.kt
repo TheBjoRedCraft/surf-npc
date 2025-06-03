@@ -1,0 +1,190 @@
+package dev.slne.surf.npc.bukkit.controller
+
+import com.google.auto.service.AutoService
+import dev.slne.surf.npc.api.npc.SNpc
+import dev.slne.surf.npc.api.npc.SNpcData
+import dev.slne.surf.npc.api.npc.SNpcProperty
+import dev.slne.surf.npc.api.result.NpcCreationResult
+import dev.slne.surf.npc.api.result.NpcDeletionResult
+import dev.slne.surf.npc.api.result.NpcRespawnResult
+import dev.slne.surf.npc.api.result.NpcSpawnResult
+import dev.slne.surf.npc.api.rotation.SNpcRotation
+import dev.slne.surf.npc.api.rotation.SNpcRotationType
+import dev.slne.surf.npc.api.skin.SNpcSkinData
+import dev.slne.surf.npc.bukkit.npc.BukkitSNpc
+import dev.slne.surf.npc.bukkit.util.toPlain
+import dev.slne.surf.npc.core.controller.NpcController
+import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
+import dev.slne.surf.surfapi.core.api.util.random
+import dev.slne.surf.surfapi.core.api.util.toObjectList
+import it.unimi.dsi.fastutil.objects.ObjectList
+import it.unimi.dsi.fastutil.objects.ObjectSet
+import net.kyori.adventure.util.Services
+import java.util.UUID
+
+@AutoService(NpcController::class)
+class BukkitNpcController : NpcController, Services.Fallback {
+    val npcs = mutableObjectSetOf<SNpc>()
+
+    override fun createNpc(data: SNpcData): NpcCreationResult {
+        val id = random.nextInt()
+        val uuid = UUID.randomUUID()
+
+        if(this.getNpc(id) != null) {
+            return NpcCreationResult.FAILED_ALREADY_EXISTS
+        }
+
+        val npc = BukkitSNpc (
+            id,
+            data,
+            mutableObjectSetOf<SNpcProperty>(),
+            mutableObjectSetOf<UUID>(),
+            uuid
+        )
+
+        this.registerNpc(npc)
+
+        return NpcCreationResult.SUCCESS
+    }
+
+    override fun deleteNpc(npc: SNpc): NpcDeletionResult {
+        if(!this.unregisterNpc(npc)) {
+            return NpcDeletionResult.FAILED_NOT_FOUND
+        }
+
+        npc.viewers.forEach {
+            npc.hide(it)
+        }
+
+        npc.clearProperties()
+        npc.viewers.clear()
+
+        return NpcDeletionResult.SUCCESS
+    }
+
+    override fun registerNpc(npc: SNpc) {
+        npcs.add(npc)
+    }
+
+    override fun unregisterNpc(npc: SNpc): Boolean {
+        return npcs.remove(npc)
+    }
+
+    override fun showNpc(
+        npc: SNpc,
+        uuid: UUID
+    ): NpcSpawnResult {
+        if(!npcs.contains(npc)) {
+            return NpcSpawnResult.FAILED_NOT_EXIST
+        }
+
+        if(npc.viewers.contains(uuid)) {
+            return NpcSpawnResult.FAILED_ALREADY_SPAWNED
+        }
+
+        npc.show(uuid)
+
+        return NpcSpawnResult.SUCCESS
+    }
+
+    override fun hideNpc(
+        npc: SNpc,
+        uuid: UUID
+    ): NpcDeletionResult {
+        if(!npcs.contains(npc)) {
+            return NpcDeletionResult.FAILED_NOT_FOUND
+        }
+
+        if(!npc.viewers.contains(uuid)) {
+            return NpcDeletionResult.FAILED_NOT_SPAWNED
+        }
+
+        npc.hide(uuid)
+
+        return NpcDeletionResult.SUCCESS
+    }
+
+    override fun reShowNpc(
+        npc: SNpc,
+        uuid: UUID
+    ): NpcRespawnResult {
+        if(!npcs.contains(npc)) {
+            return NpcRespawnResult.FAILED_NOT_EXIST
+        }
+
+        if(npc.viewers.contains(uuid)) {
+            return NpcRespawnResult.FAILED_ALREADY_SPAWNED
+        }
+
+        npc.hide(uuid)
+        npc.show(uuid)
+
+        return NpcRespawnResult.SUCCESS
+    }
+
+    override fun setSkin(
+        npc: SNpc,
+        skin: SNpcSkinData
+    ) {
+        npc.data.skin = skin
+    }
+
+    override fun setRotationType(
+        npc: SNpc,
+        rotationType: SNpcRotationType
+    ) {
+        npc.data.rotationType = rotationType
+    }
+
+    override fun setRotation(
+        npc: SNpc,
+        rotation: SNpcRotation
+    ) {
+        npc.data.fixedRotation = rotation
+    }
+
+    override fun getNpc(id: Int): SNpc? {
+        return npcs.find { it.id == id }
+    }
+
+    override fun getNpc(name: String): SNpc? {
+        return npcs.find { it.data.name.toPlain() == name }
+    }
+
+    override fun getNpcs(): ObjectList<SNpc> {
+        return npcs.toObjectList()
+    }
+
+    override fun despawnAllNpcs(): Int {
+        val count = npcs.size
+
+        npcs.forEach {
+            it.viewers.forEach { viewer ->
+                it.hide(viewer)
+            }
+            it.clearProperties()
+            it.viewers.clear()
+            it.delete()
+        }
+
+        npcs.clear()
+
+        return count
+    }
+
+    override fun getProperties(npc: SNpc): ObjectSet<SNpcProperty> {
+        return npc.properties
+    }
+
+    override fun addProperty(
+        npc: SNpc,
+        property: SNpcProperty
+    ): Boolean {
+        if(npc.hasProperty(property.key)) {
+            return false
+        }
+
+        npc.addProperty(property)
+        return true
+    }
+}
