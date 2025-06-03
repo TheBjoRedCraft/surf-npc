@@ -1,23 +1,12 @@
 plugins {
-    kotlin("jvm")
     id("dev.slne.surf.surfapi.gradle.paper-plugin")
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    implementation(libs.packetevents)
+    compileOnly(project(":surf-npc-api")) /* Provided by surf-npc-bukkit at runtime */
+    compileOnly(libs.packetevents.spigot)
 }
-
 surfPaperPluginApi {
-    mainClass("dev.slne.surf.npc.example.ExamplePlugin")
+    mainClass("dev.slne.surf.npc.example.SurfNpcExamplePlugin")
     authors.add("red")
-}
-
-
-
-kotlin {
-    jvmToolchain(21)
 }
