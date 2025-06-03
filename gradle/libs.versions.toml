@@ -1,6 +1,7 @@
+[versions]
+surf-database = "2.0.4-SNAPSHOT"
+packetevents-spigot = "2.8.0"
+
 [libraries]
-paper = { module = "io.papermc.paper:paper-api", version = "1.21.4-R0.1-SNAPSHOT" }
-mccoroutine-folia-api = { module = "com.github.shynixn.mccoroutine:mccoroutine-folia-api", version = "2.21.0" }
-mccoroutine-folia-core = { module = "com.github.shynixn.mccoroutine:mccoroutine-folia-core", version = "2.21.0" }
-surf-database = { module = "dev.slne.surf:surf-database", version = "1.0.4-SNAPSHOT" }
-packetevents = { module = "com.github.retrooper:packetevents-spigot", version = "2.7.0" }
+surf-database = { module = "dev.slne.surf:surf-database", version.ref = "surf-database" }
+packetevents-spigot = { module = "com.github.retrooper:packetevents-spigot", version.ref = "packetevents-spigot" }
