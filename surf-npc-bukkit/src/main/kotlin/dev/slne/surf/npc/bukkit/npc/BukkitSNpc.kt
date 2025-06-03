@@ -1,0 +1,192 @@
+package dev.slne.surf.npc.bukkit.npc
+
+import com.github.retrooper.packetevents.PacketEvents
+import com.github.retrooper.packetevents.protocol.entity.data.EntityData
+import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes
+import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes
+import com.github.retrooper.packetevents.protocol.player.GameMode
+import com.github.retrooper.packetevents.protocol.player.TextureProperty
+import com.github.retrooper.packetevents.protocol.player.UserProfile
+import com.github.retrooper.packetevents.protocol.world.Location
+import com.github.retrooper.packetevents.util.Vector3d
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityHeadLook
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity
+
+import dev.slne.surf.npc.api.npc.SNpc
+import dev.slne.surf.npc.api.npc.SNpcData
+import dev.slne.surf.npc.api.npc.SNpcProperty
+import dev.slne.surf.npc.api.rotation.SNpcRotationType
+import dev.slne.surf.npc.bukkit.util.toUser
+import dev.slne.surf.npc.core.controller.npcController
+
+import it.unimi.dsi.fastutil.objects.ObjectSet
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import org.bukkit.Bukkit
+import java.util.UUID
+import kotlin.math.atan2
+import kotlin.math.sqrt
+
+class BukkitSNpc (
+    override val id: Int,
+    override val data: SNpcData,
+    override val properties: ObjectSet<SNpcProperty>,
+    override val viewers: ObjectSet<UUID>,
+    override val npcUuid: UUID
+) : SNpc {
+    override fun show(uuid: UUID) {
+        val packetEvents = PacketEvents.getAPI()
+        val playerManager = packetEvents.playerManager
+
+        val player = Bukkit.getPlayer(uuid) ?: return
+        val user = playerManager.getUser(player)
+        val profile = UserProfile(npcUuid, PlainTextComponentSerializer.plainText().serialize(data.name))
+
+        profile.textureProperties.add(TextureProperty(
+            "textures",
+            data.skin.value,
+            data.skin.signature
+        ))
+
+        val infoPacket = WrapperPlayServerPlayerInfoUpdate (
+            WrapperPlayServerPlayerInfoUpdate.Action.ADD_PLAYER,
+            WrapperPlayServerPlayerInfoUpdate.PlayerInfo (
+                profile,
+                true,
+                0,
+                GameMode.SURVIVAL,
+                data.name,
+                null
+            )
+        )
+
+        val metaDataPacket = WrapperPlayServerEntityMetadata(
+            id,
+            listOf(EntityData(17, EntityDataTypes.BYTE, 0x7F.toByte()))
+        )
+
+        val spawnPacket = WrapperPlayServerSpawnEntity (
+            id,
+            npcUuid,
+            EntityTypes.PLAYER,
+            Location(Vector3d(player.x, player.y, player.z), player.yaw, player.pitch),
+            player.yaw,
+            0,
+            null
+        )
+
+        user.sendPacket(infoPacket)
+        user.sendPacket(spawnPacket)
+        user.sendPacket(metaDataPacket)
+    }
+
+    override fun hide(uuid: UUID) {
+        val packetEvents = PacketEvents.getAPI()
+        val playerManager = packetEvents.playerManager
+
+        val player = Bukkit.getPlayer(uuid) ?: return
+        val user = playerManager.getUser(player)
+
+        val destroyPacket = WrapperPlayServerDestroyEntities (
+            this.id
+        )
+
+        user.sendPacket(destroyPacket)
+    }
+
+    override fun refresh() {
+        for (user in viewers) {
+            val profile = UserProfile(npcUuid, PlainTextComponentSerializer.plainText().serialize(data.name))
+
+            profile.textureProperties.clear()
+            profile.textureProperties.add(TextureProperty(
+                "textures",
+                data.skin.value,
+                data.skin.signature
+            ))
+
+            val infoPacket = WrapperPlayServerPlayerInfoUpdate (
+                WrapperPlayServerPlayerInfoUpdate.Action.ADD_PLAYER,
+                WrapperPlayServerPlayerInfoUpdate.PlayerInfo (
+                    profile,
+                    true,
+                    0,
+                    GameMode.SURVIVAL,
+                    data.name,
+                    null
+                )
+            )
+
+            user.toUser()?.sendPacket(infoPacket)
+        }
+    }
+
+    override fun refreshRotation(uuid: UUID) {
+        val player = Bukkit.getPlayer(uuid) ?: return
+        val user = PacketEvents.getAPI().playerManager.getUser(player)
+
+        val yawPitch: Pair<Float, Float> = when (data.rotationType) {
+            SNpcRotationType.FIXED -> {
+                val fixedRotation = data.fixedRotation ?: return
+                Pair(fixedRotation.yaw, fixedRotation.pitch)
+            }
+
+            SNpcRotationType.PER_PLAYER -> {
+                val npcVec = Vector3d(data.location.x, data.location.y, data.location.z)
+                val playerLoc = player.location
+
+                val dx = playerLoc.x - npcVec.x
+                val dz = playerLoc.z - npcVec.z
+                val dy = playerLoc.y - npcVec.y
+
+                val yaw = Math.toDegrees(atan2(-dx, dz)).toFloat()
+                val horizontalDist = sqrt((dx * dx) + (dz * dz))
+                val pitch = (-Math.toDegrees(atan2(dy, horizontalDist))).toFloat()
+
+                Pair(yaw, pitch)
+            }
+        }
+
+        val lookPacket = WrapperPlayServerEntityRotation(id, yawPitch.first, yawPitch.second, true)
+        val headRotationPacket = WrapperPlayServerEntityHeadLook(id, yawPitch.first)
+
+        user.sendPacket(lookPacket)
+        user.sendPacket(headRotationPacket)
+    }
+
+
+
+    override fun delete() {
+        npcController.deleteNpc(this)
+    }
+
+    override fun addProperty(property: SNpcProperty) {
+        if (properties.any { it.key == property.key }) {
+            return
+        }
+        properties.add(property)
+    }
+
+    override fun getProperty(key: String): SNpcProperty? {
+        return properties.find { it.key == key }
+    }
+
+    override fun removeProperty(key: String) {
+        properties.removeIf { it.key == key }
+    }
+
+    override fun hasProperty(key: String): Boolean {
+        return properties.any { it.key == key }
+    }
+
+    override fun clearProperties() {
+        properties.clear()
+    }
+
+    override fun hasProperties(): Boolean {
+        return properties.isNotEmpty()
+    }
+}
