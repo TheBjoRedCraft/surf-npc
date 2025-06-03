@@ -1,75 +1,39 @@
 package dev.slne.surf.npc.core.controller
 
 import dev.slne.surf.npc.api.npc.SNpc
-import dev.slne.surf.npc.api.result.*
-import dev.slne.surf.npc.core.npc.CoreNpc
+import dev.slne.surf.npc.api.npc.SNpcData
+import dev.slne.surf.npc.api.npc.SNpcProperty
+import dev.slne.surf.npc.api.result.NpcCreationResult
+import dev.slne.surf.npc.api.result.NpcDeletionResult
+import dev.slne.surf.npc.api.result.NpcRespawnResult
+import dev.slne.surf.npc.api.result.NpcSpawnResult
+import dev.slne.surf.npc.api.rotation.SNpcRotation
+import dev.slne.surf.npc.api.rotation.SNpcRotationType
+import dev.slne.surf.npc.api.skin.SNpcSkinData
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectList
-import java.util.*
+import it.unimi.dsi.fastutil.objects.ObjectSet
+import java.util.UUID
 
 interface NpcController {
-    /**
-     * Creates a new NPC.
-     *
-     * @param npc The NPC to create.
-     * @return The result of the NPC creation.
-     */
-    fun create(npc: SNpc): NpcCreationResult
+    fun createNpc(data: SNpcData) : NpcCreationResult
+    fun deleteNpc(npc: SNpc) : NpcDeletionResult
 
-    /**
-     * Removes an existing NPC.
-     *
-     * @param npc The NPC to remove.
-     * @return The result of the NPC deletion.
-     */
-    fun remove(npc: SNpc): NpcDeletionResult
+    fun showNpc(npc: SNpc, uuid: UUID) : NpcSpawnResult
+    fun hideNpc(npc: SNpc, uuid: UUID) : NpcDeletionResult
+    fun reShowNpc(npc: SNpc, uuid: UUID): NpcRespawnResult
 
-    /**
-     * Retrieves an NPC by its ID.
-     *
-     * @param id The ID of the NPC.
-     * @return The NPC with the specified ID, or null if not found.
-     */
+    fun setSkin(npc: SNpc, skin: SNpcSkinData)
+    fun setRotationType(npc: SNpc, rotationType: SNpcRotationType)
+    fun setRotation(npc: SNpc, rotation: SNpcRotation)
+
     fun getNpc(id: UUID): SNpc?
-
-    /**
-     * Retrieves an NPC by its name.
-     *
-     * @param name The name of the NPC.
-     * @return The NPC with the specified name, or null if not found.
-     */
     fun getNpc(name: String): SNpc?
-
-    /**
-     * Retrieves all NPCs.
-     *
-     * @return A list of all NPCs.
-     */
     fun getNpcs(): ObjectList<SNpc>
+    fun despawnAllNpcs(): Int
 
-    /**
-     * Spawns an NPC.
-     *
-     * @param npc The NPC to spawn.
-     * @return The result of the NPC spawn.
-     */
-    fun spawn(npc: SNpc): NpcSpawnResult
-
-    /**
-     * Respawns an NPC.
-     *
-     * @param npc The NPC to respawn.
-     * @return The result of the NPC respawn.
-     */
-    fun respawn(npc: SNpc): NpcRespawnResult
-
-    /**
-     * Despawns an NPC.
-     *
-     * @param npc The NPC to despawn.
-     * @return The result of the NPC despawn.
-     */
-    fun despawn(npc: SNpc): NpcDespawnResult
+    fun getProperties(npc: SNpc): ObjectSet<SNpcProperty>
+    fun addProperty(npc: SNpc, property: SNpcProperty): Boolean
 
     companion object {
         /**
