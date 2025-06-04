@@ -8,7 +8,8 @@ import dev.slne.surf.npc.api.skin.SNpcSkinData
 import net.kyori.adventure.text.Component
 
 data class BukkitSNpcData (
-    override var name: Component,
+    override var displayName: Component,
+    override val internalName: String,
     override var skin: SNpcSkinData,
     override var location: SNpcLocation,
     override var rotationType: SNpcRotationType,

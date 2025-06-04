@@ -43,7 +43,7 @@ class BukkitSNpc (
 
         val player = Bukkit.getPlayer(uuid) ?: return
         val user = playerManager.getUser(player)
-        val profile = UserProfile(npcUuid, PlainTextComponentSerializer.plainText().serialize(data.name))
+        val profile = UserProfile(npcUuid, PlainTextComponentSerializer.plainText().serialize(data.displayName))
 
         profile.textureProperties.add(TextureProperty(
             "textures",
@@ -58,7 +58,7 @@ class BukkitSNpc (
                 true,
                 0,
                 GameMode.SURVIVAL,
-                data.name,
+                data.displayName,
                 null
             )
         )
@@ -104,7 +104,7 @@ class BukkitSNpc (
 
     override fun refresh() {
         for (user in viewers) {
-            val profile = UserProfile(npcUuid, PlainTextComponentSerializer.plainText().serialize(data.name))
+            val profile = UserProfile(npcUuid, PlainTextComponentSerializer.plainText().serialize(data.displayName))
 
             profile.textureProperties.clear()
             profile.textureProperties.add(TextureProperty(
@@ -120,7 +120,7 @@ class BukkitSNpc (
                     true,
                     0,
                     GameMode.SURVIVAL,
-                    data.name,
+                    data.displayName,
                     null
                 )
             )

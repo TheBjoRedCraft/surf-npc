@@ -6,7 +6,8 @@ import dev.slne.surf.npc.api.skin.SNpcSkinData
 import net.kyori.adventure.text.Component
 
 interface SNpcData {
-    var name: Component
+    var displayName: Component
+    val internalName: String
     var skin: SNpcSkinData
     var location: SNpcLocation
 

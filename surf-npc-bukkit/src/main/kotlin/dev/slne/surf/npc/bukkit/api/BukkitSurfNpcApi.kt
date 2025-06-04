@@ -59,8 +59,8 @@ class BukkitSurfNpcApi : SurfNpcApi {
         return npcController.getNpc(id)
     }
 
-    override fun getNpc(name: String): SNpc? {
-        return npcController.getNpc(name)
+    override fun getNpc(internalName: String): SNpc? {
+        return npcController.getNpc(internalName)
     }
 
     override fun getNpcs(): ObjectList<SNpc> {

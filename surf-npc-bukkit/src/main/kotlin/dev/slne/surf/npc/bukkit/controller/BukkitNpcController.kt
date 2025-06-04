@@ -12,7 +12,6 @@ import dev.slne.surf.npc.api.rotation.SNpcRotation
 import dev.slne.surf.npc.api.rotation.SNpcRotationType
 import dev.slne.surf.npc.api.skin.SNpcSkinData
 import dev.slne.surf.npc.bukkit.npc.BukkitSNpc
-import dev.slne.surf.npc.bukkit.util.toPlain
 import dev.slne.surf.npc.core.controller.NpcController
 import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
@@ -35,6 +34,10 @@ class BukkitNpcController : NpcController, Services.Fallback {
             return NpcCreationResult.FAILED_ALREADY_EXISTS
         }
 
+        if(this.getNpc(data.internalName) != null) {
+            return NpcCreationResult.FAILED_ALREADY_EXISTS
+        }
+
         val npc = BukkitSNpc (
             id,
             data,
@@ -44,6 +47,12 @@ class BukkitNpcController : NpcController, Services.Fallback {
         )
 
         this.registerNpc(npc)
+
+        if(npc.data.global) {
+            forEachPlayer {
+                npc.show(it.uniqueId)
+            }
+        }
 
         return NpcCreationResult.SUCCESS
     }
@@ -154,8 +163,8 @@ class BukkitNpcController : NpcController, Services.Fallback {
         return npcs.find { it.id == id }
     }
 
-    override fun getNpc(name: String): SNpc? {
-        return npcs.find { it.data.name.toPlain() == name }
+    override fun getNpc(internalName: String): SNpc? {
+        return npcs.find { it.data.internalName.trim().lowercase() == internalName.trim().lowercase() }
     }
 
     override fun getNpcs(): ObjectList<SNpc> {

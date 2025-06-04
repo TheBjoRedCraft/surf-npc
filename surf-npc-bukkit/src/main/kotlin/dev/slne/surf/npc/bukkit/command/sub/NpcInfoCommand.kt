@@ -9,7 +9,6 @@ import dev.slne.surf.npc.bukkit.util.PermissionRegistry
 import dev.slne.surf.npc.bukkit.util.readableString
 import dev.slne.surf.npc.bukkit.util.toPlain
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
-import dev.slne.surf.surfapi.core.api.messages.adventure.appendNewline
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickRunsCommand
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.format.TextDecoration
@@ -33,7 +32,7 @@ class NpcInfoCommand(commandName: String) : CommandAPICommand(commandName) {
                     decorate(TextDecoration.BOLD)
                 }
                 variableKey("Name: ")
-                variableValue(npc.data.name.toPlain())
+                variableValue(npc.data.internalName)
                 appendNewline()
 
                 append {
@@ -41,7 +40,7 @@ class NpcInfoCommand(commandName: String) : CommandAPICommand(commandName) {
                     decorate(TextDecoration.BOLD)
                 }
                 variableKey("Anzeigename: ")
-                append(npc.data.name)
+                append(npc.data.displayName)
                 appendNewline()
 
                 append {

@@ -25,7 +25,7 @@ interface SurfNpcApi {
     fun getProperties(npc: SNpc): ObjectSet<SNpcProperty>
 
     fun getNpc(id: Int): SNpc?
-    fun getNpc(name: String): SNpc?
+    fun getNpc(internalName: String): SNpc?
     fun getNpcs(): ObjectList<SNpc>
     fun despawnAllNpcs()
 

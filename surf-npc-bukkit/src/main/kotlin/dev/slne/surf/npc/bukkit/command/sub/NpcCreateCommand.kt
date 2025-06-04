@@ -2,7 +2,6 @@ package dev.slne.surf.npc.bukkit.command.sub
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.kotlindsl.booleanArgument
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.stringArgument
@@ -18,7 +17,6 @@ import dev.slne.surf.npc.bukkit.rotation.BukkitSNpcRotation
 import dev.slne.surf.npc.bukkit.util.PermissionRegistry
 import dev.slne.surf.npc.bukkit.util.skinDataFromName
 import dev.slne.surf.npc.core.controller.npcController
-import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -26,11 +24,13 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 class NpcCreateCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(PermissionRegistry.COMMAND_NPC_CREATE)
+        stringArgument("internalName")
         textArgument("name")
         stringArgument("skin")
         rotationTypeArgument("rotationType")
         playerExecutor { player, args ->
             val name: String by args
+            val internalName: String by args
             val skin: String by args
             val rotationType: SNpcRotationType by args
             val location = player.location
@@ -53,7 +53,8 @@ class NpcCreateCommand(commandName: String) : CommandAPICommand(commandName) {
             plugin.launch {
                 val skinData = skinDataFromName(skin)
                 val npcResult = npcController.createNpc(BukkitSNpcData(
-                    name = parsedName,
+                    displayName = parsedName,
+                    internalName,
                     skinData,
                     BukkitSNpcLocation(location.x, location.y, location.z, location.world.name),
                     rotationType,
@@ -61,7 +62,7 @@ class NpcCreateCommand(commandName: String) : CommandAPICommand(commandName) {
                     true
                     ))
 
-                val npc = npcController.getNpc(name)
+                val npc = npcController.getNpc(internalName)
 
                 if(npc == null) {
                     player.sendText {
@@ -69,10 +70,6 @@ class NpcCreateCommand(commandName: String) : CommandAPICommand(commandName) {
                         error("Der Npc konnte nicht erstellt werden: ${npcResult.name}")
                     }
                     return@launch
-                }
-
-                forEachPlayer {
-                    npc.show(it.uniqueId)
                 }
 
                 if(npcResult == NpcCreationResult.SUCCESS) {

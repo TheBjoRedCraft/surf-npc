@@ -13,7 +13,6 @@ import dev.slne.surf.npc.api.skin.SNpcSkinData
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
-import net.kyori.adventure.text.Component
 import java.util.UUID
 
 interface NpcController {
@@ -32,7 +31,7 @@ interface NpcController {
     fun setRotation(npc: SNpc, rotation: SNpcRotation)
 
     fun getNpc(id: Int): SNpc?
-    fun getNpc(name: String): SNpc?
+    fun getNpc(internalName: String): SNpc?
     fun getNpcs(): ObjectList<SNpc>
     fun despawnAllNpcs(): Int
 
