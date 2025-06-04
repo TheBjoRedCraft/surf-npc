@@ -66,7 +66,7 @@ class NpcCreateCommand(commandName: String) : CommandAPICommand(commandName) {
                 if(npc == null) {
                     player.sendText {
                         appendPrefix()
-                        error("Der Npc konnte nicht erstellt werden.")
+                        error("Der Npc konnte nicht erstellt werden: ${npcResult.name}")
                     }
                     return@launch
                 }
@@ -83,7 +83,7 @@ class NpcCreateCommand(commandName: String) : CommandAPICommand(commandName) {
                 } else {
                     player.sendText {
                         appendPrefix()
-                        error("Der Npc konnte nicht erstellt werden. ${npcResult.name}")
+                        error("Der Npc konnte nicht erstellt werden: ${npcResult.name}")
                     }
                 }
             }
