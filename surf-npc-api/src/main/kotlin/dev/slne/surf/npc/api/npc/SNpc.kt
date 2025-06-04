@@ -14,6 +14,7 @@ import java.util.UUID
 interface SNpc {
     val id: Int
     val npcUuid: UUID
+    val nameTagId: Int
     val data: SNpcData
     val properties: ObjectSet<SNpcProperty>
     val viewers: ObjectSet<UUID>

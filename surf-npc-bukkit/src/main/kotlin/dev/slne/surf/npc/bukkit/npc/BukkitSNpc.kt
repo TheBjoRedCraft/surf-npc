@@ -22,10 +22,13 @@ import dev.slne.surf.npc.api.npc.SNpcProperty
 import dev.slne.surf.npc.api.rotation.SNpcRotationType
 import dev.slne.surf.npc.bukkit.util.toUser
 import dev.slne.surf.npc.core.controller.npcController
+import dev.slne.surf.surfapi.core.api.util.random
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
+import java.util.Optional
 import java.util.UUID
 import kotlin.math.atan2
 import kotlin.math.sqrt
@@ -35,7 +38,8 @@ class BukkitSNpc (
     override val data: SNpcData,
     override val properties: ObjectSet<SNpcProperty>,
     override val viewers: ObjectSet<UUID>,
-    override val npcUuid: UUID
+    override val npcUuid: UUID,
+    override val nameTagId: Int
 ) : SNpc {
     override fun show(uuid: UUID) {
         val packetEvents = PacketEvents.getAPI()
@@ -43,7 +47,7 @@ class BukkitSNpc (
 
         val player = Bukkit.getPlayer(uuid) ?: return
         val user = playerManager.getUser(player)
-        val profile = UserProfile(npcUuid, PlainTextComponentSerializer.plainText().serialize(data.displayName))
+        val profile = UserProfile(npcUuid, data.internalName)
 
         profile.textureProperties.add(TextureProperty(
             "textures",
@@ -55,7 +59,7 @@ class BukkitSNpc (
             WrapperPlayServerPlayerInfoUpdate.Action.ADD_PLAYER,
             WrapperPlayServerPlayerInfoUpdate.PlayerInfo (
                 profile,
-                true,
+                false,
                 0,
                 GameMode.SURVIVAL,
                 data.displayName,
@@ -65,7 +69,10 @@ class BukkitSNpc (
 
         val metaDataPacket = WrapperPlayServerEntityMetadata(
             id,
-            listOf(EntityData(17, EntityDataTypes.BYTE, 0x7F.toByte()))
+            listOf(
+                EntityData(17, EntityDataTypes.BYTE, 0x7F.toByte()),
+                EntityData(0, EntityDataTypes.BYTE, 0x02.toByte()),
+            )
         )
 
         val rotationPair = Pair(
@@ -83,9 +90,29 @@ class BukkitSNpc (
             null
         )
 
+        val spawnNametagPacket = WrapperPlayServerSpawnEntity (
+            nameTagId,
+            npcUuid,
+            EntityTypes.TEXT_DISPLAY,
+            Location(Vector3d(data.location.x, data.location.y + 1.25, data.location.z), rotationPair.first, rotationPair.second),
+            rotationPair.first,
+            0,
+            null
+        )
+
+        val metaDataNameTagPacket = WrapperPlayServerEntityMetadata(
+            nameTagId,
+            listOf(
+                EntityData(23, EntityDataTypes.ADV_COMPONENT, data.displayName)
+            )
+        )
+
         user.sendPacket(infoPacket)
         user.sendPacket(spawnPacket)
         user.sendPacket(metaDataPacket)
+
+        user.sendPacket(spawnNametagPacket)
+        user.sendPacket(metaDataNameTagPacket)
     }
 
     override fun hide(uuid: UUID) {
@@ -96,7 +123,7 @@ class BukkitSNpc (
         val user = playerManager.getUser(player)
 
         val destroyPacket = WrapperPlayServerDestroyEntities (
-            this.id
+            this.id, nameTagId
         )
 
         user.sendPacket(destroyPacket)

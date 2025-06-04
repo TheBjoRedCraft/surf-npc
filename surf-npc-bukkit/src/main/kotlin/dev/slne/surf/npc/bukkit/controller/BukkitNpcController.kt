@@ -28,6 +28,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
 
     override fun createNpc(data: SNpcData): NpcCreationResult {
         val id = random.nextInt()
+        val nameTagId = random.nextInt()
         val uuid = UUID.randomUUID()
 
         if(this.getNpc(id) != null) {
@@ -43,7 +44,8 @@ class BukkitNpcController : NpcController, Services.Fallback {
             data,
             mutableObjectSetOf<SNpcProperty>(),
             mutableObjectSetOf<UUID>(),
-            uuid
+            uuid,
+            nameTagId
         )
 
         this.registerNpc(npc)
