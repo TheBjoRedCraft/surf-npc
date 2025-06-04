@@ -33,6 +33,7 @@ class NpcCreateCommand(commandName: String) : CommandAPICommand(commandName) {
             val name: String by args
             val skin: String by args
             val rotationType: SNpcRotationType by args
+            val location = player.location
 
             if(!this.isValidName(name)) {
                 player.sendText {
@@ -56,7 +57,7 @@ class NpcCreateCommand(commandName: String) : CommandAPICommand(commandName) {
                     skinData,
                     BukkitSNpcLocation(player.x, player.y, player.z, player.world.name),
                     rotationType,
-                    BukkitSNpcRotation(player.location.yaw, player.location.pitch),
+                    BukkitSNpcRotation(location.yaw, location.pitch),
                     true
                     ))
 
