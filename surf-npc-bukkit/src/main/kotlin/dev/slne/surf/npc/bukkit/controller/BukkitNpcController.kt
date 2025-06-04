@@ -14,6 +14,7 @@ import dev.slne.surf.npc.api.skin.SNpcSkinData
 import dev.slne.surf.npc.bukkit.npc.BukkitSNpc
 import dev.slne.surf.npc.bukkit.util.toPlain
 import dev.slne.surf.npc.core.controller.NpcController
+import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import dev.slne.surf.surfapi.core.api.util.random
 import dev.slne.surf.surfapi.core.api.util.toObjectList
@@ -52,8 +53,14 @@ class BukkitNpcController : NpcController, Services.Fallback {
             return NpcDeletionResult.FAILED_NOT_FOUND
         }
 
-        npc.viewers.forEach {
-            npc.hide(it)
+        if(npc.data.global) {
+            forEachPlayer { player ->
+                npc.hide(player.uniqueId)
+            }
+        } else {
+            npc.viewers.forEach { viewer ->
+                npc.hide(viewer)
+            }
         }
 
         npc.clearProperties()
@@ -159,9 +166,16 @@ class BukkitNpcController : NpcController, Services.Fallback {
         val count = npcs.size
 
         npcs.forEach {
-            it.viewers.forEach { viewer ->
-                it.hide(viewer)
+            if(it.data.global) {
+                forEachPlayer { player ->
+                    it.hide(player.uniqueId)
+                }
+            } else {
+                it.viewers.forEach { viewer ->
+                    it.hide(viewer)
+                }
             }
+
             it.clearProperties()
             it.viewers.clear()
             it.delete()

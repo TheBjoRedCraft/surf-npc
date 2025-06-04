@@ -16,10 +16,7 @@ import org.bukkit.Location
 
 import java.net.HttpURLConnection
 import java.net.URL
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
 
-@OptIn(ExperimentalEncodingApi::class)
 suspend fun skinDataFromName(name: String): SNpcSkinData = withContext(Dispatchers.IO) {
     val uuid = PlayerLookupService.getUuid(name) ?: return@withContext skinDataDefault()
 
@@ -62,4 +59,8 @@ fun SNpcLocation.toLocation(): Location? {
         this.y,
         this.z
     )
+}
+
+fun SNpcLocation.readableString(): String {
+    return "$x, $y, $z in '$world'"
 }

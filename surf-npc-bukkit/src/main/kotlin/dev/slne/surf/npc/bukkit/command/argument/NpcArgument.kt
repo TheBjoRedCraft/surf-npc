@@ -11,11 +11,19 @@ import dev.slne.surf.npc.core.controller.npcController
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
 class NpcArgument(nodeName: String) : CustomArgument<SNpc, String>(StringArgument(nodeName), { info ->
-    npcController.getNpc(info.input) ?: throw CustomArgumentException.fromAdventureComponent (
-        buildText {
-            appendPrefix()
-            error("Der Npc '${info.input}' wurde nicht gefunden.")
-        })
+    if(info.input.toIntOrNull() != null) {
+        npcController.getNpc(info.input.toInt()) ?: throw CustomArgumentException.fromAdventureComponent (
+            buildText {
+                appendPrefix()
+                error("Der Npc mit der ID '${info.input}' wurde nicht gefunden.")
+            })
+    } else {
+        npcController.getNpc(info.input) ?: throw CustomArgumentException.fromAdventureComponent (
+            buildText {
+                appendPrefix()
+                error("Der Npc '${info.input}' wurde nicht gefunden.")
+            })
+    }
 }) {
     init {
         replaceSuggestions(ArgumentSuggestions.stringCollection {

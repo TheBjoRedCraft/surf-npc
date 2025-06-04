@@ -12,6 +12,10 @@ class NpcListener : PacketListener {
     override fun onPacketReceive(event: PacketReceiveEvent) {
         val player = event.getPlayer<Player>()
 
+        if(player == null) {
+            return
+        }
+
         if (event.packetType == PacketType.Play.Client.PLAYER_POSITION_AND_ROTATION) {
             val playerUuid = player.uniqueId
 

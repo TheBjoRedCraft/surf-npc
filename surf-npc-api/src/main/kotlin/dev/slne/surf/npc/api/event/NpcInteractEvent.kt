@@ -10,7 +10,7 @@ class NpcInteractEvent (
 ) : Event(), Cancellable {
     private val handlerList = HandlerList()
 
-    var cancelled = false
+    private var cancelled = false
 
     override fun getHandlers(): HandlerList {
         return handlerList

@@ -34,6 +34,14 @@ class NpcCreateCommand(commandName: String) : CommandAPICommand(commandName) {
             val skin: String by args
             val rotationType: SNpcRotationType by args
 
+            if(!this.isValidName(name)) {
+                player.sendText {
+                    appendPrefix()
+                    error("Der Npc Name ist ungültig.")
+                }
+                return@playerExecutor
+            }
+
             player.sendText {
                 appendPrefix()
                 info("Der Npc wird erstellt. Dies kann einen Moment dauern...")
@@ -79,5 +87,9 @@ class NpcCreateCommand(commandName: String) : CommandAPICommand(commandName) {
                 }
             }
         }
+    }
+
+    fun isValidName(name: String): Boolean {
+        return name.isNotBlank() && (name.length > 1 || !name[0].isDigit())
     }
 }
