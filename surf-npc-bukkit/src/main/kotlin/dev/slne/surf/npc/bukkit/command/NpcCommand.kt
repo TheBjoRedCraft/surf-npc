@@ -6,6 +6,7 @@ import dev.slne.surf.npc.bukkit.command.sub.NpcCreateCommand
 import dev.slne.surf.npc.bukkit.command.sub.NpcDeleteCommand
 import dev.slne.surf.npc.bukkit.command.sub.NpcInfoCommand
 import dev.slne.surf.npc.bukkit.command.sub.NpcListCommand
+import dev.slne.surf.npc.bukkit.command.sub.edit.NpcEditCommand
 import dev.slne.surf.npc.bukkit.util.PermissionRegistry
 
 class NpcCommand(commandName: String) : CommandAPICommand(commandName) {
@@ -15,5 +16,6 @@ class NpcCommand(commandName: String) : CommandAPICommand(commandName) {
         subcommand(NpcDeleteCommand("delete"))
         subcommand(NpcInfoCommand("info"))
         subcommand(NpcListCommand("list"))
+        subcommand(NpcEditCommand("edit"))
     }
 }
