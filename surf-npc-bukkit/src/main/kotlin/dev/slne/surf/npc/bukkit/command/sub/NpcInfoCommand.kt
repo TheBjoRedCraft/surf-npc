@@ -55,6 +55,14 @@ class NpcInfoCommand(commandName: String) : CommandAPICommand(commandName) {
                     info("| ")
                     decorate(TextDecoration.BOLD)
                 }
+                variableKey("Nametag-ID: ")
+                variableValue(npc.nameTagId)
+                appendNewline()
+
+                append {
+                    info("| ")
+                    decorate(TextDecoration.BOLD)
+                }
                 variableKey("Uuid: ")
                 variableValue(npc.npcUuid.toString())
                 appendNewline()
