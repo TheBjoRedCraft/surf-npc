@@ -100,8 +100,6 @@ class BukkitSNpc (
         )
 
         user.sendPacket(destroyPacket)
-
-        user.sendMessage("sent destory packet to ${user.name} for npc $id")
     }
 
     override fun refresh() {

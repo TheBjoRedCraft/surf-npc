@@ -11,7 +11,6 @@ import dev.slne.surf.npc.api.skin.SNpcSkinData
 import dev.slne.surf.npc.core.controller.npcController
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
-import net.kyori.adventure.text.Component
 import java.util.UUID
 
 class BukkitSurfNpcApi : SurfNpcApi {
