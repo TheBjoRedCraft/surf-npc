@@ -1,8 +1,10 @@
 package dev.slne.surf.npc.bukkit.util
 
+import dev.slne.surf.npc.api.npc.SNpc
 import dev.slne.surf.npc.api.npc.SNpcLocation
 import dev.slne.surf.npc.api.skin.SNpcSkinData
 import dev.slne.surf.npc.bukkit.skin.BukkitSNpcSkinData
+import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
 import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 
 import kotlinx.coroutines.Dispatchers
@@ -63,4 +65,28 @@ fun SNpcLocation.toLocation(): Location? {
 
 fun SNpcLocation.readableString(): String {
     return "$x, $y, $z in '$world'"
+}
+
+fun SNpc.hideAll() {
+    if(this.data.global) {
+        forEachPlayer {
+            this.hide(it.uniqueId)
+        }
+    } else {
+        this.viewers.forEach { viewer ->
+            this.hide(viewer)
+        }
+    }
+}
+
+fun SNpc.showAll() {
+    if(this.data.global) {
+        forEachPlayer {
+            this.show(it.uniqueId)
+        }
+    } else {
+        this.viewers.forEach { viewer ->
+            this.show(viewer)
+        }
+    }
 }
