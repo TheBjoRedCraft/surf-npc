@@ -52,6 +52,7 @@ class BukkitSNpc (
         val player = Bukkit.getPlayer(uuid) ?: return
         val user = playerManager.getUser(player)
         val profile = UserProfile(npcUuid, data.internalName)
+        val nameTagUuid = UUID.randomUUID()
 
         profile.textureProperties.add(TextureProperty(
             "textures",
@@ -96,9 +97,9 @@ class BukkitSNpc (
 
         val spawnNametagPacket = WrapperPlayServerSpawnEntity (
             nameTagId,
-            npcUuid,
+            nameTagUuid,
             EntityTypes.TEXT_DISPLAY,
-            Location(Vector3d(data.location.x, data.location.y + 2.25, data.location.z), rotationPair.first, rotationPair.second),
+            Location(Vector3d(data.location.x, data.location.y + 2, data.location.z), 0f, 0f),
             rotationPair.first,
             0,
             null
@@ -107,7 +108,9 @@ class BukkitSNpc (
         val metaDataNameTagPacket = WrapperPlayServerEntityMetadata(
             nameTagId,
             listOf(
-                EntityData(23, EntityDataTypes.ADV_COMPONENT, data.displayName)
+                EntityData(23, EntityDataTypes.ADV_COMPONENT, data.displayName),
+                EntityData(15, EntityDataTypes.BYTE, 3.toByte()),
+                EntityData(27, EntityDataTypes.BYTE, 0x02.toByte())
             )
         )
 

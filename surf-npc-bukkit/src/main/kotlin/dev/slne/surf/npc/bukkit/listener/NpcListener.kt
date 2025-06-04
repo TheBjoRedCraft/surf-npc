@@ -6,7 +6,6 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType
 import dev.slne.surf.npc.bukkit.util.toLocation
 import dev.slne.surf.npc.core.controller.npcController
 import org.bukkit.entity.Player
-import java.util.UUID
 
 class NpcListener : PacketListener {
     override fun onPacketReceive(event: PacketReceiveEvent) {
