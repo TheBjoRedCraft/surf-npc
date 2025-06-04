@@ -55,7 +55,7 @@ class NpcCreateCommand(commandName: String) : CommandAPICommand(commandName) {
                 val npcResult = npcController.createNpc(BukkitSNpcData(
                     name = parsedName,
                     skinData,
-                    BukkitSNpcLocation(player.x, player.y, player.z, player.world.name),
+                    BukkitSNpcLocation(location.x, location.y, location.z, location.world.name),
                     rotationType,
                     BukkitSNpcRotation(location.yaw, location.pitch),
                     true
