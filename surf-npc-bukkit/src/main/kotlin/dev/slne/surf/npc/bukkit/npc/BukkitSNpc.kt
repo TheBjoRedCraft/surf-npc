@@ -14,7 +14,9 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerScoreboardObjective
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams
 
 import dev.slne.surf.npc.api.npc.SNpc
 import dev.slne.surf.npc.api.npc.SNpcData
@@ -25,6 +27,8 @@ import dev.slne.surf.npc.core.controller.npcController
 import dev.slne.surf.surfapi.core.api.util.random
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
@@ -94,7 +98,7 @@ class BukkitSNpc (
             nameTagId,
             npcUuid,
             EntityTypes.TEXT_DISPLAY,
-            Location(Vector3d(data.location.x, data.location.y + 1.25, data.location.z), rotationPair.first, rotationPair.second),
+            Location(Vector3d(data.location.x, data.location.y + 2.25, data.location.z), rotationPair.first, rotationPair.second),
             rotationPair.first,
             0,
             null
@@ -107,9 +111,35 @@ class BukkitSNpc (
             )
         )
 
+        val teamCreatePacket = WrapperPlayServerTeams(
+            "npc_$id",
+            WrapperPlayServerTeams.TeamMode.CREATE,
+            WrapperPlayServerTeams.ScoreBoardTeamInfo(
+                data.displayName,
+                Component.empty(),
+                Component.empty(),
+                WrapperPlayServerTeams.NameTagVisibility.NEVER,
+                WrapperPlayServerTeams.CollisionRule.ALWAYS,
+                NamedTextColor.RED,
+                WrapperPlayServerTeams.OptionData.NONE
+            )
+        )
+
+        val nullInfo: WrapperPlayServerTeams.ScoreBoardTeamInfo? = null
+
+        val teamMemberAddPacket = WrapperPlayServerTeams(
+            "npc_$id",
+            WrapperPlayServerTeams.TeamMode.ADD_ENTITIES,
+            nullInfo,
+            data.internalName
+        )
+
         user.sendPacket(infoPacket)
         user.sendPacket(spawnPacket)
         user.sendPacket(metaDataPacket)
+
+        user.sendPacket(teamCreatePacket)
+        user.sendPacket(teamMemberAddPacket)
 
         user.sendPacket(spawnNametagPacket)
         user.sendPacket(metaDataNameTagPacket)
