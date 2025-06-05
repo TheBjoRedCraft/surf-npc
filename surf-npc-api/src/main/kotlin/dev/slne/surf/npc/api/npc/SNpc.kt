@@ -10,6 +10,7 @@ interface SNpc {
     val id: Int
     val npcUuid: UUID
     val nameTagId: Int
+    val nameTagUuid: UUID
     val data: SNpcData
     val properties: ObjectSet<SNpcProperty>
     val viewers: ObjectSet<UUID>

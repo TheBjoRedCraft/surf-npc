@@ -48,7 +48,8 @@ class BukkitSNpc (
     override val properties: ObjectSet<SNpcProperty>,
     override val viewers: ObjectSet<UUID>,
     override val npcUuid: UUID,
-    override val nameTagId: Int
+    override val nameTagId: Int,
+    override val nameTagUuid: UUID
 ) : SNpc {
     override fun spawn(uuid: UUID) {
         val packetEvents = PacketEvents.getAPI()

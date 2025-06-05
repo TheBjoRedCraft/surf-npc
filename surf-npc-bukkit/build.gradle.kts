@@ -4,7 +4,6 @@ plugins {
 
 dependencies {
     api(project(":surf-npc-core"))
-    api(libs.surf.database)
 }
 
 surfPaperPluginApi {
