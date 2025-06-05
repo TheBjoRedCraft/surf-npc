@@ -14,6 +14,7 @@ import dev.slne.surf.npc.api.rotation.SNpcRotation
 import dev.slne.surf.npc.api.rotation.SNpcRotationType
 import dev.slne.surf.npc.api.skin.SNpcSkinData
 import dev.slne.surf.npc.bukkit.npc.BukkitSNpc
+import dev.slne.surf.npc.bukkit.plugin
 import dev.slne.surf.npc.core.controller.NpcController
 import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
@@ -59,9 +60,13 @@ class BukkitNpcController : NpcController, Services.Fallback {
             }
         }
 
-        Bukkit.getPluginManager().callEvent(NpcCreateEvent (
-            npc
-        ))
+        Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+            Bukkit.getPluginManager().callEvent(NpcCreateEvent (
+                npc
+            ))
+        }, 1L)
+
+
 
         return NpcCreationResult.SUCCESS
     }
@@ -84,9 +89,11 @@ class BukkitNpcController : NpcController, Services.Fallback {
         npc.clearProperties()
         npc.viewers.clear()
 
-        Bukkit.getPluginManager().callEvent(NpcDeleteEvent(
-            npc
-        ))
+        Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+            Bukkit.getPluginManager().callEvent(NpcDeleteEvent (
+                npc
+            ))
+        }, 1L)
 
         return NpcDeletionResult.SUCCESS
     }

@@ -18,6 +18,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPl
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerScoreboardObjective
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams
+import dev.slne.surf.npc.api.event.NpcCreateEvent
 import dev.slne.surf.npc.api.event.NpcDespawnEvent
 import dev.slne.surf.npc.api.event.NpcSpawnEvent
 
@@ -25,6 +26,7 @@ import dev.slne.surf.npc.api.npc.SNpc
 import dev.slne.surf.npc.api.npc.SNpcData
 import dev.slne.surf.npc.api.npc.SNpcProperty
 import dev.slne.surf.npc.api.rotation.SNpcRotationType
+import dev.slne.surf.npc.bukkit.plugin
 import dev.slne.surf.npc.bukkit.util.toUser
 import dev.slne.surf.npc.core.controller.npcController
 import dev.slne.surf.surfapi.core.api.util.random
@@ -142,10 +144,12 @@ class BukkitSNpc (
         user.sendPacket(spawnNametagPacket)
         user.sendPacket(metaDataNameTagPacket)
 
-        Bukkit.getPluginManager().callEvent(NpcSpawnEvent(
-            this,
-            player
-        ))
+        Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+            Bukkit.getPluginManager().callEvent(NpcSpawnEvent (
+                this,
+                player
+            ))
+        }, 1L)
     }
 
     override fun despawn(uuid: UUID) {
@@ -165,10 +169,12 @@ class BukkitSNpc (
         user.sendPacket(destroyPacket)
         user.sendPacket(removeInfoPacket)
 
-        Bukkit.getPluginManager().callEvent(NpcDespawnEvent(
-            this,
-            player
-        ))
+        Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+            Bukkit.getPluginManager().callEvent(NpcDespawnEvent (
+                this,
+                player
+            ))
+        }, 1L)
     }
 
     override fun refresh() {

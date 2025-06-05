@@ -7,6 +7,8 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientIn
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerPosition
 import dev.slne.surf.npc.api.event.NpcCollisionEvent
 import dev.slne.surf.npc.api.event.NpcInteractEvent
+import dev.slne.surf.npc.api.event.NpcSpawnEvent
+import dev.slne.surf.npc.bukkit.plugin
 import dev.slne.surf.npc.bukkit.util.toLocation
 import dev.slne.surf.npc.core.controller.npcController
 import org.bukkit.Bukkit
@@ -44,10 +46,12 @@ class NpcListener : PacketListener {
                         continue
                     }
 
-                    Bukkit.getPluginManager().callEvent(NpcCollisionEvent (
-                        npc,
-                        player
-                    ))
+                    Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+                        Bukkit.getPluginManager().callEvent(NpcCollisionEvent (
+                            npc,
+                            player
+                        ))
+                    }, 1L)
                 }
             }
             PacketType.Play.Client.INTERACT_ENTITY -> {
