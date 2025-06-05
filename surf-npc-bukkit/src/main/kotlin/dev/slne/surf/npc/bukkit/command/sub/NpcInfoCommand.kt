@@ -90,6 +90,14 @@ class NpcInfoCommand(commandName: String) : CommandAPICommand(commandName) {
                     info("| ")
                     decorate(TextDecoration.BOLD)
                 }
+                variableKey("Skin: ")
+                variableValue(npc.data.skin.ownerName)
+                appendNewline()
+
+                append {
+                    info("| ")
+                    decorate(TextDecoration.BOLD)
+                }
                 variableKey("Global: ")
                 variableValue(if (npc.data.global) "Ja" else "Nein")
             }
