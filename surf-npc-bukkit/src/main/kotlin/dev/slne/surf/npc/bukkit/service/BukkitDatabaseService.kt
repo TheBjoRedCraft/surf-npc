@@ -28,6 +28,7 @@ import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.nio.file.Path
 import java.util.UUID
@@ -109,7 +110,7 @@ class BukkitDatabaseService : DatabaseService, Services.Fallback {
             withContext(Dispatchers.IO) {
                 val serverIdentifier = serverId
 
-                transaction {
+                newSuspendedTransaction {
                     val npcs = Npcs.selectAll().where(Npcs.serverId eq serverIdentifier).associateBy { it[Npcs.npcId] }
                     val propertiesMap = NpcProperties.selectAll().where(Npcs.serverId eq serverIdentifier).groupBy { it[NpcProperties.npcId] }
                     val viewersMap = NpcViewers.selectAll().where(Npcs.serverId eq serverIdentifier).groupBy { it[NpcViewers.npcId] }
@@ -163,70 +164,66 @@ class BukkitDatabaseService : DatabaseService, Services.Fallback {
     }
 
     override fun saveNpcs() {
-        plugin.launch {
-            withContext(Dispatchers.IO) {
-                val serverIdentifier = serverId
-                transaction {
-                    NpcViewers.deleteWhere { NpcViewers.serverId eq serverIdentifier }
-                    NpcProperties.deleteWhere { NpcProperties.serverId eq serverIdentifier }
-                    NpcRotation.deleteWhere { NpcRotation.serverId eq serverIdentifier }
-                    NpcSkins.deleteWhere { NpcSkins.serverId eq serverIdentifier }
-                    Npcs.deleteWhere { Npcs.serverId eq serverIdentifier }
+        val serverIdentifier = serverId
+        transaction {
+            NpcViewers.deleteWhere { NpcViewers.serverId eq serverIdentifier }
+            NpcProperties.deleteWhere { NpcProperties.serverId eq serverIdentifier }
+            NpcRotation.deleteWhere { NpcRotation.serverId eq serverIdentifier }
+            NpcSkins.deleteWhere { NpcSkins.serverId eq serverIdentifier }
+            Npcs.deleteWhere { Npcs.serverId eq serverIdentifier }
 
-                    npcController.getNpcs().forEach { npc ->
-                        val data = npc.data as BukkitSNpcData
-                        val skin = data.skin
-                        val location = data.location
-                        val rotation = data.fixedRotation
+            npcController.getNpcs().forEach { npc ->
+                val data = npc.data as BukkitSNpcData
+                val skin = data.skin
+                val location = data.location
+                val rotation = data.fixedRotation
 
-                        Npcs.insert {
-                            it[npcId] = npc.id
-                            it[internalName] = data.internalName
-                            it[displayName] = miniMessage.serialize(data.displayName)
-                            it[locationX] = location.x
-                            it[locationY] = location.y
-                            it[locationZ] = location.z
-                            it[world] = location.world
-                            it[global] = data.global
-                            it[npcUuid] = npc.npcUuid
-                            it[nameTagId] = npc.nameTagId
-                            it[serverId] = serverIdentifier
-                        }
+                Npcs.insert {
+                    it[npcId] = npc.id
+                    it[internalName] = data.internalName
+                    it[displayName] = miniMessage.serialize(data.displayName)
+                    it[locationX] = location.x
+                    it[locationY] = location.y
+                    it[locationZ] = location.z
+                    it[world] = location.world
+                    it[global] = data.global
+                    it[npcUuid] = npc.npcUuid
+                    it[nameTagId] = npc.nameTagId
+                    it[serverId] = serverIdentifier
+                }
 
-                        NpcSkins.insert {
-                            it[npcId] = npc.id
-                            it[skinName] = skin.ownerName
-                            it[skinValue] = skin.value
-                            it[skinSignature] = skin.signature
-                            it[serverId] = serverIdentifier
-                        }
+                NpcSkins.insert {
+                    it[npcId] = npc.id
+                    it[skinName] = skin.ownerName
+                    it[skinValue] = skin.value
+                    it[skinSignature] = skin.signature
+                    it[serverId] = serverIdentifier
+                }
 
-                        NpcRotation.insert {
-                            it[npcId] = npc.id
-                            it[rotationType] = data.rotationType.name
-                            it[rotationYaw] = rotation?.yaw ?: 0f
-                            it[rotationPitch] = rotation?.pitch ?: 0f
-                            it[serverId]
-                        }
+                NpcRotation.insert {
+                    it[npcId] = npc.id
+                    it[rotationType] = data.rotationType.name
+                    it[rotationYaw] = rotation?.yaw ?: 0f
+                    it[rotationPitch] = rotation?.pitch ?: 0f
+                    it[serverId]
+                }
 
-                        npc.properties.forEach { prop ->
-                            val bukkitProp = prop as BukkitSNpcProperty
-                            NpcProperties.insert {
-                                it[npcId] = npc.id
-                                it[key] = bukkitProp.key
-                                it[value] = bukkitProp.value
-                                it[type] = bukkitProp.type.name
-                                it[serverId] = serverIdentifier
-                            }
-                        }
+                npc.properties.forEach { prop ->
+                    val bukkitProp = prop as BukkitSNpcProperty
+                    NpcProperties.insert {
+                        it[npcId] = npc.id
+                        it[key] = bukkitProp.key
+                        it[value] = bukkitProp.value
+                        it[type] = bukkitProp.type.name
+                        it[serverId] = serverIdentifier
+                    }
+                }
 
-                        npc.viewers.forEach { viewer ->
-                            NpcViewers.insert {
-                                it[npcId] = npc.id
-                                it[viewerUuid] = viewer
-                                it[serverId] = serverIdentifier
-                            }
-                        }
+                npc.viewers.forEach { viewer ->
+                    NpcViewers.insert {
+                        it[npcId] = npc.id
+                        it[viewerUuid] = viewer
+                        it[serverId] = serverIdentifier
                     }
                 }
             }

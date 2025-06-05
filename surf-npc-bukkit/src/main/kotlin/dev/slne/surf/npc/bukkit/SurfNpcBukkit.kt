@@ -42,4 +42,4 @@ class SurfNpcBukkit : SuspendingJavaPlugin() {
 }
 
 val plugin get() = JavaPlugin.getPlugin(SurfNpcBukkit::class.java)
-val serverId: Int get() = plugin.config.getInt("server-name") ?: error("Invalid plugin configuration: 'server-name' is not set.")
+val serverId: Int get() = plugin.config.getInt("server-name")
