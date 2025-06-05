@@ -12,4 +12,11 @@ class NpcDeleteEvent (
     override fun getHandlers(): HandlerList {
         return handlerList
     }
+
+    companion object {
+        @JvmStatic
+        fun getHandlerList(): HandlerList {
+            return HandlerList()
+        }
+    }
 }
