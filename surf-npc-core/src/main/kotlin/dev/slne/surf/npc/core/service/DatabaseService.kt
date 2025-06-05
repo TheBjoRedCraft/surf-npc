@@ -8,7 +8,8 @@ import java.nio.file.Path
 interface DatabaseService {
     fun connect(path: Path)
 
-    fun loadNpcs(): ObjectSet<SNpc>
+    fun loadNpcs()
+    fun saveNpcs()
 
     companion object {
         /**
