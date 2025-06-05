@@ -228,7 +228,7 @@ class BukkitDatabaseService : DatabaseService, Services.Fallback {
                     it[rotationType] = data.rotationType.name
                     it[rotationYaw] = rotation?.yaw ?: 0f
                     it[rotationPitch] = rotation?.pitch ?: 0f
-                    it[serverId]
+                    it[serverId] = serverIdentifier
                 }
 
                 npc.properties.forEach { prop ->
