@@ -58,7 +58,6 @@ class BukkitSNpc (
         val player = Bukkit.getPlayer(uuid) ?: return
         val user = playerManager.getUser(player)
         val profile = UserProfile(npcUuid, data.internalName)
-        val nameTagUuid = UUID.randomUUID()
         val nullInfo: WrapperPlayServerTeams.ScoreBoardTeamInfo? = null
 
         profile.textureProperties.add(TextureProperty(
