@@ -58,10 +58,12 @@ class NpcListener : PacketListener {
                 val packet = WrapperPlayClientInteractEntity(event)
                 val npc = npcController.getNpc(packet.entityId) ?: return
 
-                Bukkit.getPluginManager().callEvent(NpcInteractEvent (
-                    npc,
-                    player
-                ))
+                Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+                    Bukkit.getPluginManager().callEvent(NpcInteractEvent (
+                        npc,
+                        player
+                    ))
+                }, 1L)
             }
         }
     }
