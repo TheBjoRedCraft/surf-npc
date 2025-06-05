@@ -11,7 +11,7 @@ class ConnectionListener : Listener {
         val player = event.player
 
         npcController.getNpcs().filter { it.data.global }.forEach {
-            it.show(player.uniqueId)
+            it.spawn(player.uniqueId)
         }
     }
 }

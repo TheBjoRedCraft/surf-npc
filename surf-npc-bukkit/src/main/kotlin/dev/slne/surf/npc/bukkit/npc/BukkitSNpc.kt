@@ -13,6 +13,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDe
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityHeadLook
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoRemove
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerScoreboardObjective
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity
@@ -45,7 +46,7 @@ class BukkitSNpc (
     override val npcUuid: UUID,
     override val nameTagId: Int
 ) : SNpc {
-    override fun show(uuid: UUID) {
+    override fun spawn(uuid: UUID) {
         val packetEvents = PacketEvents.getAPI()
         val playerManager = packetEvents.playerManager
 
@@ -53,6 +54,7 @@ class BukkitSNpc (
         val user = playerManager.getUser(player)
         val profile = UserProfile(npcUuid, data.internalName)
         val nameTagUuid = UUID.randomUUID()
+        val nullInfo: WrapperPlayServerTeams.ScoreBoardTeamInfo? = null
 
         profile.textureProperties.add(TextureProperty(
             "textures",
@@ -71,7 +73,6 @@ class BukkitSNpc (
                 null
             )
         )
-
         val metaDataPacket = WrapperPlayServerEntityMetadata(
             id,
             listOf(
@@ -79,12 +80,10 @@ class BukkitSNpc (
                 EntityData(0, EntityDataTypes.BYTE, 0x02.toByte()),
             )
         )
-
         val rotationPair = Pair(
             data.fixedRotation?.yaw ?: 0f,
             data.fixedRotation?.pitch ?: 0f
         )
-
         val spawnPacket = WrapperPlayServerSpawnEntity (
             id,
             npcUuid,
@@ -94,7 +93,6 @@ class BukkitSNpc (
             0,
             null
         )
-
         val spawnNametagPacket = WrapperPlayServerSpawnEntity (
             nameTagId,
             nameTagUuid,
@@ -104,7 +102,6 @@ class BukkitSNpc (
             0,
             null
         )
-
         val metaDataNameTagPacket = WrapperPlayServerEntityMetadata(
             nameTagId,
             listOf(
@@ -113,7 +110,6 @@ class BukkitSNpc (
                 EntityData(27, EntityDataTypes.BYTE, 0x02.toByte())
             )
         )
-
         val teamCreatePacket = WrapperPlayServerTeams(
             "npc_$id",
             WrapperPlayServerTeams.TeamMode.CREATE,
@@ -127,9 +123,6 @@ class BukkitSNpc (
                 WrapperPlayServerTeams.OptionData.NONE
             )
         )
-
-        val nullInfo: WrapperPlayServerTeams.ScoreBoardTeamInfo? = null
-
         val teamMemberAddPacket = WrapperPlayServerTeams(
             "npc_$id",
             WrapperPlayServerTeams.TeamMode.ADD_ENTITIES,
@@ -148,7 +141,7 @@ class BukkitSNpc (
         user.sendPacket(metaDataNameTagPacket)
     }
 
-    override fun hide(uuid: UUID) {
+    override fun despawn(uuid: UUID) {
         val packetEvents = PacketEvents.getAPI()
         val playerManager = packetEvents.playerManager
 
@@ -158,8 +151,12 @@ class BukkitSNpc (
         val destroyPacket = WrapperPlayServerDestroyEntities (
             this.id, nameTagId
         )
+        val removeInfoPacket = WrapperPlayServerPlayerInfoRemove(
+            npcUuid
+        )
 
         user.sendPacket(destroyPacket)
+        user.sendPacket(removeInfoPacket)
     }
 
     override fun refresh() {

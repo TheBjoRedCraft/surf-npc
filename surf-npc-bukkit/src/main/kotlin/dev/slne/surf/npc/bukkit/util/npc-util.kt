@@ -70,11 +70,11 @@ fun SNpcLocation.readableString(): String {
 fun SNpc.hideAll() {
     if(this.data.global) {
         forEachPlayer {
-            this.hide(it.uniqueId)
+            this.despawn(it.uniqueId)
         }
     } else {
         this.viewers.forEach { viewer ->
-            this.hide(viewer)
+            this.despawn(viewer)
         }
     }
 }
@@ -82,11 +82,11 @@ fun SNpc.hideAll() {
 fun SNpc.showAll() {
     if(this.data.global) {
         forEachPlayer {
-            this.show(it.uniqueId)
+            this.spawn(it.uniqueId)
         }
     } else {
         this.viewers.forEach { viewer ->
-            this.show(viewer)
+            this.spawn(viewer)
         }
     }
 }

@@ -1,11 +1,6 @@
 package dev.slne.surf.npc.api.npc
 
-import dev.slne.surf.npc.api.skin.SNpcSkinData
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap
-import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
-import net.kyori.adventure.text.Component
-import org.bukkit.Location
 import java.util.UUID
 
 /**
@@ -19,8 +14,8 @@ interface SNpc {
     val properties: ObjectSet<SNpcProperty>
     val viewers: ObjectSet<UUID>
 
-    fun show(uuid: UUID)
-    fun hide(uuid: UUID)
+    fun spawn(uuid: UUID)
+    fun despawn(uuid: UUID)
 
     fun refresh()
     fun refreshRotation(uuid: UUID)

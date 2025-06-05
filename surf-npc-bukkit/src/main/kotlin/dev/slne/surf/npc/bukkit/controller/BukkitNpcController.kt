@@ -52,7 +52,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
 
         if(npc.data.global) {
             forEachPlayer {
-                npc.show(it.uniqueId)
+                npc.spawn(it.uniqueId)
             }
         }
 
@@ -66,11 +66,11 @@ class BukkitNpcController : NpcController, Services.Fallback {
 
         if(npc.data.global) {
             forEachPlayer { player ->
-                npc.hide(player.uniqueId)
+                npc.despawn(player.uniqueId)
             }
         } else {
             npc.viewers.forEach { viewer ->
-                npc.hide(viewer)
+                npc.despawn(viewer)
             }
         }
 
@@ -100,7 +100,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
             return NpcSpawnResult.FAILED_ALREADY_SPAWNED
         }
 
-        npc.show(uuid)
+        npc.spawn(uuid)
 
         return NpcSpawnResult.SUCCESS
     }
@@ -117,7 +117,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
             return NpcDeletionResult.FAILED_NOT_SPAWNED
         }
 
-        npc.hide(uuid)
+        npc.despawn(uuid)
 
         return NpcDeletionResult.SUCCESS
     }
@@ -134,8 +134,8 @@ class BukkitNpcController : NpcController, Services.Fallback {
             return NpcRespawnResult.FAILED_ALREADY_SPAWNED
         }
 
-        npc.hide(uuid)
-        npc.show(uuid)
+        npc.despawn(uuid)
+        npc.spawn(uuid)
 
         return NpcRespawnResult.SUCCESS
     }
@@ -179,11 +179,11 @@ class BukkitNpcController : NpcController, Services.Fallback {
         npcs.forEach {
             if(it.data.global) {
                 forEachPlayer { player ->
-                    it.hide(player.uniqueId)
+                    it.despawn(player.uniqueId)
                 }
             } else {
                 it.viewers.forEach { viewer ->
-                    it.hide(viewer)
+                    it.despawn(viewer)
                 }
             }
 
