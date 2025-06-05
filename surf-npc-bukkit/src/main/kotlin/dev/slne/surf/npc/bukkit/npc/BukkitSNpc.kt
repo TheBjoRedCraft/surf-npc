@@ -18,6 +18,8 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPl
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerScoreboardObjective
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams
+import dev.slne.surf.npc.api.event.NpcDespawnEvent
+import dev.slne.surf.npc.api.event.NpcSpawnEvent
 
 import dev.slne.surf.npc.api.npc.SNpc
 import dev.slne.surf.npc.api.npc.SNpcData
@@ -139,6 +141,11 @@ class BukkitSNpc (
 
         user.sendPacket(spawnNametagPacket)
         user.sendPacket(metaDataNameTagPacket)
+
+        Bukkit.getPluginManager().callEvent(NpcSpawnEvent(
+            this,
+            player
+        ))
     }
 
     override fun despawn(uuid: UUID) {
@@ -157,6 +164,11 @@ class BukkitSNpc (
 
         user.sendPacket(destroyPacket)
         user.sendPacket(removeInfoPacket)
+
+        Bukkit.getPluginManager().callEvent(NpcDespawnEvent(
+            this,
+            player
+        ))
     }
 
     override fun refresh() {

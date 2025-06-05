@@ -1,6 +1,8 @@
 package dev.slne.surf.npc.bukkit.controller
 
 import com.google.auto.service.AutoService
+import dev.slne.surf.npc.api.event.NpcCreateEvent
+import dev.slne.surf.npc.api.event.NpcDeleteEvent
 import dev.slne.surf.npc.api.npc.SNpc
 import dev.slne.surf.npc.api.npc.SNpcData
 import dev.slne.surf.npc.api.npc.SNpcProperty
@@ -20,6 +22,7 @@ import dev.slne.surf.surfapi.core.api.util.toObjectList
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.util.Services
+import org.bukkit.Bukkit
 import java.util.UUID
 
 @AutoService(NpcController::class)
@@ -56,6 +59,10 @@ class BukkitNpcController : NpcController, Services.Fallback {
             }
         }
 
+        Bukkit.getPluginManager().callEvent(NpcCreateEvent (
+            npc
+        ))
+
         return NpcCreationResult.SUCCESS
     }
 
@@ -76,6 +83,10 @@ class BukkitNpcController : NpcController, Services.Fallback {
 
         npc.clearProperties()
         npc.viewers.clear()
+
+        Bukkit.getPluginManager().callEvent(NpcDeleteEvent(
+            npc
+        ))
 
         return NpcDeletionResult.SUCCESS
     }
