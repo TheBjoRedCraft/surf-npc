@@ -55,7 +55,7 @@ class BukkitDatabaseService : DatabaseService, Services.Fallback {
     }
 
     object NpcProperties: Table("npc_properties") {
-        val npcId = integer("npc_id").uniqueIndex()
+        val npcId = integer("npc_id").uniqueIndex().references(Npcs.npcId)
         val serverId = integer("server_id")
         val key = text("key")
         val value = text("value")
@@ -65,7 +65,7 @@ class BukkitDatabaseService : DatabaseService, Services.Fallback {
     }
 
     object NpcViewers: Table("npc_viewers") {
-        val npcId = integer("npc_id").uniqueIndex()
+        val npcId = integer("npc_id").uniqueIndex().references(Npcs.npcId)
         val serverId = integer("server_id")
         val viewerUuid = varchar("viewer_uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
 
@@ -73,7 +73,7 @@ class BukkitDatabaseService : DatabaseService, Services.Fallback {
     }
 
     object NpcRotation: Table("npc_rotation") {
-        val npcId = integer("npc_id").uniqueIndex()
+        val npcId = integer("npc_id").uniqueIndex().references(Npcs.npcId)
         val serverId = integer("server_id")
         val rotationType = text("rotation_type")
         val rotationYaw = float("rotation_yaw")
@@ -83,7 +83,7 @@ class BukkitDatabaseService : DatabaseService, Services.Fallback {
     }
 
     object NpcSkins: Table("npc_skins") {
-        val npcId = integer("npc_id").uniqueIndex()
+        val npcId = integer("npc_id").uniqueIndex().references(Npcs.npcId)
         val serverId = integer("server_id")
         val skinName = text("skin_name")
         val skinValue = text("skin_value")
