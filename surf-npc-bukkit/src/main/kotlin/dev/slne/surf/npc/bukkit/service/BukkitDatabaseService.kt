@@ -25,6 +25,7 @@ import net.kyori.adventure.util.Services
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
@@ -111,51 +112,73 @@ class BukkitDatabaseService : DatabaseService, Services.Fallback {
                 val serverIdentifier = serverId
 
                 newSuspendedTransaction {
-                    val npcs = Npcs.selectAll().where(Npcs.serverId eq serverIdentifier).associateBy { it[Npcs.npcId] }
-                    val propertiesMap = NpcProperties.selectAll().where(Npcs.serverId eq serverIdentifier).groupBy { it[NpcProperties.npcId] }
-                    val viewersMap = NpcViewers.selectAll().where(Npcs.serverId eq serverIdentifier).groupBy { it[NpcViewers.npcId] }
-                    val rotations = NpcRotation.selectAll().where(Npcs.serverId eq serverIdentifier).associateBy { it[NpcRotation.npcId] }
-                    val skins = NpcSkins.selectAll().where(Npcs.serverId eq serverIdentifier).associateBy { it[NpcSkins.npcId] }
+                    Npcs.selectAll().where(Npcs.serverId eq serverIdentifier).forEach { row ->
+                        val npcId = row[Npcs.npcId]
+                        val npcUUID = row[Npcs.npcUuid]
+                        val internalName = row[Npcs.internalName]
+                        val nameTagId = row[Npcs.nameTagId]
+                        val displayName = miniMessage.deserialize(row[Npcs.displayName])
+                        val locationX = row[Npcs.locationX]
+                        val locationY = row[Npcs.locationY]
+                        val locationZ = row[Npcs.locationZ]
+                        val world = row[Npcs.world]
+                        val global = row[Npcs.global]
 
-                    npcs.forEach { (id, row) ->
-                        val data = BukkitSNpcData(
-                            displayName = miniMessage.deserialize(row[Npcs.displayName]),
-                            internalName = row[Npcs.internalName],
-                            skin = skins[id]?.let {
-                                BukkitSNpcSkinData (
-                                    it[NpcSkins.skinName],
-                                    it[NpcSkins.skinValue],
-                                    it[NpcSkins.skinSignature]
-                                )
-                            } ?: skinDataDefault(),
-                            location = BukkitSNpcLocation (
-                                row[Npcs.locationX],
-                                row[Npcs.locationY],
-                                row[Npcs.locationZ],
-                                row[Npcs.world]
-                            ),
-                            rotationType = rotations[id]?.get(NpcRotation.rotationType)?.let(SNpcRotationType::valueOf) ?: SNpcRotationType.FIXED,
-                            fixedRotation = rotations[id]?.let {
-                                BukkitSNpcRotation(it[NpcRotation.rotationYaw], it[NpcRotation.rotationPitch])
-                            },
-                            global = row[Npcs.global]
-                        )
+                        val skinRow = NpcSkins.selectAll().where(NpcSkins.npcId eq npcId and (NpcSkins.serverId eq serverIdentifier)).firstOrNull()
+                        val propertyRow = NpcProperties.selectAll().where(NpcProperties.npcId eq npcId and (NpcProperties.serverId eq serverIdentifier))
+                        val rotationRow = NpcRotation.selectAll().where(NpcRotation.npcId eq npcId and (NpcRotation.serverId eq serverIdentifier)).firstOrNull()
+                        val viewers = NpcViewers.selectAll().where(NpcViewers.npcId eq npcId and (NpcViewers.serverId eq serverIdentifier))
+                            .map { it[NpcViewers.viewerUuid] }
+                            .toMutableSet()
 
-                        val props = propertiesMap[id].orEmpty().mapTo(mutableObjectSetOf()) {
-                            BukkitSNpcProperty(it[NpcProperties.key], it[NpcProperties.value], SNpcPropertyType.valueOf(it[NpcProperties.type]))
+                        val skin = if (skinRow != null) {
+                            BukkitSNpcSkinData(
+                                ownerName = skinRow[NpcSkins.skinName],
+                                value = skinRow[NpcSkins.skinValue],
+                                signature = skinRow[NpcSkins.skinSignature]
+                            )
+                        } else {
+                            skinDataDefault()
                         }
 
-                        val viewers = viewersMap[id].orEmpty().mapTo(mutableObjectSetOf()) {
-                            it[NpcViewers.viewerUuid]
+                        val rotationType = if (rotationRow != null) {
+                            SNpcRotationType.valueOf(rotationRow[NpcRotation.rotationType])
+                        } else {
+                            SNpcRotationType.FIXED
                         }
+
+                        val rotation = if (rotationRow != null) {
+                            BukkitSNpcRotation(
+                                yaw = rotationRow[NpcRotation.rotationYaw],
+                                pitch = rotationRow[NpcRotation.rotationPitch]
+                            )
+                        } else {
+                            BukkitSNpcRotation(0f, 0f)
+                        }
+
+                        val properties = propertyRow.map {
+                            BukkitSNpcProperty(
+                                key = it[NpcProperties.key],
+                                value = it[NpcProperties.value],
+                                type = SNpcPropertyType.valueOf(it[NpcProperties.type])
+                            )
+                        }.toMutableSet()
 
                         npcController.registerNpc(BukkitSNpc(
-                            id = id,
-                            data = data,
-                            properties = props.mapTo(mutableObjectSetOf<SNpcProperty>()) { it },
-                            viewers = viewers,
-                            npcUuid = row[Npcs.npcUuid],
-                            nameTagId = row[Npcs.nameTagId]
+                            id = npcId,
+                            npcUuid = npcUUID,
+                            nameTagId = nameTagId,
+                            data = BukkitSNpcData(
+                                displayName = displayName,
+                                internalName = internalName,
+                                skin = skin,
+                                location = BukkitSNpcLocation(locationX, locationY, locationZ, world),
+                                rotationType = rotationType,
+                                fixedRotation = rotation,
+                                global = global
+                            ),
+                            properties = properties.mapTo(mutableObjectSetOf()) { it },
+                            viewers = mutableObjectSetOf(*viewers.toTypedArray())
                         ))
                     }
                 }
