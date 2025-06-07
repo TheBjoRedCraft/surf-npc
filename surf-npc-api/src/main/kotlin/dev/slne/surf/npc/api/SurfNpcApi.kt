@@ -38,7 +38,7 @@ interface SurfNpcApi {
         skin: SNpcSkinData,
         location: SNpcLocation,
         global: Boolean = true,
-        rotationType: SNpcRotationType = SNpcRotationType.FIXED,
+        rotationType: SNpcRotationType = SNpcRotationType.PER_PLAYER,
         fixedRotation: SNpcRotation? = null
     ): NpcCreationResult
 
