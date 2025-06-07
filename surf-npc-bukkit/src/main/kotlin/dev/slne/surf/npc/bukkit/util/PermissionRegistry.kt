@@ -14,4 +14,7 @@ object PermissionRegistry {
     const val COMMAND_NPC_EDIT_ROTATION = "$PERMISSION_PREFIX.command.edit.rotation"
     const val COMMAND_NPC_EDIT_SKIN = "$PERMISSION_PREFIX.command.edit.skin"
     const val COMMAND_NPC_DISPLAYNAME = "$PERMISSION_PREFIX.command.edit.displayname"
+
+    const val COMMAND_NPC_TELEPORT_TO = "$PERMISSION_PREFIX.command.teleport"
+    const val COMMAND_NPC_TELEPORT_HERE = "$PERMISSION_PREFIX.command.teleporthere"
 }
