@@ -23,7 +23,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 class NpcEditDisplayNameCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withPermission(PermissionRegistry.COMMAND_NPC_EDIT_SKIN)
+        withPermission(PermissionRegistry.COMMAND_NPC_DISPLAYNAME)
         npcArgument("npc")
         textArgument("displayName")
         playerExecutor { player, args ->
