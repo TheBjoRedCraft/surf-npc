@@ -2,24 +2,46 @@ package dev.slne.surf.npc.bukkit.api
 
 import dev.slne.surf.npc.api.SurfNpcApi
 import dev.slne.surf.npc.api.npc.SNpc
-import dev.slne.surf.npc.api.npc.SNpcData
+import dev.slne.surf.npc.api.npc.SNpcLocation
 import dev.slne.surf.npc.api.npc.SNpcProperty
+import dev.slne.surf.npc.api.result.NpcCreationResult
 import dev.slne.surf.npc.api.result.NpcDeletionResult
 import dev.slne.surf.npc.api.rotation.SNpcRotation
 import dev.slne.surf.npc.api.rotation.SNpcRotationType
 import dev.slne.surf.npc.api.skin.SNpcSkinData
+import dev.slne.surf.npc.bukkit.npc.BukkitSNpcData
+import dev.slne.surf.npc.bukkit.npc.BukkitSNpcLocation
+import dev.slne.surf.npc.bukkit.rotation.BukkitSNpcRotation
+import dev.slne.surf.npc.bukkit.skin.BukkitSNpcSkinData
 import dev.slne.surf.npc.core.controller.npcController
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
+import net.kyori.adventure.text.Component
 import java.util.UUID
 
 class BukkitSurfNpcApi : SurfNpcApi {
-    override fun createNpc(data: SNpcData) {
-        npcController.createNpc(data)
+    override fun createNpc(
+        displayName: Component,
+        internalName: String,
+        skin: SNpcSkinData,
+        location: SNpcLocation,
+        global: Boolean,
+        rotationType: SNpcRotationType,
+        fixedRotation: SNpcRotation?
+    ): NpcCreationResult {
+        return npcController.createNpc(BukkitSNpcData(
+            displayName = displayName,
+            internalName = internalName,
+            skin = skin,
+            location = location,
+            global = global,
+            rotationType = rotationType,
+            fixedRotation = fixedRotation
+        ))
     }
 
-    override fun deleteNpc(npc: SNpc): Boolean {
-        return npcController.deleteNpc(npc) == NpcDeletionResult.SUCCESS
+    override fun deleteNpc(npc: SNpc): NpcDeletionResult {
+        return npcController.deleteNpc(npc)
     }
 
     override fun showNpc(npc: SNpc, uuid: UUID) {
@@ -30,10 +52,7 @@ class BukkitSurfNpcApi : SurfNpcApi {
         npcController.hideNpc(npc, uuid)
     }
 
-    override fun setSkin(
-        npc: SNpc,
-        skin: SNpcSkinData
-    ) {
+    override fun setSkin(npc: SNpc, skin: SNpcSkinData) {
         npcController.setSkin(npc, skin)
     }
 
@@ -44,10 +63,7 @@ class BukkitSurfNpcApi : SurfNpcApi {
         npcController.setRotationType(npc, rotationType)
     }
 
-    override fun setRotation(
-        npc: SNpc,
-        rotation: SNpcRotation
-    ) {
+    override fun setRotation(npc: SNpc, rotation: SNpcRotation) {
         npcController.setRotation(npc, rotation)
     }
 
@@ -69,5 +85,29 @@ class BukkitSurfNpcApi : SurfNpcApi {
 
     override fun despawnAllNpcs() {
         npcController.despawnAllNpcs()
+    }
+
+    override fun createRotation(
+        yaw: Float,
+        pitch: Float
+    ): SNpcRotation {
+        return BukkitSNpcRotation(yaw, pitch)
+    }
+
+    override fun createSkinData(
+        owner: String,
+        value: String,
+        signature: String
+    ): SNpcSkinData {
+        return BukkitSNpcSkinData(owner, value, signature)
+    }
+
+    override fun createLocation(
+        x: Double,
+        y: Double,
+        z: Double,
+        worldName: String
+    ): SNpcLocation {
+        return BukkitSNpcLocation(x, y, z, worldName)
     }
 }
