@@ -20,6 +20,14 @@ class ExampleNpcListener : Listener {
         val npc = event.npc
         val player = event.player
 
+        if(npc.hasProperty("example_npc")) {
+            player.sendText {
+                append(npc.data.displayName)
+                spacer(" ")
+                info(" Hey, du hast die Property 'example_npc'!")
+            }
+        }
+
         player.sendText {
             spacer("[")
             append(npc.data.displayName)
