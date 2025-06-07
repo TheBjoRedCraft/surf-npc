@@ -1,204 +1,205 @@
+
 # 🏄 surf-npc
 
-Ein leistungsstarkes Minecraft-Plugin zur einfachen Erstellung und Verwaltung von NPCs mit Surf-Funktionalität, ideal für Lobby-Server, Minigames oder RPG-Welten.
+A powerful Minecraft plugin for easily creating and managing NPCs with surf functionality – perfect for lobby servers, minigames, or RPG worlds.
 
 ## 🌟 Features
 
-- 🧍 Erstelle interaktive NPCs mit einem Befehl
-- 🎯 Weise jedem NPC ein Ziel oder Kommando zu
-- ⚙️ Vollständig konfigurierbar & permission-basiert
-- 🧩 API für Entwickler zur Integration in eigene Plugins
+- 🧍 Create interactive NPCs with a single command
+- 🎯 Assign each NPC a target or command
+- ⚙️ Fully configurable & permission-based
+- 🧩 API for developers to integrate into custom plugins
+
 ---
+
 ## 💬 Commands
 
-| Befehl                                                        | Beschreibung                   | Permission                                                                                                    |
-|---------------------------------------------------------------|--------------------------------|---------------------------------------------------------------------------------------------------------------|
-| `/npc <subcommand>`                                           | Basis für alle Subcommands     | `surf.npc.command`                                                                                            |
-| `/npc create <name> <displayname> <skinOwner> <rotationType>` | Erstellt einen neuen NPC       | `surf.npc.command.create`                                                                                     |
-| `/npc delete <npc>`                                           | Entfernt den angegebenen NPC   | `surf.npc.command.delete`                                                                                     |
-| `/npc list [<page>]`                                          | Listet alle existierenden NPCs | `surf.npc.command.list`                                                                                       |
-| `/npc edit <npc> <key> <value>`                               | Editiert einen NPC deiner Wahl | `surf.npc.command.edit`, `surf.npc.command.rotation`, `surf.npc.command.skin`, `surf.npc.command.displayname` |
-| `/npc info <npc>`                                             | Informiert über NPC-Daten      | `surf.npc.command.info`                                                                                       |
-| `/npc teleport <npc>`                                         | Teleportiert dich zu einem NPC | `surf.npc.command.teleport`                                                                                   |
-| `/npc teleporthere <npc>`                                     | Teleportiert einen NPC zu dir  | `surf.npc.command.teleporthere`                                                                               |
+| Command                                                    | Description                      | Permission                                                                                                    |
+|------------------------------------------------------------|----------------------------------|---------------------------------------------------------------------------------------------------------------|
+| `/npc <subcommand>`                                        | Base command for all subcommands | `surf.npc.command`                                                                                            |
+| `/npc create <name> <displayname> <skinOwner> <rotationType>` | Creates a new NPC             | `surf.npc.command.create`                                                                                     |
+| `/npc delete <npc>`                                        | Deletes the specified NPC        | `surf.npc.command.delete`                                                                                     |
+| `/npc list [<page>]`                                       | Lists all existing NPCs          | `surf.npc.command.list`                                                                                       |
+| `/npc edit <npc> <key> <value>`                            | Edits the specified NPC          | `surf.npc.command.edit`, `surf.npc.command.rotation`, `surf.npc.command.skin`, `surf.npc.command.displayname` |
+| `/npc info <npc>`                                          | Shows information about the NPC  | `surf.npc.command.info`                                                                                       |
+| `/npc teleport <npc>`                                      | Teleports you to an NPC          | `surf.npc.command.teleport`                                                                                   |
+| `/npc teleporthere <npc>`                                  | Teleports an NPC to you          | `surf.npc.command.teleporthere`                                                                               |
 
 ---
 
 ## 🔐 Permissions
 
-| Permission                          | Beschreibung                                       |
+| Permission                          | Description                                       |
 |-------------------------------------|----------------------------------------------------|
-| `surf.npc.command`                  | Basisberechtigung für alle NPC-Kommandos           |
-| `surf.npc.command.create`           | Erlaubt das Erstellen von NPCs                     |
-| `surf.npc.command.delete`           | Erlaubt das Löschen von NPCs                       |
-| `surf.npc.command.list`             | Erlaubt das Anzeigen aller NPCs                    |
-| `surf.npc.command.info`             | Zeigt detaillierte Informationen über einen NPC    |
-| `surf.npc.command.edit`             | Erlaubt das Bearbeiten von NPCs                    |
-| `surf.npc.command.edit.rotation`    | Erlaubt das Anpassen der NPC-Rotation              |
-| `surf.npc.command.edit.skin`        | Erlaubt das Ändern des NPC-Skins                   |
-| `surf.npc.command.edit.displayname` | Erlaubt das Bearbeiten des Anzeigenamens           |
-| `surf.npc.command.teleport`         | Erlaubt das Teleportieren **zum** NPC              |
-| `surf.npc.command.teleporthere`     | Erlaubt das Teleportieren **des** NPCs zum Spieler |
-
+| `surf.npc.command`                  | Base permission for all NPC commands               |
+| `surf.npc.command.create`           | Allows creation of NPCs                            |
+| `surf.npc.command.delete`           | Allows deletion of NPCs                            |
+| `surf.npc.command.list`             | Allows listing all NPCs                            |
+| `surf.npc.command.info`             | Shows detailed NPC information                     |
+| `surf.npc.command.edit`             | Allows editing NPCs                                |
+| `surf.npc.command.edit.rotation`    | Allows changing NPC rotation                       |
+| `surf.npc.command.edit.skin`        | Allows changing the NPC skin                       |
+| `surf.npc.command.edit.displayname` | Allows editing the display name                    |
+| `surf.npc.command.teleport`         | Allows teleportation **to** an NPC                 |
+| `surf.npc.command.teleporthere`     | Allows teleportation **of** an NPC to the player   |
 
 ---
 
 ## 🧪 API
 
-### 🔧 Allgemeine Methoden
+### 🔧 General Methods
 
 #### `createNpc(displayName, internalName, skin, location, global, rotationType, fixedRotation)`
-Erstellt einen neuen NPC im Spiel.
+Creates a new NPC in-game.
 
-| Parameter       | Typ                | Beschreibung                                 |
-|-----------------|--------------------|----------------------------------------------|
-| `displayName`   | `Component`        | Anzeigename des NPCs                         |
-| `internalName`  | `String`           | Interner, unique Name                        |
-| `skin`          | `SNpcSkinData`     | Skin-Daten des NPCs (Textur, Signatur usw.)  |
-| `location`      | `SNpcLocation`     | Position, an der der NPC gespawnt wird       |
-| `global`        | `Boolean`          | Ob der NPC global sichtbar ist               |
-| `rotationType`  | `SNpcRotationType` | Art der Rotation (FIXED, PER_PLAYER)         |
-| `fixedRotation` | `SNpcRotation?`    | Feste Rotation, falls `rotationType = FIXED` |
+| Parameter       | Type               | Description                                      |
+|----------------|--------------------|--------------------------------------------------|
+| `displayName`   | `Component`        | NPC's display name                               |
+| `internalName`  | `String`           | Internal, unique name                            |
+| `skin`          | `SNpcSkinData`     | Skin data (texture, signature, etc.)             |
+| `location`      | `SNpcLocation`     | Spawn position                                   |
+| `global`        | `Boolean`          | Whether the NPC is globally visible              |
+| `rotationType`  | `SNpcRotationType` | Type of rotation (FIXED, PER_PLAYER)             |
+| `fixedRotation` | `SNpcRotation?`    | Fixed rotation if `rotationType = FIXED`         |
 
 #### `deleteNpc(npc)`
-Löscht den angegebenen NPC.
+Deletes the specified NPC.
 
-| Parameter | Typ     | Beschreibung             |
-|-----------|---------|--------------------------|
-| `npc`     | `SNpc`  | Der zu löschende NPC     |
+| Parameter | Type    | Description       |
+|----------|---------|-------------------|
+| `npc`    | `SNpc`  | The NPC to delete |
 
 #### `getNpc(id)`
-Holt einen NPC anhand der internen ID.
+Gets an NPC by internal ID.
 
-| Parameter | Typ   | Beschreibung      |
-|-----------|-------|-------------------|
-| `id`      | `Int` | Interne NPC-ID    |
+| Parameter | Type   | Description    |
+|-----------|--------|----------------|
+| `id`      | `Int`  | Internal NPC ID|
 
 #### `getNpc(internalName)`
-Holt einen NPC anhand des internen Namens.
+Gets an NPC by internal name.
 
-| Parameter      | Typ     | Beschreibung                |
-|----------------|---------|-----------------------------|
-| `internalName` | `String`| Der interne Name des NPCs   |
+| Parameter      | Type    | Description          |
+|----------------|---------|----------------------|
+| `internalName` | `String`| Internal name of NPC |
 
 #### `getNpcs()`
-Gibt eine Liste aller NPCs zurück.
+Returns a list of all NPCs.
 
 #### `despawnAllNpcs()`
-Entfernt alle NPCs temporär aus der Welt.
+Temporarily removes all NPCs from the world.
 
 ---
 
-### 👁️ Sichtbarkeit
+### 👁️ Visibility
 
 #### `showNpc(npc, uuid)`
-Zeigt einen NPC einem bestimmten Spieler.
+Shows an NPC to a specific player.
 
-| Parameter | Typ     | Beschreibung                     |
-|-----------|---------|----------------------------------|
-| `npc`     | `SNpc`  | Der anzuzeigende NPC             |
-| `uuid`    | `UUID`  | UUID des Spielers                |
+| Parameter | Type    | Description                |
+|-----------|---------|----------------------------|
+| `npc`     | `SNpc`  | The NPC to show            |
+| `uuid`    | `UUID`  | UUID of the player         |
 
 #### `hideNpc(npc, uuid)`
-Versteckt den NPC vor einem Spieler.
+Hides an NPC from a player.
 
-| Parameter | Typ     | Beschreibung                    |
-|-----------|---------|---------------------------------|
-| `npc`     | `SNpc`  | Der zu versteckende NPC         |
-| `uuid`    | `UUID`  | UUID des Spielers               |
+| Parameter | Type    | Description                |
+|-----------|---------|----------------------------|
+| `npc`     | `SNpc`  | The NPC to hide            |
+| `uuid`    | `UUID`  | UUID of the player         |
 
 ---
 
-### 🧍 NPC Eigenschaften
+### 🧍 NPC Attributes
 
 #### `setSkin(npc, skin)`
-Ändert den Skin eines NPCs.
+Changes an NPC's skin.
 
-| Parameter | Typ            | Beschreibung                     |
-|-----------|----------------|----------------------------------|
-| `npc`     | `SNpc`         | Ziel-NPC                         |
-| `skin`    | `SNpcSkinData` | Neue Skin-Daten                  |
+| Parameter | Type            | Description       |
+|-----------|------------------|------------------|
+| `npc`     | `SNpc`          | Target NPC       |
+| `skin`    | `SNpcSkinData`  | New skin data    |
 
 #### `setRotationType(npc, rotationType)`
-Setzt den Rotationstyp des NPCs.
+Sets the rotation type for an NPC.
 
-| Parameter      | Typ                | Beschreibung      |
-|----------------|--------------------|-------------------|
-| `npc`          | `SNpc`             | Ziel-NPC          |
-| `rotationType` | `SNpcRotationType` | PER_PLAYER, FIXED |
+| Parameter      | Type               | Description                  |
+|----------------|--------------------|------------------------------|
+| `npc`          | `SNpc`             | Target NPC                   |
+| `rotationType` | `SNpcRotationType` | PER_PLAYER or FIXED rotation |
 
 #### `setRotation(npc, rotation)`
-Setzt eine feste Rotation (nur wenn Typ `FIXED`).
+Sets a fixed rotation (only when type is `FIXED`).
 
-| Parameter  | Typ            | Beschreibung             |
-|------------|----------------|--------------------------|
-| `npc`      | `SNpc`         | Ziel-NPC                 |
-| `rotation` | `SNpcRotation` | Rotation mit Yaw & Pitch |
+| Parameter  | Type            | Description             |
+|------------|------------------|-------------------------|
+| `npc`      | `SNpc`          | Target NPC              |
+| `rotation` | `SNpcRotation`  | Rotation with Yaw/Pitch |
 
 ---
 
 ### 🏷️ Properties
 
 #### `getProperties(npc)`
-Holt alle Properties eines NPCs.
+Retrieves all properties of an NPC.
 
-| Parameter | Typ    | Beschreibung        |
-|-----------|--------|---------------------|
-| `npc`     | `SNpc` | Ziel-NPC            |
+| Parameter | Type    | Description |
+|-----------|---------|-------------|
+| `npc`     | `SNpc`  | Target NPC  |
 
 #### `addProperty(npc, property)`
-Fügt eine Property zum NPC hinzu.
+Adds a property to an NPC.
 
-| Parameter  | Typ            | Beschreibung            |
-|------------|----------------|-------------------------|
-| `npc`      | `SNpc`         | Ziel-NPC                |
-| `property` | `SNpcProperty` | Hinzuzufügende Property |
+| Parameter  | Type            | Description           |
+|------------|------------------|------------------------|
+| `npc`      | `SNpc`          | Target NPC            |
+| `property` | `SNpcProperty`  | Property to add       |
 
 #### `removeProperty(npc, property)`
-Entfernt eine Property vom NPC.
+Removes a property from an NPC.
 
-| Parameter  | Typ            | Beschreibung            |
-|------------|----------------|-------------------------|
-| `npc`      | `SNpc`         | Ziel-NPC                |
-| `property` | `SNpcProperty` | Zu entfernende Property |
+| Parameter  | Type            | Description              |
+|------------|------------------|---------------------------|
+| `npc`      | `SNpc`          | Target NPC               |
+| `property` | `SNpcProperty`  | Property to remove       |
 
 #### `createProperty(key, value, type)`
-Erstellt eine neue Property.
+Creates a new property.
 
-| Parameter | Typ                | Beschreibung                              |
-|-----------|--------------------|-------------------------------------------|
-| `key`     | `String`           | Name/Schlüssel der Property               |
-| `value`   | `String`           | Wert der Property                         |
-| `type`    | `SNpcPropertyType` | Typ (STRING, BOOLEAN, BYTE, DOUBLE, etc.) |
+| Parameter | Type                | Description                              |
+|-----------|---------------------|------------------------------------------|
+| `key`     | `String`            | Property name/key                        |
+| `value`   | `String`            | Property value                           |
+| `type`    | `SNpcPropertyType`  | Type (STRING, BOOLEAN, BYTE, DOUBLE, etc)|
 
 ---
 
-### 🛠️ Hilfsfunktionen
+### 🛠️ Helper Functions
 
 #### `createRotation(yaw, pitch)`
-Erstellt eine neue Rotation.
+Creates a new rotation.
 
-| Parameter | Typ     | Beschreibung                      |
-|-----------|---------|-----------------------------------|
-| `yaw`     | `Float` | Horizontale Blickrichtung         |
-| `pitch`   | `Float` | Vertikale Blickrichtung           |
+| Parameter | Type     | Description          |
+|-----------|----------|----------------------|
+| `yaw`     | `Float`  | Horizontal direction |
+| `pitch`   | `Float`  | Vertical direction   |
 
 #### `createSkinData(owner, value, signature)`
-Erstellt Skin-Daten eines NPCs.
+Creates skin data for an NPC.
 
-| Parameter   | Typ      | Beschreibung                |
-|-------------|----------|-----------------------------|
-| `owner`     | `String` | Spielername oder Identifier |
-| `value`     | `String` | Skin-Textur-Wert            |
-| `signature` | `String` | Signatur zum Skin-Wert      |
+| Parameter   | Type     | Description                |
+|-------------|----------|----------------------------|
+| `owner`     | `String` | Player name or identifier  |
+| `value`     | `String` | Skin texture value         |
+| `signature` | `String` | Signature of skin value    |
 
 #### `createLocation(x, y, z, worldName)`
-Erstellt eine Position.
+Creates a location.
 
-| Parameter   | Typ      | Beschreibung                |
-|-------------|----------|-----------------------------|
-| `x`         | `Double` | X-Koordinate                |
-| `y`         | `Double` | Y-Koordinate                |
-| `z`         | `Double` | Z-Koordinate                |
-| `worldName` | `String` | Name der Welt (z.B.`world`) |
-
+| Parameter   | Type     | Description         |
+|-------------|----------|---------------------|
+| `x`         | `Double` | X coordinate        |
+| `y`         | `Double` | Y coordinate        |
+| `z`         | `Double` | Z coordinate        |
+| `worldName` | `String` | Name of the world   |
