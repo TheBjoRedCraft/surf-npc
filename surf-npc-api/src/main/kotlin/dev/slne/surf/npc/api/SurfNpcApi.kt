@@ -3,6 +3,7 @@ package dev.slne.surf.npc.api
 import dev.slne.surf.npc.api.npc.SNpc
 import dev.slne.surf.npc.api.npc.SNpcLocation
 import dev.slne.surf.npc.api.npc.SNpcProperty
+import dev.slne.surf.npc.api.npc.SNpcPropertyType
 import dev.slne.surf.npc.api.result.NpcCreationResult
 import dev.slne.surf.npc.api.result.NpcDeletionResult
 import dev.slne.surf.npc.api.rotation.SNpcRotation
@@ -35,6 +36,12 @@ interface SurfNpcApi {
     fun getProperties(npc: SNpc): ObjectSet<SNpcProperty>
     fun addProperty(npc: SNpc, property: SNpcProperty): Boolean
     fun removeProperty(npc: SNpc, property: SNpcProperty): Boolean
+
+    fun createProperty(
+        key: String,
+        value: String,
+        type: SNpcPropertyType
+    ): SNpcProperty
 
     fun getNpc(id: Int): SNpc?
     fun getNpc(internalName: String): SNpc?

@@ -4,6 +4,7 @@ import dev.slne.surf.npc.api.SurfNpcApi
 import dev.slne.surf.npc.api.npc.SNpc
 import dev.slne.surf.npc.api.npc.SNpcLocation
 import dev.slne.surf.npc.api.npc.SNpcProperty
+import dev.slne.surf.npc.api.npc.SNpcPropertyType
 import dev.slne.surf.npc.api.result.NpcCreationResult
 import dev.slne.surf.npc.api.result.NpcDeletionResult
 import dev.slne.surf.npc.api.rotation.SNpcRotation
@@ -11,6 +12,7 @@ import dev.slne.surf.npc.api.rotation.SNpcRotationType
 import dev.slne.surf.npc.api.skin.SNpcSkinData
 import dev.slne.surf.npc.bukkit.npc.BukkitSNpcData
 import dev.slne.surf.npc.bukkit.npc.BukkitSNpcLocation
+import dev.slne.surf.npc.bukkit.property.BukkitSNpcProperty
 import dev.slne.surf.npc.bukkit.rotation.BukkitSNpcRotation
 import dev.slne.surf.npc.bukkit.skin.BukkitSNpcSkinData
 import dev.slne.surf.npc.core.controller.npcController
@@ -83,6 +85,14 @@ class BukkitSurfNpcApi : SurfNpcApi {
         property: SNpcProperty
     ): Boolean {
         return npcController.removeProperty(npc, property)
+    }
+
+    override fun createProperty(
+        key: String,
+        value: String,
+        type: SNpcPropertyType
+    ): SNpcProperty {
+        return BukkitSNpcProperty(key, value, type)
     }
 
     override fun getNpc(id: Int): SNpc? {
