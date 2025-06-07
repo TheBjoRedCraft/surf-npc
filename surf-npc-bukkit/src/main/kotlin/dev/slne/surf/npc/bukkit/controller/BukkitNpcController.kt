@@ -232,4 +232,16 @@ class BukkitNpcController : NpcController, Services.Fallback {
         npc.addProperty(property)
         return true
     }
+
+    override fun removeProperty(
+        npc: SNpc,
+        property: SNpcProperty
+    ): Boolean {
+        if(!npc.hasProperty(property.key)) {
+            return false
+        }
+
+        npc.removeProperty(property.key)
+        return true
+    }
 }

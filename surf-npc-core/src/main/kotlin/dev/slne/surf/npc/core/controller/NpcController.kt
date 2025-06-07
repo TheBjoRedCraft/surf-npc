@@ -37,6 +37,7 @@ interface NpcController {
 
     fun getProperties(npc: SNpc): ObjectSet<SNpcProperty>
     fun addProperty(npc: SNpc, property: SNpcProperty): Boolean
+    fun removeProperty(npc: SNpc, property: SNpcProperty): Boolean
 
     companion object {
         /**

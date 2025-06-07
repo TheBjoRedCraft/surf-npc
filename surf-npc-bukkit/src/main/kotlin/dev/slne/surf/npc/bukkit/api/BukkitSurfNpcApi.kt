@@ -71,6 +71,20 @@ class BukkitSurfNpcApi : SurfNpcApi {
         return npcController.getProperties(npc)
     }
 
+    override fun addProperty(
+        npc: SNpc,
+        property: SNpcProperty
+    ): Boolean {
+        return npcController.addProperty(npc, property)
+    }
+
+    override fun removeProperty(
+        npc: SNpc,
+        property: SNpcProperty
+    ): Boolean {
+        return npcController.removeProperty(npc, property)
+    }
+
     override fun getNpc(id: Int): SNpc? {
         return npcController.getNpc(id)
     }
