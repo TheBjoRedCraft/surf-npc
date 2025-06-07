@@ -1,5 +1,4 @@
 package dev.slne.surf.npc.bukkit.storage
-
 import com.google.auto.service.AutoService
 
 import dev.slne.surf.npc.api.npc.SNpcPropertyType

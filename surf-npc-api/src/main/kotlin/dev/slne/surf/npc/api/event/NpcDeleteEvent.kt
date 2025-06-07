@@ -7,16 +7,10 @@ import org.bukkit.event.HandlerList
 class NpcDeleteEvent (
     val npc: SNpc
 ) : Event() {
-    private val handlerList = HandlerList()
-
-    override fun getHandlers(): HandlerList {
-        return handlerList
-    }
+    override fun getHandlers(): HandlerList = handlerList
 
     companion object {
         @JvmStatic
-        fun getHandlerList(): HandlerList {
-            return HandlerList()
-        }
+        val handlerList = HandlerList()
     }
 }
