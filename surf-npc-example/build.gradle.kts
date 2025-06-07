@@ -10,6 +10,7 @@ dependencies {
 surfPaperPluginApi {
     mainClass("dev.slne.surf.npc.example.SurfNpcExamplePlugin")
     authors.add("red")
+    generateLibraryLoader(false)
     serverDependencies {
         registerRequired("surf-npc-bukkit")
     }

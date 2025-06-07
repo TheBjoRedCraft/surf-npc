@@ -1,5 +1,6 @@
 package dev.slne.surf.npc.bukkit.api
 
+import com.google.auto.service.AutoService
 import dev.slne.surf.npc.api.SurfNpcApi
 import dev.slne.surf.npc.api.npc.SNpc
 import dev.slne.surf.npc.api.npc.SNpcLocation
@@ -19,9 +20,11 @@ import dev.slne.surf.npc.core.controller.npcController
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.util.Services
 import java.util.UUID
 
-class BukkitSurfNpcApi : SurfNpcApi {
+@AutoService(SurfNpcApi::class)
+class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
     override fun createNpc(
         displayName: Component,
         internalName: String,
