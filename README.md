@@ -47,7 +47,7 @@ Ein leistungsstarkes Minecraft-Plugin zur einfachen Erstellung und Verwaltung vo
 
 ### 🔧 Allgemeine Methoden
 
-#### `createNpc(displayName, internalName, skin, location, global = true, rotationType = FIXED, fixedRotation = null)`
+#### `createNpc(displayName, internalName, skin, location, global, rotationType, fixedRotation)`
 Erstellt einen neuen NPC im Spiel.
 
 | Parameter       | Typ                | Beschreibung                                 |
