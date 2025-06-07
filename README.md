@@ -13,7 +13,7 @@ Ein leistungsstarkes Minecraft-Plugin zur einfachen Erstellung und Verwaltung vo
 
 | Befehl                                                        | Beschreibung                   | Permission                                                                                                    |
 |---------------------------------------------------------------|--------------------------------|---------------------------------------------------------------------------------------------------------------|
-| `/npc <subcommand>                                            | /                              | `surf.npc.command`                                                                                            |
+| `/npc <subcommand>`                                           | Basis für alle Subcommands     | `surf.npc.command`                                                                                            |
 | `/npc create <name> <displayname> <skinOwner> <rotationType>` | Erstellt einen neuen NPC       | `surf.npc.command.create`                                                                                     |
 | `/npc delete <npc>`                                           | Entfernt den angegebenen NPC   | `surf.npc.command.delete`                                                                                     |
 | `/npc list [<page>]`                                          | Listet alle existierenden NPCs | `surf.npc.command.list`                                                                                       |
