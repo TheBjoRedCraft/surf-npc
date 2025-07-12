@@ -5,8 +5,9 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":surf-npc-api")) /* Provided by surf-npc-bukkit at runtime */
+    compileOnly(project(":surf-npc-api"))
 }
+
 surfPaperPluginApi {
     mainClass("dev.slne.surf.npc.example.SurfNpcExamplePlugin")
     authors.add("red")

@@ -1,14 +1,8 @@
 package dev.slne.surf.npc.api.npc
 
-enum class SNpcPropertyType {
-    STRING,
-    INTEGER,
-    FLOAT,
-    DOUBLE,
-    BOOLEAN,
-    LONG,
-    SHORT,
-    BYTE,
-    UUID,
-    ADV_COMPONENT
+interface SNpcPropertyType<T : Any> {
+    val classType: Class<T>
+    fun encode(value: T): String
+    fun decode(value: String): T
 }
+
