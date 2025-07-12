@@ -7,7 +7,7 @@ import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import dev.slne.surf.npc.bukkit.command.NpcCommand
 import dev.slne.surf.npc.bukkit.listener.ConnectionListener
 import dev.slne.surf.npc.bukkit.listener.NpcListener
-import dev.slne.surf.npc.bukkit.property.PropertyTypeRegistry
+import dev.slne.surf.npc.bukkit.property.BukkitPropertyTypeRegistry
 import dev.slne.surf.npc.bukkit.property.impl.BooleanPropertyType
 import dev.slne.surf.npc.bukkit.property.impl.ComponentPropertyType
 import dev.slne.surf.npc.bukkit.property.impl.FloatPropertyType
@@ -26,11 +26,11 @@ class BukkitMain : SuspendingJavaPlugin() {
         storageService.initialize()
         storageService.loadNpcs()
 
-        PropertyTypeRegistry.register(BooleanPropertyType())
-        PropertyTypeRegistry.register(ComponentPropertyType())
-        PropertyTypeRegistry.register(FloatPropertyType())
-        PropertyTypeRegistry.register(IntegerPropertyType())
-        PropertyTypeRegistry.register(StringPropertyType())
+        BukkitPropertyTypeRegistry.register(BooleanPropertyType())
+        BukkitPropertyTypeRegistry.register(ComponentPropertyType())
+        BukkitPropertyTypeRegistry.register(FloatPropertyType())
+        BukkitPropertyTypeRegistry.register(IntegerPropertyType())
+        BukkitPropertyTypeRegistry.register(StringPropertyType())
 
         NpcCommand("npc").register()
     }

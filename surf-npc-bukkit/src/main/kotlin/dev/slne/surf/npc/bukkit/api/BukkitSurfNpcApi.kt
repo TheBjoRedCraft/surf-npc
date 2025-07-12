@@ -14,6 +14,7 @@ import dev.slne.surf.npc.api.rotation.SNpcRotationType
 import dev.slne.surf.npc.api.skin.SNpcSkinData
 import dev.slne.surf.npc.bukkit.npc.BukkitSNpcData
 import dev.slne.surf.npc.bukkit.npc.BukkitSNpcLocation
+import dev.slne.surf.npc.bukkit.property.BukkitSNpcProperty
 import dev.slne.surf.npc.bukkit.rotation.BukkitSNpcRotation
 import dev.slne.surf.npc.bukkit.skin.BukkitSNpcSkinData
 import dev.slne.surf.npc.core.controller.npcController
@@ -81,14 +82,14 @@ class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
 
     override fun addProperty(
         npc: SNpc,
-        property: SNpcProperty
+        property: SNpcProperty<*>
     ): Boolean {
         return npcController.addProperty(npc, property)
     }
 
     override fun removeProperty(
         npc: SNpc,
-        property: SNpcProperty
+        property: SNpcProperty<*>
     ): Boolean {
         return npcController.removeProperty(npc, property)
     }
@@ -96,8 +97,8 @@ class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
     override fun createProperty(
         key: String,
         value: String,
-        type: SNpcPropertyType
-    ): SNpcProperty {
+        type: SNpcPropertyType<*>
+    ): SNpcProperty<*> {
         return BukkitSNpcProperty(key, value, type)
     }
 

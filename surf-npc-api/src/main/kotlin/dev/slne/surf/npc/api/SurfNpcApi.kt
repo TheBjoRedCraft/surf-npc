@@ -111,10 +111,10 @@ interface SurfNpcApi {
      * Removes a property from an NPC.
      *
      * @param npc The NPC to update.
-     * @param property The property to remove.
+     * @param key The property key
      * @return True if the property was removed, false otherwise.
      */
-    fun removeProperty(npc: SNpc, property: SNpcProperty<*>): Boolean
+    fun removeProperty(npc: SNpc, key: String): Boolean
 
     /**
      * Creates a new property for an NPC.

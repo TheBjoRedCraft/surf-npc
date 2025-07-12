@@ -30,7 +30,7 @@ class SurfNpcExamplePlugin(): SuspendingJavaPlugin() {
         surfNpcApi.addProperty(npc, surfNpcApi.createProperty(
             "example_npc",
             "true",
-            SNpcPropertyType.BOOLEAN
+
         ))
     }
 
