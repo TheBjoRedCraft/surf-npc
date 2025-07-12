@@ -18,6 +18,7 @@ import dev.slne.surf.npc.bukkit.property.BukkitSNpcProperty
 import dev.slne.surf.npc.bukkit.rotation.BukkitSNpcRotation
 import dev.slne.surf.npc.bukkit.skin.BukkitSNpcSkinData
 import dev.slne.surf.npc.core.controller.npcController
+import dev.slne.surf.npc.core.property.propertyTypeRegistry
 
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -76,7 +77,7 @@ class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
         npcController.setRotation(npc, rotation)
     }
 
-    override fun getProperties(npc: SNpc): ObjectSet<SNpcProperty> {
+    override fun getProperties(npc: SNpc): ObjectSet<SNpcProperty<*>> {
         return npcController.getProperties(npc)
     }
 
@@ -89,9 +90,9 @@ class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
 
     override fun removeProperty(
         npc: SNpc,
-        property: SNpcProperty<*>
+        key: String
     ): Boolean {
-        return npcController.removeProperty(npc, property)
+        return npcController.removeProperty(npc, key)
     }
 
     override fun createProperty(
@@ -140,5 +141,13 @@ class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
         worldName: String
     ): SNpcLocation {
         return BukkitSNpcLocation(x, y, z, worldName)
+    }
+
+    override fun <T : Any> registerPropertyType(type: SNpcPropertyType<T>) {
+        propertyTypeRegistry.register(type)
+    }
+
+    override fun <T : Any> getPropertyType(clazz: Class<T>): SNpcPropertyType<T>? {
+        return propertyTypeRegistry.get(clazz)
     }
 }

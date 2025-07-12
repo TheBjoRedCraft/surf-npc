@@ -200,6 +200,9 @@ interface SurfNpcApi {
         worldName: String
     ): SNpcLocation
 
+    fun <T : Any> registerPropertyType(type: SNpcPropertyType<T>)
+    fun <T : Any> getPropertyType(clazz: Class<T>): SNpcPropertyType<T>?
+
     companion object {
         /**
          * The instance of the SurfNpcApi.
