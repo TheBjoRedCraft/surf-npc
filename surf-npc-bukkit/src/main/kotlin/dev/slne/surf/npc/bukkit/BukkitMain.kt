@@ -12,7 +12,7 @@ import dev.slne.surf.npc.core.service.storageService
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 
-class SurfNpcBukkit : SuspendingJavaPlugin() {
+class BukkitMain : SuspendingJavaPlugin() {
     override fun onEnable() {
         PacketEvents.getAPI().eventManager.registerListener(NpcListener(), PacketListenerPriority.NORMAL)
         Bukkit.getPluginManager().registerEvents(ConnectionListener(), this)
@@ -28,5 +28,5 @@ class SurfNpcBukkit : SuspendingJavaPlugin() {
     }
 }
 
-val plugin get() = JavaPlugin.getPlugin(SurfNpcBukkit::class.java)
+val plugin get() = JavaPlugin.getPlugin(BukkitMain::class.java)
 val serverId: Int get() = plugin.config.getInt("server-name")

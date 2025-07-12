@@ -7,7 +7,7 @@ dependencies {
 }
 
 surfPaperPluginApi {
-    mainClass("dev.slne.surf.npc.bukkit.SurfNpcBukkit")
+    mainClass("dev.slne.surf.npc.bukkit.BukkitMain")
     authors.add("red")
 
     generateLibraryLoader(false)
