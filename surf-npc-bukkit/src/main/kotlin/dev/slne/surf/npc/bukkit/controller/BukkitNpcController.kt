@@ -47,7 +47,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
         val npc = BukkitSNpc (
             id,
             data,
-            mutableObjectSetOf<SNpcProperty>(),
+            mutableObjectSetOf<SNpcProperty<*>>(),
             mutableObjectSetOf<UUID>(),
             uuid,
             nameTagId,
@@ -186,7 +186,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
     }
 
     override fun getNpc(internalName: String): SNpc? {
-        return npcs.find { it.data.internalName.trim().lowercase() == internalName.trim().lowercase() }
+        return npcs.find { it.data.internalName.trim().equals(internalName.trim(), ignoreCase = true) }
     }
 
     override fun getNpcs(): ObjectList<SNpc> {
@@ -217,15 +217,15 @@ class BukkitNpcController : NpcController, Services.Fallback {
         return count
     }
 
-    override fun getProperties(npc: SNpc): ObjectSet<SNpcProperty> {
+    override fun getProperties(npc: SNpc): ObjectSet<SNpcProperty<*>> {
         return npc.properties
     }
 
     override fun addProperty(
         npc: SNpc,
-        property: SNpcProperty
+        property: SNpcProperty<*>
     ): Boolean {
-        if(npc.hasProperty(property.key)) {
+        if (npc.hasProperty(property.key)) {
             return false
         }
 
@@ -235,13 +235,13 @@ class BukkitNpcController : NpcController, Services.Fallback {
 
     override fun removeProperty(
         npc: SNpc,
-        property: SNpcProperty
+        key: String
     ): Boolean {
-        if(!npc.hasProperty(property.key)) {
+        if (!npc.hasProperty(key)) {
             return false
         }
 
-        npc.removeProperty(property.key)
+        npc.removeProperty(key)
         return true
     }
 }

@@ -34,10 +34,10 @@ interface NpcController {
     fun getNpc(internalName: String): SNpc?
     fun getNpcs(): ObjectList<SNpc>
     fun despawnAllNpcs(): Int
+    fun getProperties(npc: SNpc): ObjectSet<SNpcProperty<*>>
+    fun addProperty(npc: SNpc, property: SNpcProperty<*>): Boolean
+    fun removeProperty(npc: SNpc, key: String): Boolean
 
-    fun getProperties(npc: SNpc): ObjectSet<SNpcProperty>
-    fun addProperty(npc: SNpc, property: SNpcProperty): Boolean
-    fun removeProperty(npc: SNpc, property: SNpcProperty): Boolean
 
     companion object {
         /**
