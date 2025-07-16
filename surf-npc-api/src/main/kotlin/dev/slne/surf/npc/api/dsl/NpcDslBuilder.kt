@@ -1,6 +1,7 @@
 package dev.slne.surf.npc.api.dsl
 
 import dev.slne.surf.npc.api.npc.SNpcLocation
+import dev.slne.surf.npc.api.npc.SNpcProperty
 import dev.slne.surf.npc.api.result.NpcCreationResult
 import dev.slne.surf.npc.api.rotation.SNpcRotation
 import dev.slne.surf.npc.api.rotation.SNpcRotationType
@@ -38,8 +39,16 @@ fun rotation(block: RotationBuilder.() -> Unit): SNpcRotation {
     return RotationBuilder().apply(block).build()
 }
 
+fun npcProperty(block: NpcPropertyBuilder.() -> Unit): SNpcProperty {
+    return NpcPropertyBuilder().apply(block).build()
+}
+
 fun skin(block: SkinBuilder.() -> Unit): SNpcSkinData {
     return SkinBuilder().apply(block).build()
+}
+
+suspend fun skin(name: String): SNpcSkinData {
+    return surfNpcApi.getSkin(name)
 }
 
 fun npc(block: NpcDslBuilder.() -> Unit): NpcCreationResult {

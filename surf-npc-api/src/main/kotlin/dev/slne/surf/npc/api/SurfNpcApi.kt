@@ -126,9 +126,11 @@ interface SurfNpcApi {
      */
     fun createProperty(
         key: String,
-        value: String,
+        value: Any,
         type: SNpcPropertyType
     ): SNpcProperty
+
+    suspend fun getSkin(name: String): SNpcSkinData
 
     /**
      * Retrieves an NPC by its ID.

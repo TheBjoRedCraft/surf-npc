@@ -16,6 +16,7 @@ import dev.slne.surf.npc.bukkit.npc.BukkitSNpcLocation
 import dev.slne.surf.npc.bukkit.property.BukkitSNpcProperty
 import dev.slne.surf.npc.bukkit.rotation.BukkitSNpcRotation
 import dev.slne.surf.npc.bukkit.skin.BukkitSNpcSkinData
+import dev.slne.surf.npc.bukkit.util.skinDataFromName
 import dev.slne.surf.npc.core.controller.npcController
 import dev.slne.surf.npc.core.property.propertyTypeRegistry
 
@@ -96,10 +97,14 @@ class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
 
     override fun createProperty(
         key: String,
-        value: String,
+        value: Any,
         type: SNpcPropertyType
     ): SNpcProperty {
         return BukkitSNpcProperty(key, value, type)
+    }
+
+    override suspend fun getSkin(name: String): SNpcSkinData {
+        return skinDataFromName(name)
     }
 
     override fun getNpc(id: Int): SNpc? {

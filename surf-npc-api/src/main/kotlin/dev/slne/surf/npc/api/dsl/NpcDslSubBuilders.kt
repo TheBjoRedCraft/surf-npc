@@ -1,8 +1,11 @@
 package dev.slne.surf.npc.api.dsl
 
 import dev.slne.surf.npc.api.npc.SNpcLocation
+import dev.slne.surf.npc.api.npc.SNpcProperty
+import dev.slne.surf.npc.api.npc.SNpcPropertyType
 import dev.slne.surf.npc.api.rotation.SNpcRotation
 import dev.slne.surf.npc.api.skin.SNpcSkinData
+import dev.slne.surf.npc.api.surfNpcApi
 
 class SkinBuilder {
     lateinit var ownerName: String
@@ -37,5 +40,17 @@ class RotationBuilder {
     fun build(): SNpcRotation = object : SNpcRotation {
         override val yaw = this@RotationBuilder.yaw
         override val pitch = this@RotationBuilder.pitch
+    }
+}
+
+class NpcPropertyBuilder {
+    var key: String = ""
+    var value: Any = ""
+    var type: SNpcPropertyType = surfNpcApi.getPropertyType("string") ?: error("Default property type 'string' not found")
+
+    fun build(): SNpcProperty = object : SNpcProperty {
+        override val key = this@NpcPropertyBuilder.key
+        override val value = this@NpcPropertyBuilder.value
+        override val type = this@NpcPropertyBuilder.type
     }
 }
