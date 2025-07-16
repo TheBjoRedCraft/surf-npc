@@ -1,18 +1,18 @@
 package dev.slne.surf.npc.bukkit.property.impl
 
 import dev.slne.surf.npc.api.npc.SNpcPropertyType
+import dev.slne.surf.npc.bukkit.util.miniMessage
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.MiniMessage
 
-class ComponentPropertyType : SNpcPropertyType<Component> {
-    override val classType: Class<Component> = Component::class.java
-
-    override fun encode(value: Component): String {
-        return MiniMessage.miniMessage().serialize(value)
+class ComponentPropertyType(override val id: String) : SNpcPropertyType {
+    override fun encode(value: Any): String {
+        require(value is Component) { "Expected Component, got ${value::class}" }
+        return miniMessage.serialize(value)
     }
 
     override fun decode(value: String): Component {
-        return MiniMessage.miniMessage().deserialize(value)
+        return miniMessage.deserialize(value)
     }
 }
+
 

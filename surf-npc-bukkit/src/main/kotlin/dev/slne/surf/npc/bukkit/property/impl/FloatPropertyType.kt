@@ -2,10 +2,9 @@ package dev.slne.surf.npc.bukkit.property.impl
 
 import dev.slne.surf.npc.api.npc.SNpcPropertyType
 
-class FloatPropertyType : SNpcPropertyType<Float> {
-    override val classType: Class<Float> = Float::class.java
-
-    override fun encode(value: Float): String {
+class FloatPropertyType(override val id: String) : SNpcPropertyType {
+    override fun encode(value: Any): String {
+        require(value is Float) { "Expected Float, got ${value::class}" }
         return value.toString()
     }
 
@@ -13,4 +12,5 @@ class FloatPropertyType : SNpcPropertyType<Float> {
         return value.toFloat()
     }
 }
+
 

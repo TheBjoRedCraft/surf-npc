@@ -2,10 +2,9 @@ package dev.slne.surf.npc.bukkit.property.impl
 
 import dev.slne.surf.npc.api.npc.SNpcPropertyType
 
-class IntegerPropertyType : SNpcPropertyType<Int> {
-    override val classType: Class<Int> = Int::class.java
-
-    override fun encode(value: Int): String {
+class IntPropertyType(override val id: String) : SNpcPropertyType {
+    override fun encode(value: Any): String {
+        require(value is Int) { "Expected Int, got ${value::class}" }
         return value.toString()
     }
 
@@ -13,4 +12,5 @@ class IntegerPropertyType : SNpcPropertyType<Int> {
         return value.toInt()
     }
 }
+
 

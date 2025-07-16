@@ -3,19 +3,25 @@ package dev.slne.surf.npc.bukkit.property
 import com.google.auto.service.AutoService
 import dev.slne.surf.npc.api.npc.SNpcPropertyType
 import dev.slne.surf.npc.core.property.PropertyTypeRegistry
+import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import net.kyori.adventure.util.Services
 
 @AutoService(PropertyTypeRegistry::class)
 class BukkitPropertyTypeRegistry : PropertyTypeRegistry, Services.Fallback {
-    private val types = mutableMapOf<Class<*>, SNpcPropertyType<*>>()
+    val types = mutableObjectSetOf<SNpcPropertyType>()
 
-    override fun <T : Any> register(type: SNpcPropertyType<T>) {
-        types[type.classType] = type
+    override fun register(type: SNpcPropertyType) {
+        val existing = types.firstOrNull { it.id == type.id }
+
+        if (existing != null) {
+            types.remove(existing)
+        }
+
+        types.add(type)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : Any> get(clazz: Class<T>): SNpcPropertyType<T>? {
-        return types[clazz] as? SNpcPropertyType<T>
+    override fun get(id: String): SNpcPropertyType? {
+        return types.firstOrNull() { it.id == id}
     }
 }
 

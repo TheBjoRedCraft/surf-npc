@@ -1,171 +1,163 @@
 package dev.slne.surf.npc.bukkit.storage
-import com.google.auto.service.AutoService
 
-import dev.slne.surf.npc.api.npc.SNpcPropertyType
-import dev.slne.surf.npc.api.rotation.SNpcRotationType
+import com.google.auto.service.AutoService
 import dev.slne.surf.npc.bukkit.npc.BukkitSNpc
-import dev.slne.surf.npc.bukkit.npc.BukkitSNpcData
-import dev.slne.surf.npc.bukkit.npc.BukkitSNpcLocation
 import dev.slne.surf.npc.bukkit.plugin
-import dev.slne.surf.npc.bukkit.property.BukkitSNpcProperty
-import dev.slne.surf.npc.bukkit.rotation.BukkitSNpcRotation
-import dev.slne.surf.npc.bukkit.skin.BukkitSNpcSkinData
-import dev.slne.surf.npc.bukkit.util.miniMessage
 import dev.slne.surf.npc.core.controller.npcController
 import dev.slne.surf.npc.core.service.StorageService
-
-import dev.slne.surf.surfapi.core.api.config.surfConfigApi
 import dev.slne.surf.surfapi.core.api.util.logger
+import dev.slne.surf.npc.api.npc.*
+import dev.slne.surf.npc.api.rotation.SNpcRotation
+import dev.slne.surf.npc.api.rotation.SNpcRotationType
+import dev.slne.surf.npc.api.skin.SNpcSkinData
+import dev.slne.surf.npc.bukkit.property.BukkitSNpcProperty
+import dev.slne.surf.npc.bukkit.util.miniMessage
+import dev.slne.surf.npc.core.property.propertyTypeRegistry
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
+import dev.slne.surf.surfapi.core.api.util.toMutableObjectSet
 
 import net.kyori.adventure.util.Services
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.bukkit.configuration.file.YamlConfiguration
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.UUID
 
 @AutoService(StorageService::class)
 class BukkitStorageService : StorageService, Services.Fallback {
+    private val npcFolder: Path
+        get() = plugin.dataPath.resolve("npcs")
+
     override fun initialize() {
-        surfConfigApi.createSpongeYmlConfig<StorageConfig>(StorageConfig::class.java, plugin.dataPath, "storage.yml")
+        if (!Files.exists(npcFolder)) {
+            Files.createDirectories(npcFolder)
+        }
     }
 
     override fun loadNpcs() {
-        val config = surfConfigApi.getSpongeConfig(StorageConfig::class.java)
+        val files = Files.list(npcFolder).filter { it.toString().endsWith(".yml") }.toList()
 
-        config.npcs.forEach { npcEntry ->
-            npcController.registerNpc(BukkitSNpc(
-                npcEntry.npcId,
-                BukkitSNpcData(
-                    miniMessage.deserialize(npcEntry.displayName),
-                    npcEntry.internalName,
-                    BukkitSNpcSkinData(
-                        npcEntry.skin.skinOwner,
-                        npcEntry.skin.skinValue,
-                        npcEntry.skin.skinSignature
-                    ),
-                    BukkitSNpcLocation(
-                        npcEntry.location.x,
-                        npcEntry.location.y,
-                        npcEntry.location.z,
-                        npcEntry.location.world
-                    ),
-                    SNpcRotationType.valueOf(npcEntry.rotationConfig.rotationType),
-                    BukkitSNpcRotation(
-                        npcEntry.rotationConfig.rotationYaw,
-                        npcEntry.rotationConfig.rotationPitch
-                    ),
-                    npcEntry.global
-                ),
-                npcEntry.properties.mapTo(mutableObjectSetOf()) {
-                    BukkitSNpcProperty(
-                        it.propertyKey,
-                        it.propertyValue,
-                        SNpcPropertyType.valueOf(it.propertyType)
-                    )
-                },
-                npcEntry.viewers.mapTo(mutableObjectSetOf()) { it },
-                npcEntry.npcUuid,
-                npcEntry.nameTagId,
-                npcEntry.nameTagUuid
-            ))
+        files.forEach { path ->
+            val config = YamlConfiguration.loadConfiguration(path.toFile())
+            try {
+                val id = config.getInt("npc.data.id")
+                val uuid = UUID.fromString(config.getString("npc.data.uuid")!!)
+                val nameTagId = config.getInt("npc.data.nameTagId")
+                val nameTagUuid = UUID.fromString(config.getString("npc.data.nameTagUuid"))
+                val displayName = miniMessage.deserialize(config.getString("npc.data.displayName") ?: "")
+                val internalName = config.getString("npc.data.internalName")!!
+
+                val skin: SNpcSkinData = object : SNpcSkinData {
+                    override val ownerName = config.getString("npc.data.skin.owner") ?: "Unknown"
+                    override val value = config.getString("npc.data.skin.value") ?: error("Skin value cannot be null")
+                    override val signature = config.getString("npc.data.skin.signature") ?: error("Skin signature cannot be null")
+                }
+
+                val location: SNpcLocation = object : SNpcLocation {
+                    override val x = config.getDouble("npc.data.location.x")
+                    override val y = config.getDouble("npc.data.location.y")
+                    override val z = config.getDouble("npc.data.location.z")
+                    override val world = config.getString("npc.data.location.world")!!
+                }
+
+                val rotationType = SNpcRotationType.valueOf(config.getString("npc.data.rotationType")!!)
+                val fixedRotation: SNpcRotation? = if (rotationType == SNpcRotationType.FIXED) {
+                    object : SNpcRotation {
+                        override val yaw = config.getDouble("npc.data.fixedRotation.yaw").toFloat()
+                        override val pitch = config.getDouble("npc.data.fixedRotation.pitch").toFloat()
+                    }
+                } else null
+
+                val global = config.getBoolean("npc.data.global")
+                val viewers = config.getStringList("npc.data.viewers").map(UUID::fromString).toMutableObjectSet()
+
+                val data = object : SNpcData {
+                    override var displayName = displayName
+                    override val internalName = internalName
+                    override var skin = skin
+                    override var location = location
+                    override var rotationType = rotationType
+                    override var fixedRotation = fixedRotation
+                    override var global = global
+                }
+
+                val npc = BukkitSNpc(
+                    id = id,
+                    npcUuid = uuid,
+                    nameTagId = nameTagId,
+                    nameTagUuid = nameTagUuid,
+                    data = data,
+                    viewers = viewers,
+                    properties = mutableObjectSetOf<SNpcProperty>()
+                )
+
+                val propsSection = config.getConfigurationSection("npc.data.properties") ?: return@forEach
+                val sectionKeys = propsSection.getKeys(false)
+
+                sectionKeys.forEach { key ->
+                    val valueString = config.getString("npc.data.properties.$key.value") ?: return@forEach
+                    val typeString = config.getString("npc.data.properties.$key.type") ?: return@forEach
+
+                    val type = propertyTypeRegistry.get(typeString)
+                        ?: error("Unknown property type: $typeString")
+                    val value = type.decode(valueString)
+
+                    npc.addProperty(BukkitSNpcProperty(
+                        key, value, type
+                    ))
+                }
+
+                npcController.registerNpc(npc)
+            } catch (e: Exception) {
+                logger().atWarning().log("Failed to load NPC from file ${path.fileName}: ${e.message}")
+            }
         }
 
-        logger().atInfo().log("Successfully loaded ${npcController.getNpcs().size}/${config.npcs.size} Npcs!")
+        logger().atInfo().log("Successfully loaded ${npcController.getNpcs().size} NPCs from ${files.size} files!")
     }
 
     override fun saveNpcs() {
-        val configManager = surfConfigApi.getSpongeConfigManagerForConfig(StorageConfig::class.java)
-        val config = configManager.config
+        Files.list(npcFolder)
+            .filter { it.toString().endsWith(".yml") }
+            .forEach(Files::delete)
 
+        npcController.getNpcs().forEach { npc ->
+            val file = npcFolder.resolve("${npc.data.internalName}.yml").toFile()
+            val config = YamlConfiguration()
 
-        config.npcs = npcController.getNpcs().map { npc ->
-            StorageNpcConfig(
-                npcId = npc.id,
-                npcUuid = npc.npcUuid,
-                nameTagId = npc.nameTagId,
-                nameTagUuid = npc.nameTagUuid,
-                displayName = miniMessage.serialize(npc.data.displayName),
-                internalName = npc.data.internalName,
-                global = npc.data.global,
-                skin = StorageNpcSkinConfig(
-                    skinOwner = npc.data.skin.ownerName,
-                    skinValue = npc.data.skin.value,
-                    skinSignature = npc.data.skin.signature
-                ),
-                location = StorageNpcLocationConfig(
-                    x = npc.data.location.x,
-                    y = npc.data.location.y,
-                    z = npc.data.location.z,
-                    world = npc.data.location.world
-                ),
-                rotationConfig = StorageNpcRotationConfig(
-                    rotationType = npc.data.rotationType.name,
-                    rotationYaw = npc.data.fixedRotation?.yaw ?: 0f,
-                    rotationPitch = npc.data.fixedRotation?.pitch ?: 0f
-                ),
-                properties = npc.properties.map {
-                    StorageNpcPropertyConfig(
-                        propertyType = it.type.name,
-                        propertyKey = it.key,
-                        propertyValue = it.value
-                    )
-                }.toSet(),
-                viewers = npc.viewers.toList()
-            )
+            config.set("npc.data.id", npc.id)
+            config.set("npc.data.uuid", npc.npcUuid.toString())
+            config.set("npc.data.nameTagId", npc.nameTagId)
+            config.set("npc.data.nameTagUuid", npc.nameTagUuid.toString())
+            config.set("npc.data.displayName", miniMessage.serialize(npc.data.displayName))
+            config.set("npc.data.internalName", npc.data.internalName)
+
+            config.set("npc.data.skin.owner", npc.data.skin.ownerName)
+            config.set("npc.data.skin.value", npc.data.skin.value)
+            config.set("npc.data.skin.signature", npc.data.skin.signature)
+
+            config.set("npc.data.location.x", npc.data.location.x)
+            config.set("npc.data.location.y", npc.data.location.y)
+            config.set("npc.data.location.z", npc.data.location.z)
+            config.set("npc.data.location.world", npc.data.location.world)
+
+            config.set("npc.data.rotationType", npc.data.rotationType.name)
+            npc.data.fixedRotation?.let {
+                config.set("npc.data.fixedRotation.yaw", it.yaw)
+                config.set("npc.data.fixedRotation.pitch", it.pitch)
+            }
+
+            config.set("npc.data.global", npc.data.global)
+            config.set("npc.data.viewers", npc.viewers.map(UUID::toString))
+
+            npc.properties.forEach {
+                val path = "npc.data.properties.${it.key}"
+                config.set("$path.value", it.type.encode(it.value))
+                config.set("$path.type", it.type.id)
+            }
+
+            config.save(file)
         }
-        configManager.save()
 
-        logger().atInfo().log("Successfully saved ${config.npcs.size}/${npcController.getNpcs().size} Npcs!")
+        logger().atInfo().log("Successfully saved ${npcController.getNpcs().size} NPCs to separate files!")
     }
-
-
-    @ConfigSerializable
-    data class StorageConfig (
-        var npcs: List<StorageNpcConfig>
-    )
-
-    @ConfigSerializable
-    data class StorageNpcConfig (
-        val npcId: Int,
-        val npcUuid: UUID,
-        val nameTagId: Int,
-        val nameTagUuid: UUID,
-
-        val displayName: String,
-        val internalName: String,
-        val global: Boolean,
-        val skin: StorageNpcSkinConfig,
-        val location: StorageNpcLocationConfig,
-        val rotationConfig: StorageNpcRotationConfig,
-        val properties: Set<StorageNpcPropertyConfig>,
-        val viewers: List<UUID>
-    )
-
-    @ConfigSerializable
-    data class StorageNpcSkinConfig (
-        val skinOwner: String,
-        val skinValue: String,
-        val skinSignature: String
-    )
-
-    @ConfigSerializable
-    data class StorageNpcLocationConfig (
-        val x: Double,
-        val y: Double,
-        val z: Double,
-        val world: String
-    )
-
-    @ConfigSerializable
-    data class StorageNpcRotationConfig (
-        val rotationType: String,
-        val rotationYaw: Float,
-        val rotationPitch: Float
-    )
-
-    @ConfigSerializable
-    data class StorageNpcPropertyConfig (
-        val propertyType: String,
-        val propertyKey: String,
-        val propertyValue: String
-    )
 }

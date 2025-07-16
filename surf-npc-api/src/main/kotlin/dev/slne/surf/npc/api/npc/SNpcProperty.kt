@@ -1,9 +1,7 @@
 package dev.slne.surf.npc.api.npc
 
-interface SNpcProperty<T : Any> {
+interface SNpcProperty {
     val key: String
-    val value: String
-    val type: SNpcPropertyType<T>
-
-    fun getTypedValue(): T = type.decode(value)
+    val value: Any
+    val type: SNpcPropertyType
 }

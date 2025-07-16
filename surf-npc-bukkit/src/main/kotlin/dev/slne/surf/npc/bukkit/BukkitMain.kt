@@ -9,10 +9,7 @@ import dev.slne.surf.npc.bukkit.listener.ConnectionListener
 import dev.slne.surf.npc.bukkit.listener.NpcListener
 import dev.slne.surf.npc.bukkit.property.BukkitPropertyTypeRegistry
 import dev.slne.surf.npc.bukkit.property.impl.BooleanPropertyType
-import dev.slne.surf.npc.bukkit.property.impl.ComponentPropertyType
-import dev.slne.surf.npc.bukkit.property.impl.FloatPropertyType
-import dev.slne.surf.npc.bukkit.property.impl.IntegerPropertyType
-import dev.slne.surf.npc.bukkit.property.impl.StringPropertyType
+import dev.slne.surf.npc.core.property.propertyTypeRegistry
 import dev.slne.surf.npc.core.service.storageService
 
 import org.bukkit.Bukkit
@@ -26,11 +23,11 @@ class BukkitMain : SuspendingJavaPlugin() {
         storageService.initialize()
         storageService.loadNpcs()
 
-        BukkitPropertyTypeRegistry.register(BooleanPropertyType())
-        BukkitPropertyTypeRegistry.register(ComponentPropertyType())
-        BukkitPropertyTypeRegistry.register(FloatPropertyType())
-        BukkitPropertyTypeRegistry.register(IntegerPropertyType())
-        BukkitPropertyTypeRegistry.register(StringPropertyType())
+        propertyTypeRegistry.register(BooleanPropertyType())
+        propertyTypeRegistry.register(ComponentPropertyType())
+        propertyTypeRegistry.register(FloatPropertyType())
+        propertyTypeRegistry.register(IntegerPropertyType())
+        propertyTypeRegistry.register(StringPropertyType())
 
         NpcCommand("npc").register()
     }
@@ -41,4 +38,3 @@ class BukkitMain : SuspendingJavaPlugin() {
 }
 
 val plugin get() = JavaPlugin.getPlugin(BukkitMain::class.java)
-val serverId: Int get() = plugin.config.getInt("server-name")

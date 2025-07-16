@@ -2,15 +2,15 @@ package dev.slne.surf.npc.bukkit.property.impl
 
 import dev.slne.surf.npc.api.npc.SNpcPropertyType
 
-class BooleanPropertyType : SNpcPropertyType<Boolean> {
-    override val classType: Class<Boolean> = Boolean::class.java
-
-    override fun encode(value: Boolean): String {
+class BooleanPropertyType(override val id: String) : SNpcPropertyType {
+    override fun encode(value: Any): String {
+        require(value is Long) { "Expected Long, got ${value::class}" }
         return value.toString()
     }
 
-    override fun decode(value: String): Boolean {
-        return value.toBooleanStrict()
+    override fun decode(value: String): Long {
+        return value.toLong()
     }
 }
+
 

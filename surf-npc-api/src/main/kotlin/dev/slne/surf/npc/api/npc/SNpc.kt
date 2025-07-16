@@ -12,7 +12,7 @@ interface SNpc {
     val nameTagId: Int
     val nameTagUuid: UUID
     val data: SNpcData
-    val properties: ObjectSet<SNpcProperty<*>>
+    val properties: ObjectSet<SNpcProperty>
     val viewers: ObjectSet<UUID>
 
     fun spawn(uuid: UUID)
@@ -28,7 +28,7 @@ interface SNpc {
      *
      * @param property The property
      */
-    fun addProperty(property: SNpcProperty<*>)
+    fun addProperty(property: SNpcProperty)
 
     /**
      * Retrieves the value of a property.
@@ -36,7 +36,7 @@ interface SNpc {
      * @param key The key of the property.
      * @return The value of the property.
      */
-    fun getProperty(key: String): SNpcProperty<*>?
+    fun getProperty(key: String): SNpcProperty?
 
     /**
      * Removes a property from the NPC.
