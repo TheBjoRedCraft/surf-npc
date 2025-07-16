@@ -38,15 +38,15 @@ class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
         rotationType: SNpcRotationType,
         fixedRotation: SNpcRotation?
     ): NpcCreationResult {
-        return npcController.createNpc(BukkitSNpcData(
-            displayName = displayName,
-            internalName = internalName,
-            skin = skin,
-            location = location,
-            global = global,
-            rotationType = rotationType,
-            fixedRotation = fixedRotation
-        ))
+        return npcController.createNpc(
+            internalName,
+            displayName,
+            skin,
+            location,
+            rotationType,
+            fixedRotation ?: BukkitSNpcRotation(0f, 0f),
+            global
+        )
     }
 
     override fun deleteNpc(npc: SNpc): NpcDeletionResult {

@@ -4,31 +4,26 @@ import com.github.retrooper.packetevents.event.PacketListener
 import com.github.retrooper.packetevents.event.PacketReceiveEvent
 import com.github.retrooper.packetevents.protocol.packettype.PacketType
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerPosition
 import dev.slne.surf.npc.api.event.NpcCollisionEvent
 import dev.slne.surf.npc.api.event.NpcInteractEvent
-import dev.slne.surf.npc.api.event.NpcSpawnEvent
+import dev.slne.surf.npc.api.npc.SNpcProperty
 import dev.slne.surf.npc.bukkit.plugin
-import dev.slne.surf.npc.bukkit.util.toLocation
 import dev.slne.surf.npc.core.controller.npcController
 import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.entity.Player
 
 class NpcListener : PacketListener {
     override fun onPacketReceive(event: PacketReceiveEvent) {
-        val player = event.getPlayer<Player>()
-
-        if(player == null) {
-            return
-        }
+        val player = event.getPlayer<Player>() ?: return
 
         when(event.packetType) {
             PacketType.Play.Client.PLAYER_POSITION_AND_ROTATION -> {
                 for (npc in npcController.getNpcs()) {
-                    val npcLoc = npc.data.location
+                    val npcLoc = npc.getProperty(SNpcProperty.Internal.LOCATION)?.value as? Location ?: continue
                     val playerLoc = player.location
 
-                    if (playerLoc.distanceSquared(npcLoc.toLocation() ?: return) > 20 * 20) {
+                    if (playerLoc.distanceSquared(npcLoc) > 20 * 20) {
                         continue
                     }
 
@@ -36,13 +31,11 @@ class NpcListener : PacketListener {
                 }
             }
             PacketType.Play.Client.PLAYER_POSITION -> {
-                val packet = WrapperPlayClientPlayerPosition(event)
-
                 for (npc in npcController.getNpcs()) {
-                    val npcLoc = npc.data.location
+                    val npcLoc = npc.getProperty(SNpcProperty.Internal.LOCATION)?.value as? Location ?: continue
                     val playerLoc = player.location
 
-                    if (playerLoc.distanceSquared(npcLoc.toLocation() ?: return) > 1 * 1) {
+                    if (playerLoc.distanceSquared(npcLoc) > 1 * 1) {
                         continue
                     }
 
