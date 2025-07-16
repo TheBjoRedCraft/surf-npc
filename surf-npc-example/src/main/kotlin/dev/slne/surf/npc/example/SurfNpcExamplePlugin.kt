@@ -29,7 +29,7 @@ class SurfNpcExamplePlugin(): SuspendingJavaPlugin() {
 
         surfNpcApi.addProperty(npc, surfNpcApi.createProperty(
             "example_npc",
-            "true",
+            true,
             surfNpcApi.getPropertyType(SNpcPropertyType.Types.BOOLEAN) ?: return run {
                 logger().atWarning().log("Failed to create example NPC: Boolean property type not found.")
             }
