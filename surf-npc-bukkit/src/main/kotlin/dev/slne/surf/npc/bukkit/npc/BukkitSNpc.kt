@@ -24,6 +24,16 @@ import dev.slne.surf.npc.api.npc.SNpc
 import dev.slne.surf.npc.api.npc.SNpcProperty
 import dev.slne.surf.npc.api.rotation.SNpcRotation
 import dev.slne.surf.npc.api.rotation.SNpcRotationType
+import dev.slne.surf.npc.bukkit.packet.createDestroyPacket
+import dev.slne.surf.npc.bukkit.packet.createEntityMetadataPacket
+import dev.slne.surf.npc.bukkit.packet.createNametagMetadataPacket
+import dev.slne.surf.npc.bukkit.packet.createNametagSpawnPacket
+import dev.slne.surf.npc.bukkit.packet.createPlayerInfoPacket
+import dev.slne.surf.npc.bukkit.packet.createPlayerInfoRemovePacket
+import dev.slne.surf.npc.bukkit.packet.createRotationPackets
+import dev.slne.surf.npc.bukkit.packet.createSpawnEntityPacket
+import dev.slne.surf.npc.bukkit.packet.createTeamAddEntityPacket
+import dev.slne.surf.npc.bukkit.packet.createTeamCreatePacket
 import dev.slne.surf.npc.bukkit.plugin
 import dev.slne.surf.npc.bukkit.util.toUser
 import dev.slne.surf.npc.core.controller.npcController
@@ -68,84 +78,20 @@ class BukkitSNpc (
             skinSignature
         ))
 
-        val infoPacket = WrapperPlayServerPlayerInfoUpdate (
-            WrapperPlayServerPlayerInfoUpdate.Action.ADD_PLAYER,
-            WrapperPlayServerPlayerInfoUpdate.PlayerInfo (
-                profile,
-                false,
-                0,
-                GameMode.SURVIVAL,
-                displayName,
-                null
-            )
-        )
-        val metaDataPacket = WrapperPlayServerEntityMetadata(
-            id,
-            listOf(
-                EntityData(17, EntityDataTypes.BYTE, 0x7F.toByte()),
-                EntityData(0, EntityDataTypes.BYTE, 0x02.toByte()),
-            )
-        )
         val rotationPair = Pair(
             rotation.yaw,
             rotation.pitch
         )
 
-        val spawnPacket = WrapperPlayServerSpawnEntity (
-            id,
-            npcUuid,
-            EntityTypes.PLAYER,
-            Location(Vector3d(location.x, location.y, location.z), rotationPair.first, rotationPair.second),
-            rotationPair.first,
-            0,
-            null
-        )
-        val spawnNametagPacket = WrapperPlayServerSpawnEntity (
-            nameTagId,
-            nameTagUuid,
-            EntityTypes.TEXT_DISPLAY,
-            Location(Vector3d(location.x, location.y + 2, location.z), 0f, 0f),
-            rotationPair.first,
-            0,
-            null
-        )
-        val metaDataNameTagPacket = WrapperPlayServerEntityMetadata(
-            nameTagId,
-            listOf(
-                EntityData(23, EntityDataTypes.ADV_COMPONENT, displayName),
-                EntityData(15, EntityDataTypes.BYTE, 3.toByte()),
-                EntityData(27, EntityDataTypes.BYTE, 0x02.toByte())
-            )
-        )
-        val teamCreatePacket = WrapperPlayServerTeams(
-            "npc_$id",
-            WrapperPlayServerTeams.TeamMode.CREATE,
-            WrapperPlayServerTeams.ScoreBoardTeamInfo(
-                displayName,
-                Component.empty(),
-                Component.empty(),
-                WrapperPlayServerTeams.NameTagVisibility.NEVER,
-                WrapperPlayServerTeams.CollisionRule.ALWAYS,
-                NamedTextColor.RED,
-                WrapperPlayServerTeams.OptionData.NONE
-            )
-        )
-        val teamMemberAddPacket = WrapperPlayServerTeams(
-            "npc_$id",
-            WrapperPlayServerTeams.TeamMode.ADD_ENTITIES,
-            nullInfo,
-            internalName
-        )
+        user.sendPacket(createPlayerInfoPacket(profile, displayName))
+        user.sendPacket(createSpawnEntityPacket(id, npcUuid, location, rotationPair.first, rotationPair.second))
+        user.sendPacket(createEntityMetadataPacket(id))
 
-        user.sendPacket(infoPacket)
-        user.sendPacket(spawnPacket)
-        user.sendPacket(metaDataPacket)
+        user.sendPacket(createTeamCreatePacket("npc_$id", displayName))
+        user.sendPacket(createTeamAddEntityPacket("npc_$id", internalName))
 
-        user.sendPacket(teamCreatePacket)
-        user.sendPacket(teamMemberAddPacket)
-
-        user.sendPacket(spawnNametagPacket)
-        user.sendPacket(metaDataNameTagPacket)
+        user.sendPacket(createNametagSpawnPacket(id, npcUuid, location))
+        user.sendPacket(createNametagMetadataPacket(id, displayName))
 
         Bukkit.getScheduler().runTaskLater(plugin, Runnable {
             Bukkit.getPluginManager().callEvent(NpcSpawnEvent (
@@ -162,15 +108,8 @@ class BukkitSNpc (
         val player = Bukkit.getPlayer(uuid) ?: return
         val user = playerManager.getUser(player)
 
-        val destroyPacket = WrapperPlayServerDestroyEntities (
-            this.id, nameTagId
-        )
-        val removeInfoPacket = WrapperPlayServerPlayerInfoRemove(
-            npcUuid
-        )
-
-        user.sendPacket(destroyPacket)
-        user.sendPacket(removeInfoPacket)
+        user.sendPacket(createDestroyPacket(this.id, nameTagId))
+        user.sendPacket(createPlayerInfoRemovePacket(npcUuid))
 
         Bukkit.getScheduler().runTaskLater(plugin, Runnable {
             Bukkit.getPluginManager().callEvent(NpcDespawnEvent (
@@ -195,19 +134,7 @@ class BukkitSNpc (
                 skinSignature
             ))
 
-            val infoPacket = WrapperPlayServerPlayerInfoUpdate (
-                WrapperPlayServerPlayerInfoUpdate.Action.ADD_PLAYER,
-                WrapperPlayServerPlayerInfoUpdate.PlayerInfo (
-                    profile,
-                    true,
-                    0,
-                    GameMode.SURVIVAL,
-                    displayName,
-                    null
-                )
-            )
-
-            user.toUser()?.sendPacket(infoPacket)
+            user.toUser()?.sendPacket(createPlayerInfoPacket(profile, displayName))
         }
     }
 
@@ -240,11 +167,10 @@ class BukkitSNpc (
             }
         }
 
-        val lookPacket = WrapperPlayServerEntityRotation(id, yawPitch.first, yawPitch.second, true)
-        val headRotationPacket = WrapperPlayServerEntityHeadLook(id, yawPitch.first)
+        val rotationPackets = createRotationPackets(id, yawPitch.first, yawPitch.second)
 
-        user.sendPacket(lookPacket)
-        user.sendPacket(headRotationPacket)
+        user.sendPacket(rotationPackets.first)
+        user.sendPacket(rotationPackets.second)
     }
 
 
