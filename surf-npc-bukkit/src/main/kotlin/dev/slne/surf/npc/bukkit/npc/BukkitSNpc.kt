@@ -12,6 +12,7 @@ import dev.slne.surf.npc.api.npc.SNpc
 import dev.slne.surf.npc.api.npc.SNpcProperty
 import dev.slne.surf.npc.api.rotation.SNpcRotation
 import dev.slne.surf.npc.api.rotation.SNpcRotationType
+import dev.slne.surf.npc.api.surfNpcApi
 import dev.slne.surf.npc.bukkit.createDestroyPacket
 import dev.slne.surf.npc.bukkit.createEntityMetadataPacket
 import dev.slne.surf.npc.bukkit.createNametagMetadataPacket
@@ -25,6 +26,7 @@ import dev.slne.surf.npc.bukkit.createTeamCreatePacket
 import dev.slne.surf.npc.bukkit.plugin
 import dev.slne.surf.npc.bukkit.util.toUser
 import dev.slne.surf.npc.core.controller.npcController
+import dev.slne.surf.surfapi.bukkit.api.surfBukkitApi
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
@@ -48,7 +50,6 @@ class BukkitSNpc (
 
         val player = Bukkit.getPlayer(uuid) ?: return
         val user = playerManager.getUser(player)
-        val nullInfo: WrapperPlayServerTeams.ScoreBoardTeamInfo? = null
 
         val displayName = this.getProperty(SNpcProperty.Internal.DISPLAYNAME)?.value as? Component ?: return
         val profile = UserProfile(npcUuid, internalName)
@@ -69,6 +70,7 @@ class BukkitSNpc (
             rotation.yaw,
             rotation.pitch
         )
+
 
         user.sendPacket(createPlayerInfoPacket(profile, displayName))
         user.sendPacket(createSpawnEntityPacket(id, npcUuid, location, rotationPair.first, rotationPair.second))
