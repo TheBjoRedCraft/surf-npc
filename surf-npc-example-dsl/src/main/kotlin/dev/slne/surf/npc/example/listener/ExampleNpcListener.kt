@@ -28,7 +28,7 @@ class ExampleNpcListener : Listener {
             player.sendText {
                 append(displayName)
                 spacer(" ")
-                info(" Hey, du hast die Property 'example_npc'!")
+                info(" Hey, du hast die Property 'example_npc'! Diese wurde über das DSL erstellt.")
             }
         }
 
@@ -36,7 +36,7 @@ class ExampleNpcListener : Listener {
             spacer("[")
             append(displayName)
             spacer("]")
-            info(" Hey, schön das du da bist!")
+            info(" Hey, schön das du da bist! Dies ist ein NPC, welcher mit dem DSL erstellt wurde.")
         }
     }
 }
