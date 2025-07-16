@@ -16,6 +16,8 @@ interface SNpcPropertyType {
         const val UUID = "uuid"
         const val LOCATION = "location"
         const val COMPONENT = "component"
+
+        const val NPC_ROTATION = "npc_rotation"
     }
 }
 

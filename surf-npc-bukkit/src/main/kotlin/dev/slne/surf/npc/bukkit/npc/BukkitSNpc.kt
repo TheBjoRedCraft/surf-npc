@@ -15,41 +15,35 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoRemove
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerScoreboardObjective
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams
-import dev.slne.surf.npc.api.event.NpcCreateEvent
 import dev.slne.surf.npc.api.event.NpcDespawnEvent
 import dev.slne.surf.npc.api.event.NpcSpawnEvent
 
 import dev.slne.surf.npc.api.npc.SNpc
-import dev.slne.surf.npc.api.npc.SNpcData
 import dev.slne.surf.npc.api.npc.SNpcProperty
+import dev.slne.surf.npc.api.rotation.SNpcRotation
 import dev.slne.surf.npc.api.rotation.SNpcRotationType
 import dev.slne.surf.npc.bukkit.plugin
 import dev.slne.surf.npc.bukkit.util.toUser
 import dev.slne.surf.npc.core.controller.npcController
-import dev.slne.surf.surfapi.core.api.util.random
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
-import java.util.Optional
 import java.util.UUID
 import kotlin.math.atan2
 import kotlin.math.sqrt
 
 class BukkitSNpc (
     override val id: Int,
-    override val data: SNpcData,
     override val properties: ObjectSet<SNpcProperty>,
     override val viewers: ObjectSet<UUID>,
     override val npcUuid: UUID,
     override val nameTagId: Int,
-    override val nameTagUuid: UUID
+    override val nameTagUuid: UUID,
+    override val internalName: String
 ) : SNpc {
     override fun spawn(uuid: UUID) {
         val packetEvents = PacketEvents.getAPI()
@@ -57,13 +51,21 @@ class BukkitSNpc (
 
         val player = Bukkit.getPlayer(uuid) ?: return
         val user = playerManager.getUser(player)
-        val profile = UserProfile(npcUuid, data.internalName)
         val nullInfo: WrapperPlayServerTeams.ScoreBoardTeamInfo? = null
+
+        val displayName = this.getProperty(SNpcProperty.Internal.DISPLAYNAME)?.value as? Component ?: return
+        val profile = UserProfile(npcUuid, internalName)
+
+        val skinValue = this.getProperty(SNpcProperty.Internal.SKIN_TEXTURE)?.value as? String ?: return
+        val skinSignature = this.getProperty(SNpcProperty.Internal.SKIN_SIGNATURE)?.value as? String ?: return
+
+        val rotation = this.getProperty(SNpcProperty.Internal.ROTATION_FIXED)?.value as? SNpcRotation ?: return
+        val location = this.getProperty(SNpcProperty.Internal.LOCATION)?.value as? org.bukkit.Location ?: return
 
         profile.textureProperties.add(TextureProperty(
             "textures",
-            data.skin.value,
-            data.skin.signature
+            skinValue,
+            skinSignature
         ))
 
         val infoPacket = WrapperPlayServerPlayerInfoUpdate (
@@ -73,7 +75,7 @@ class BukkitSNpc (
                 false,
                 0,
                 GameMode.SURVIVAL,
-                data.displayName,
+                displayName,
                 null
             )
         )
@@ -85,14 +87,15 @@ class BukkitSNpc (
             )
         )
         val rotationPair = Pair(
-            data.fixedRotation?.yaw ?: 0f,
-            data.fixedRotation?.pitch ?: 0f
+            rotation.yaw,
+            rotation.pitch
         )
+
         val spawnPacket = WrapperPlayServerSpawnEntity (
             id,
             npcUuid,
             EntityTypes.PLAYER,
-            Location(Vector3d(data.location.x, data.location.y, data.location.z), rotationPair.first, rotationPair.second),
+            Location(Vector3d(location.x, location.y, location.z), rotationPair.first, rotationPair.second),
             rotationPair.first,
             0,
             null
@@ -101,7 +104,7 @@ class BukkitSNpc (
             nameTagId,
             nameTagUuid,
             EntityTypes.TEXT_DISPLAY,
-            Location(Vector3d(data.location.x, data.location.y + 2, data.location.z), 0f, 0f),
+            Location(Vector3d(location.x, location.y + 2, location.z), 0f, 0f),
             rotationPair.first,
             0,
             null
@@ -109,7 +112,7 @@ class BukkitSNpc (
         val metaDataNameTagPacket = WrapperPlayServerEntityMetadata(
             nameTagId,
             listOf(
-                EntityData(23, EntityDataTypes.ADV_COMPONENT, data.displayName),
+                EntityData(23, EntityDataTypes.ADV_COMPONENT, displayName),
                 EntityData(15, EntityDataTypes.BYTE, 3.toByte()),
                 EntityData(27, EntityDataTypes.BYTE, 0x02.toByte())
             )
@@ -118,7 +121,7 @@ class BukkitSNpc (
             "npc_$id",
             WrapperPlayServerTeams.TeamMode.CREATE,
             WrapperPlayServerTeams.ScoreBoardTeamInfo(
-                data.displayName,
+                displayName,
                 Component.empty(),
                 Component.empty(),
                 WrapperPlayServerTeams.NameTagVisibility.NEVER,
@@ -131,7 +134,7 @@ class BukkitSNpc (
             "npc_$id",
             WrapperPlayServerTeams.TeamMode.ADD_ENTITIES,
             nullInfo,
-            data.internalName
+            internalName
         )
 
         user.sendPacket(infoPacket)
@@ -179,13 +182,17 @@ class BukkitSNpc (
 
     override fun refresh() {
         for (user in viewers) {
-            val profile = UserProfile(npcUuid, PlainTextComponentSerializer.plainText().serialize(data.displayName))
+            val displayName = this.getProperty(SNpcProperty.Internal.DISPLAYNAME)?.value as? Component ?: return
+            val profile = UserProfile(npcUuid, internalName)
+
+            val skinValue = this.getProperty(SNpcProperty.Internal.SKIN_TEXTURE)?.value as? String ?: return
+            val skinSignature = this.getProperty(SNpcProperty.Internal.SKIN_SIGNATURE)?.value as? String ?: return
 
             profile.textureProperties.clear()
             profile.textureProperties.add(TextureProperty(
                 "textures",
-                data.skin.value,
-                data.skin.signature
+                skinValue,
+                skinSignature
             ))
 
             val infoPacket = WrapperPlayServerPlayerInfoUpdate (
@@ -195,7 +202,7 @@ class BukkitSNpc (
                     true,
                     0,
                     GameMode.SURVIVAL,
-                    data.displayName,
+                    displayName,
                     null
                 )
             )
@@ -208,14 +215,17 @@ class BukkitSNpc (
         val player = Bukkit.getPlayer(uuid) ?: return
         val user = PacketEvents.getAPI().playerManager.getUser(player)
 
-        val yawPitch: Pair<Float, Float> = when (data.rotationType) {
+        val rotationType = this.getProperty(SNpcProperty.Internal.ROTATION_TYPE)?.value as? SNpcRotationType ?: return
+        val fixedRotation = this.getProperty(SNpcProperty.Internal.ROTATION_FIXED)?.value as? SNpcRotation ?: return
+        val location = this.getProperty(SNpcProperty.Internal.LOCATION)?.value as? org.bukkit.Location ?: return
+
+        val yawPitch: Pair<Float, Float> = when (rotationType) {
             SNpcRotationType.FIXED -> {
-                val fixedRotation = data.fixedRotation ?: return
                 Pair(fixedRotation.yaw, fixedRotation.pitch)
             }
 
             SNpcRotationType.PER_PLAYER -> {
-                val npcVec = Vector3d(data.location.x, data.location.y, data.location.z)
+                val npcVec = Vector3d(location.x, location.y, location.z)
                 val playerLoc = player.location
 
                 val dx = playerLoc.x - npcVec.x

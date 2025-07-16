@@ -8,10 +8,10 @@ import java.util.UUID
  */
 interface SNpc {
     val id: Int
+    val internalName: String
     val npcUuid: UUID
     val nameTagId: Int
     val nameTagUuid: UUID
-    val data: SNpcData
     val properties: ObjectSet<SNpcProperty>
     val viewers: ObjectSet<UUID>
 
