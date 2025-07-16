@@ -12,6 +12,7 @@ surfPaperPluginApi {
     mainClass("dev.slne.surf.npc.example.SurfNpcExamplePlugin")
     authors.add("red")
     generateLibraryLoader(false)
+    foliaSupported(true)
     serverDependencies {
         registerRequired("surf-npc-bukkit")
     }

@@ -9,6 +9,7 @@ dependencies {
 surfPaperPluginApi {
     mainClass("dev.slne.surf.npc.bukkit.BukkitMain")
     authors.add("red")
+    foliaSupported(true)
 
     generateLibraryLoader(false)
 }
