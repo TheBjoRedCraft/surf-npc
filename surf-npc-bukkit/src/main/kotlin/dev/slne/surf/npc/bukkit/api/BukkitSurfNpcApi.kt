@@ -77,13 +77,13 @@ class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
         npcController.setRotation(npc, rotation)
     }
 
-    override fun getProperties(npc: SNpc): ObjectSet<SNpcProperty<*>> {
+    override fun getProperties(npc: SNpc): ObjectSet<SNpcProperty> {
         return npcController.getProperties(npc)
     }
 
     override fun addProperty(
         npc: SNpc,
-        property: SNpcProperty<*>
+        property: SNpcProperty
     ): Boolean {
         return npcController.addProperty(npc, property)
     }
@@ -98,8 +98,8 @@ class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
     override fun createProperty(
         key: String,
         value: String,
-        type: SNpcPropertyType<*>
-    ): SNpcProperty<*> {
+        type: SNpcPropertyType
+    ): SNpcProperty {
         return BukkitSNpcProperty(key, value, type)
     }
 
@@ -143,11 +143,15 @@ class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
         return BukkitSNpcLocation(x, y, z, worldName)
     }
 
-    override fun <T : Any> registerPropertyType(type: SNpcPropertyType<T>) {
+    override fun registerPropertyType(type: SNpcPropertyType) {
         propertyTypeRegistry.register(type)
     }
 
-    override fun <T : Any> getPropertyType(clazz: Class<T>): SNpcPropertyType<T>? {
-        return propertyTypeRegistry.get(clazz)
+    override fun unregisterPropertyType(type: SNpcPropertyType) {
+        propertyTypeRegistry.unregister(type)
+    }
+
+    override fun getPropertyType(id: String): SNpcPropertyType? {
+        return propertyTypeRegistry.get(id)
     }
 }

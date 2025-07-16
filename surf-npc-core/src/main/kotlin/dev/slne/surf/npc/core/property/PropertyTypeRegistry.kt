@@ -5,6 +5,7 @@ import dev.slne.surf.surfapi.core.api.util.requiredService
 
 interface PropertyTypeRegistry {
     fun register(type: SNpcPropertyType)
+    fun unregister(type: SNpcPropertyType)
     fun get(id: String): SNpcPropertyType?
 
 

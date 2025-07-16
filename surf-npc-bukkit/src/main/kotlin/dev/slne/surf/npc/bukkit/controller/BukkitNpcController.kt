@@ -47,7 +47,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
         val npc = BukkitSNpc (
             id,
             data,
-            mutableObjectSetOf<SNpcProperty<*>>(),
+            mutableObjectSetOf<SNpcProperty>(),
             mutableObjectSetOf<UUID>(),
             uuid,
             nameTagId,
@@ -217,13 +217,13 @@ class BukkitNpcController : NpcController, Services.Fallback {
         return count
     }
 
-    override fun getProperties(npc: SNpc): ObjectSet<SNpcProperty<*>> {
+    override fun getProperties(npc: SNpc): ObjectSet<SNpcProperty> {
         return npc.properties
     }
 
     override fun addProperty(
         npc: SNpc,
-        property: SNpcProperty<*>
+        property: SNpcProperty
     ): Boolean {
         if (npc.hasProperty(property.key)) {
             return false

@@ -96,7 +96,7 @@ interface SurfNpcApi {
      * @param npc The NPC whose properties are to be retrieved.
      * @return A set of properties associated with the NPC.
      */
-    fun getProperties(npc: SNpc): ObjectSet<SNpcProperty<*>>
+    fun getProperties(npc: SNpc): ObjectSet<SNpcProperty>
 
     /**
      * Adds a property to an NPC.
@@ -105,7 +105,7 @@ interface SurfNpcApi {
      * @param property The property to add.
      * @return True if the property was added, false otherwise.
      */
-    fun addProperty(npc: SNpc, property: SNpcProperty<*>): Boolean
+    fun addProperty(npc: SNpc, property: SNpcProperty): Boolean
 
     /**
      * Removes a property from an NPC.
@@ -127,8 +127,8 @@ interface SurfNpcApi {
     fun createProperty(
         key: String,
         value: String,
-        type: SNpcPropertyType<*>
-    ): SNpcProperty<*>
+        type: SNpcPropertyType
+    ): SNpcProperty
 
     /**
      * Retrieves an NPC by its ID.
@@ -200,8 +200,10 @@ interface SurfNpcApi {
         worldName: String
     ): SNpcLocation
 
-    fun <T : Any> registerPropertyType(type: SNpcPropertyType<T>)
-    fun <T : Any> getPropertyType(clazz: Class<T>): SNpcPropertyType<T>?
+    fun registerPropertyType(type: SNpcPropertyType)
+    fun unregisterPropertyType(type: SNpcPropertyType)
+
+    fun getPropertyType(id: String): SNpcPropertyType?
 
     companion object {
         /**

@@ -20,6 +20,10 @@ class BukkitPropertyTypeRegistry : PropertyTypeRegistry, Services.Fallback {
         types.add(type)
     }
 
+    override fun unregister(type: SNpcPropertyType) {
+        types.remove(type)
+    }
+
     override fun get(id: String): SNpcPropertyType? {
         return types.firstOrNull() { it.id == id}
     }
