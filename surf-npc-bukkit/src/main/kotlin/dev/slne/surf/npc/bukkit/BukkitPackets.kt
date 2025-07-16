@@ -1,4 +1,4 @@
-package dev.slne.surf.npc.bukkit.packet
+package dev.slne.surf.npc.bukkit
 
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes
@@ -12,13 +12,8 @@ import com.github.retrooper.packetevents.wrapper.play.server.*
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import java.util.UUID
 import org.bukkit.Location as BukkitLocation
-
-fun createUserProfile(uuid: java.util.UUID, name: String, texture: String, signature: String): UserProfile {
-    return UserProfile(uuid, name).apply {
-        textureProperties.add(TextureProperty("textures", texture, signature))
-    }
-}
 
 fun createPlayerInfoPacket(profile: UserProfile, displayName: Component, listed: Boolean = false): WrapperPlayServerPlayerInfoUpdate {
     return WrapperPlayServerPlayerInfoUpdate(
@@ -46,7 +41,7 @@ fun createEntityMetadataPacket(npcEntityId: Int): WrapperPlayServerEntityMetadat
 
 fun createSpawnEntityPacket(
     entityId: Int,
-    uuid: java.util.UUID,
+    uuid: UUID,
     location: BukkitLocation,
     yaw: Float,
     pitch: Float
@@ -64,7 +59,7 @@ fun createSpawnEntityPacket(
 
 fun createNametagSpawnPacket(
     entityId: Int,
-    uuid: java.util.UUID,
+    uuid: UUID,
     location: BukkitLocation
 ): WrapperPlayServerSpawnEntity {
     return WrapperPlayServerSpawnEntity(
@@ -126,7 +121,7 @@ fun createDestroyPacket(vararg entityIds: Int): WrapperPlayServerDestroyEntities
     return WrapperPlayServerDestroyEntities(*entityIds)
 }
 
-fun createPlayerInfoRemovePacket(npcUuid: java.util.UUID): WrapperPlayServerPlayerInfoRemove {
+fun createPlayerInfoRemovePacket(npcUuid: UUID): WrapperPlayServerPlayerInfoRemove {
     return WrapperPlayServerPlayerInfoRemove(npcUuid)
 }
 
