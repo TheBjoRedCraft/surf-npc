@@ -20,7 +20,6 @@ import dev.slne.surf.npc.bukkit.property.BukkitSNpcProperty
 import dev.slne.surf.npc.core.controller.NpcController
 import dev.slne.surf.npc.core.property.propertyTypeRegistry
 import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
-import dev.slne.surf.surfapi.bukkit.api.util.key
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import dev.slne.surf.surfapi.core.api.util.random
 import dev.slne.surf.surfapi.core.api.util.toObjectList
