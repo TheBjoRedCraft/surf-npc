@@ -1,7 +1,7 @@
 package dev.slne.surf.npc.core.controller
 
 import dev.slne.surf.npc.api.npc.SNpc
-import dev.slne.surf.npc.api.npc.SNpcData
+import dev.slne.surf.npc.api.npc.SNpcLocation
 import dev.slne.surf.npc.api.npc.SNpcProperty
 import dev.slne.surf.npc.api.result.NpcCreationResult
 import dev.slne.surf.npc.api.result.NpcDeletionResult
@@ -13,10 +13,11 @@ import dev.slne.surf.npc.api.skin.SNpcSkinData
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
+import net.kyori.adventure.text.Component
 import java.util.UUID
 
 interface NpcController {
-    fun createNpc(data: SNpcData) : NpcCreationResult
+    fun createNpc(internalName: String, displayName: Component, skinData: SNpcSkinData, location: SNpcLocation, rotationType: SNpcRotationType, rotation: SNpcRotation, global: Boolean) : NpcCreationResult
     fun deleteNpc(npc: SNpc) : NpcDeletionResult
 
     fun registerNpc(npc: SNpc)

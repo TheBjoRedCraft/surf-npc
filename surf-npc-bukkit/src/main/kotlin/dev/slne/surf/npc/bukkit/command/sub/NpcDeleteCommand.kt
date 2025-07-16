@@ -24,13 +24,13 @@ class NpcDeleteCommand(commandName: String) : CommandAPICommand(commandName) {
                 player.sendText {
                     appendPrefix()
                     success("Der Npc ")
-                    variableValue(npc.data.internalName)
+                    variableValue(npc.internalName)
                     success(" wurde gelöscht.")
                 }
             } else {
                 player.sendText {
                     appendPrefix()
-                    error("Der Npc ${npc.data.internalName} konnte nicht gelöscht werden.")
+                    error("Der Npc ${npc.internalName} konnte nicht gelöscht werden.")
                 }
             }
         }

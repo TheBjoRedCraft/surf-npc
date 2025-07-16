@@ -12,7 +12,6 @@ import dev.slne.surf.npc.api.result.NpcDeletionResult
 import dev.slne.surf.npc.api.rotation.SNpcRotation
 import dev.slne.surf.npc.api.rotation.SNpcRotationType
 import dev.slne.surf.npc.api.skin.SNpcSkinData
-import dev.slne.surf.npc.bukkit.npc.BukkitSNpcData
 import dev.slne.surf.npc.bukkit.npc.BukkitSNpcLocation
 import dev.slne.surf.npc.bukkit.property.BukkitSNpcProperty
 import dev.slne.surf.npc.bukkit.rotation.BukkitSNpcRotation

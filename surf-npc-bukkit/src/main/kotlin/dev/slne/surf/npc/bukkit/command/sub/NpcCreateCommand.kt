@@ -10,7 +10,6 @@ import dev.jorel.commandapi.kotlindsl.textArgument
 import dev.slne.surf.npc.api.result.NpcCreationResult
 import dev.slne.surf.npc.api.rotation.SNpcRotationType
 import dev.slne.surf.npc.bukkit.command.argument.rotationTypeArgument
-import dev.slne.surf.npc.bukkit.npc.BukkitSNpcData
 import dev.slne.surf.npc.bukkit.npc.BukkitSNpcLocation
 import dev.slne.surf.npc.bukkit.plugin
 import dev.slne.surf.npc.bukkit.rotation.BukkitSNpcRotation
@@ -52,15 +51,15 @@ class NpcCreateCommand(commandName: String) : CommandAPICommand(commandName) {
 
             plugin.launch {
                 val skinData = skinDataFromName(skin)
-                val npcResult = npcController.createNpc(BukkitSNpcData(
-                    displayName = parsedName,
+                val npcResult = npcController.createNpc(
                     internalName,
+                    parsedName,
                     skinData,
                     BukkitSNpcLocation(location.x, location.y, location.z, location.world.name),
                     rotationType,
                     BukkitSNpcRotation(location.yaw, location.pitch),
                     true
-                    ))
+                )
 
                 val npc = npcController.getNpc(internalName)
 

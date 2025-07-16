@@ -68,6 +68,10 @@ fun SNpcLocation.readableString(): String {
     return "${x.toInt()}, ${y.toInt()}, ${z.toInt()} in '$world'"
 }
 
+fun Location.readableString(): String {
+    return "${x.toInt()}, ${y.toInt()}, ${z.toInt()} in '$world'"
+}
+
 fun SNpc.hideAll() {
     if(this.data.global) {
         forEachPlayer {

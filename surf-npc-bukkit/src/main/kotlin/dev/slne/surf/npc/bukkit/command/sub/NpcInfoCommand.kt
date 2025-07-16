@@ -4,14 +4,16 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.npc.api.npc.SNpc
+import dev.slne.surf.npc.api.npc.SNpcProperty
 import dev.slne.surf.npc.bukkit.command.argument.npcArgument
 import dev.slne.surf.npc.bukkit.util.PermissionRegistry
 import dev.slne.surf.npc.bukkit.util.readableString
-import dev.slne.surf.npc.bukkit.util.toPlain
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickRunsCommand
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Location
 
 class NpcInfoCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
@@ -19,6 +21,13 @@ class NpcInfoCommand(commandName: String) : CommandAPICommand(commandName) {
         npcArgument("npc")
         playerExecutor { player, args ->
             val npc: SNpc by args
+
+            val displayName = npc.getProperty(SNpcProperty.Internal.DISPLAYNAME)?.value as? Component ?: return@playerExecutor
+            val location = npc.getProperty(SNpcProperty.Internal.LOCATION)?.value as? Location ?: return@playerExecutor
+
+            val rotationType = npc.getProperty(SNpcProperty.Internal.ROTATION_TYPE)?.value as? Boolean ?: return@playerExecutor
+            val skinOwner = npc.getProperty(SNpcProperty.Internal.SKIN_OWNER)?.value as? String ?: return@playerExecutor
+            val global = npc.getProperty(SNpcProperty.Internal.VISIBILITY_GLOBAL)?.value as? Boolean ?: return@playerExecutor
 
             player.sendText {
                 append {
@@ -32,7 +41,7 @@ class NpcInfoCommand(commandName: String) : CommandAPICommand(commandName) {
                     decorate(TextDecoration.BOLD)
                 }
                 variableKey("Name: ")
-                variableValue(npc.data.internalName)
+                variableValue(npc.internalName)
                 appendNewline()
 
                 append {
@@ -40,7 +49,7 @@ class NpcInfoCommand(commandName: String) : CommandAPICommand(commandName) {
                     decorate(TextDecoration.BOLD)
                 }
                 variableKey("Anzeigename: ")
-                append(npc.data.displayName)
+                append(displayName)
                 appendNewline()
 
                 append {
@@ -73,7 +82,7 @@ class NpcInfoCommand(commandName: String) : CommandAPICommand(commandName) {
                 }
                 append {
                     variableKey("Ort: ")
-                    variableValue(npc.data.location.readableString())
+                    variableValue(location.readableString())
                     clickRunsCommand("/npc teleport ${npc.id}")
                 }
                 appendNewline()
@@ -83,7 +92,7 @@ class NpcInfoCommand(commandName: String) : CommandAPICommand(commandName) {
                     decorate(TextDecoration.BOLD)
                 }
                 variableKey("Rotation: ")
-                variableValue(npc.data.rotationType.name)
+                variableValue(if (rotationType) "Per-Player" else "Fixed")
                 appendNewline()
 
                 append {
@@ -91,7 +100,7 @@ class NpcInfoCommand(commandName: String) : CommandAPICommand(commandName) {
                     decorate(TextDecoration.BOLD)
                 }
                 variableKey("Skin: ")
-                variableValue(npc.data.skin.ownerName)
+                variableValue(skinOwner)
                 appendNewline()
 
                 append {
@@ -99,7 +108,7 @@ class NpcInfoCommand(commandName: String) : CommandAPICommand(commandName) {
                     decorate(TextDecoration.BOLD)
                 }
                 variableKey("Global: ")
-                variableValue(if (npc.data.global) "Ja" else "Nein")
+                variableValue(if (global) "Ja" else "Nein")
             }
         }
     }

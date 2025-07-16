@@ -42,7 +42,7 @@ class NpcListCommand(commandName: String) : CommandAPICommand(commandName) {
                             decorate(TextDecoration.BOLD)
                         }
 
-                        variableValue(it.data.internalName)
+                        variableValue(it.internalName)
                         spacer(" (ID: ${it.id})")
                     }
                 }
