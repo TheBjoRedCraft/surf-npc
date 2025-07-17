@@ -18,33 +18,57 @@ import org.bukkit.Location
 import java.net.HttpURLConnection
 import java.net.URL
 
+import io.ktor.client.*
+import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.timeout
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.isSuccess
+import io.ktor.serialization.kotlinx.json.*
+
 suspend fun skinDataFromName(name: String): SNpcSkinData = withContext(Dispatchers.IO) {
     val uuid = PlayerLookupService.getUuid(name) ?: return@withContext skinDataDefault()
 
-    val url = URL("https://api.minetools.eu/profile/$uuid")
-    val connection = url.openConnection() as HttpURLConnection
-
-    connection.requestMethod = "GET"
-    connection.connectTimeout = 15000
-    connection.readTimeout = 15000
-
-    if (connection.responseCode != 200) {
-        logger().atSevere().log("Fehler beim Abrufen der Skin-Daten: ${connection.responseCode} - ${connection.responseMessage}")
-        return@withContext skinDataDefault()
+    val client = HttpClient(OkHttp) {
+        install(ContentNegotiation) {
+            json()
+        }
     }
 
-    val response = connection.inputStream.bufferedReader().use { it.readText() }
 
-    val json = Json.parseToJsonElement(response).jsonObject
-    val properties = json["raw"]?.jsonObject?.get("properties")?.jsonArray ?: return@withContext skinDataDefault()
+    try {
+        val response: HttpResponse = client.get("https://api.minetools.eu/profile/$uuid") {
+            timeout {
+                this.requestTimeoutMillis = 15_000
+            }
+        }
 
-    val textureProperty = properties.firstOrNull { it.jsonObject["name"]?.jsonPrimitive?.content == "textures" } ?: return@withContext skinDataDefault()
-    val textureObj = textureProperty.jsonObject
-    val value = textureObj["value"]?.jsonPrimitive?.content ?: return@withContext skinDataDefault()
-    val signature = textureObj["signature"]?.jsonPrimitive?.content ?: return@withContext skinDataDefault()
+        if (!response.status.isSuccess()) {
+            logger().atSevere().log("Fehler beim Abrufen der Skin-Daten von ${name}: ${response.status.value} - ${response.status.description}")
+            return@withContext skinDataDefault()
+        }
 
-    return@withContext BukkitSNpcSkinData(name, value, signature)
+        val json = Json.parseToJsonElement(response.bodyAsText()).jsonObject
+        val properties = json["raw"]?.jsonObject?.get("properties")?.jsonArray ?: return@withContext skinDataDefault()
+
+        val textureProperty = properties.firstOrNull {
+            it.jsonObject["name"]?.jsonPrimitive?.content == "textures"
+        } ?: return@withContext skinDataDefault()
+
+        val textureObj = textureProperty.jsonObject
+        val value = textureObj["value"]?.jsonPrimitive?.content ?: return@withContext skinDataDefault()
+        val signature = textureObj["signature"]?.jsonPrimitive?.content ?: return@withContext skinDataDefault()
+
+        return@withContext BukkitSNpcSkinData(name, value, signature)
+    } catch (e: Exception) {
+        logger().atSevere().log("Exception beim Abrufen der Skin-Daten: ${e.message}")
+        return@withContext skinDataDefault()
+    } finally {
+        client.close()
+    }
 }
+
 
 fun skinDataDefault() : SNpcSkinData {
     return BukkitSNpcSkinData(
