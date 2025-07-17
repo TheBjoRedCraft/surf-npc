@@ -4,6 +4,7 @@ import dev.slne.surf.npc.api.npc.SNpcLocation
 import dev.slne.surf.npc.api.skin.SNpcSkinData
 import dev.slne.surf.npc.bukkit.skin.BukkitSNpcSkinData
 import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
+import dev.slne.surf.surfapi.core.api.util.logger
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -28,7 +29,7 @@ suspend fun skinDataFromName(name: String): SNpcSkinData = withContext(Dispatche
     connection.readTimeout = 15000
 
     if (connection.responseCode != 200) {
-        println("Fehler beim Abrufen der Skin-Daten: ${connection.responseCode} - ${connection.responseMessage}")
+        logger().atSevere().log("Fehler beim Abrufen der Skin-Daten: ${connection.responseCode} - ${connection.responseMessage}")
         return@withContext skinDataDefault()
     }
 
