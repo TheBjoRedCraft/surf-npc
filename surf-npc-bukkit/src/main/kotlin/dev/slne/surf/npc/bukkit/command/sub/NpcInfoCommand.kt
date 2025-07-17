@@ -22,12 +22,12 @@ class NpcInfoCommand(commandName: String) : CommandAPICommand(commandName) {
         playerExecutor { player, args ->
             val npc: SNpc by args
 
-            val displayName = npc.getProperty(SNpcProperty.Internal.DISPLAYNAME)?.value as? Component ?: return@playerExecutor
-            val location = npc.getProperty(SNpcProperty.Internal.LOCATION)?.value as? Location ?: return@playerExecutor
+            val displayName = npc.getProperty(SNpcProperty.Internal.DISPLAYNAME)?.value as? Component ?: error("NPC ${npc.internalName} has no display name set")
+            val location = npc.getProperty(SNpcProperty.Internal.LOCATION)?.value as? Location ?: error("NPC ${npc.internalName} has no location set")
 
-            val rotationType = npc.getProperty(SNpcProperty.Internal.ROTATION_TYPE)?.value as? Boolean ?: return@playerExecutor
-            val skinOwner = npc.getProperty(SNpcProperty.Internal.SKIN_OWNER)?.value as? String ?: return@playerExecutor
-            val global = npc.getProperty(SNpcProperty.Internal.VISIBILITY_GLOBAL)?.value as? Boolean ?: return@playerExecutor
+            val rotationType = npc.getProperty(SNpcProperty.Internal.ROTATION_TYPE)?.value as? Boolean ?: error("NPC ${npc.internalName} has no rotation type set")
+            val skinOwner = npc.getProperty(SNpcProperty.Internal.SKIN_OWNER)?.value as? String ?: error("NPC ${npc.internalName} has no skin owner set")
+            val global = npc.getProperty(SNpcProperty.Internal.VISIBILITY_GLOBAL)?.value as? Boolean ?: error("NPC ${npc.internalName} has no global visibility set")
 
             player.sendText {
                 append {
