@@ -138,9 +138,13 @@ class BukkitSNpc (
         val player = Bukkit.getPlayer(uuid) ?: return
         val user = PacketEvents.getAPI().playerManager.getUser(player)
 
+        println("Refreshing rotation for NPC: $internalName")
+
         val rotationType = this.getProperty(SNpcProperty.Internal.ROTATION_TYPE)?.value as? SNpcRotationType ?: return
         val fixedRotation = this.getProperty(SNpcProperty.Internal.ROTATION_FIXED)?.value as? SNpcRotation ?: return
         val location = this.getProperty(SNpcProperty.Internal.LOCATION)?.value as? SNpcLocation ?: return
+
+        println("Rotation Type: $rotationType")
 
         val yawPitch: Pair<Float, Float> = when (rotationType) {
             SNpcRotationType.FIXED -> {
@@ -163,10 +167,16 @@ class BukkitSNpc (
             }
         }
 
+        println("Calculated Yaw: ${yawPitch.first}, Pitch: ${yawPitch.second}")
+
         val rotationPackets = createRotationPackets(id, yawPitch.first, yawPitch.second)
+
+        println("Sending rotation packets for NPC: $internalName")
 
         user.sendPacket(rotationPackets.first)
         user.sendPacket(rotationPackets.second)
+
+        println("Rotation packets sent for NPC: $internalName")
     }
 
 
