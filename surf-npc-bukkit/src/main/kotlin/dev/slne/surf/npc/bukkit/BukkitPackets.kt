@@ -8,6 +8,7 @@ import com.github.retrooper.packetevents.protocol.player.UserProfile
 import com.github.retrooper.packetevents.util.Vector3d
 import com.github.retrooper.packetevents.wrapper.play.server.*
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams
+import io.github.retrooper.packetevents.util.SpigotConversionUtil
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Location
@@ -129,3 +130,9 @@ fun createRotationPackets(entityId: Int, yaw: Float, pitch: Float): Pair<Wrapper
         WrapperPlayServerEntityHeadLook(entityId, yaw)
     )
 }
+
+fun createTeleportPacket(entityId: Int, location: Location, onGround: Boolean = false) = WrapperPlayServerEntityTeleport(
+    entityId,
+    SpigotConversionUtil.fromBukkitLocation(location),
+    onGround
+)

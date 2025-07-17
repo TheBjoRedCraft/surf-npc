@@ -22,6 +22,7 @@ import dev.slne.surf.npc.bukkit.createRotationPackets
 import dev.slne.surf.npc.bukkit.createPlayerSpawnPacket
 import dev.slne.surf.npc.bukkit.createTeamAddEntityPacket
 import dev.slne.surf.npc.bukkit.createTeamCreatePacket
+import dev.slne.surf.npc.bukkit.createTeleportPacket
 import dev.slne.surf.npc.bukkit.plugin
 import dev.slne.surf.npc.bukkit.rotation.BukkitSNpcRotation
 import dev.slne.surf.npc.bukkit.util.toLocation
@@ -33,6 +34,7 @@ import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import java.util.UUID
 import kotlin.math.atan2
 import kotlin.math.sqrt
@@ -174,6 +176,18 @@ class BukkitSNpc (
 
     override fun delete() {
         npcController.deleteNpc(this)
+    }
+
+    override fun teleport(player: Player) {
+        val location = player.location
+
+        viewers.forEach {
+            val target = Bukkit.getPlayer(it) ?: return@forEach
+            val user = PacketEvents.getAPI().playerManager.getUser(target)
+
+            user.sendPacket(createTeleportPacket(id, location))
+            user.sendPacket(createTeleportPacket(nameTagId, location))
+        }
     }
 
     override fun addProperty(property: SNpcProperty) {

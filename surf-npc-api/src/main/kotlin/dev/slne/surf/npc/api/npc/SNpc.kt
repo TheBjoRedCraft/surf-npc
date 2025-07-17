@@ -1,6 +1,7 @@
 package dev.slne.surf.npc.api.npc
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
+import org.bukkit.entity.Player
 import java.util.UUID
 
 /**
@@ -22,6 +23,7 @@ interface SNpc {
     fun refreshRotation(uuid: UUID)
 
     fun delete()
+    fun teleport(player: Player)
 
     /**
      * Adds a property to the NPC.
