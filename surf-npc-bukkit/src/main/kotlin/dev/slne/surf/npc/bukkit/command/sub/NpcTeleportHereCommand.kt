@@ -16,7 +16,7 @@ import org.bukkit.entity.Player
 
 class NpcTeleportHereCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
-        withPermission(PermissionRegistry.COMMAND_NPC_TELEPORT_TO)
+        withPermission(PermissionRegistry.COMMAND_NPC_TELEPORT_HERE)
         npcArgument("npc")
         playerArgument("target", true)
         playerExecutor { player, args ->

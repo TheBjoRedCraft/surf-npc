@@ -17,4 +17,9 @@ object PermissionRegistry {
 
     const val COMMAND_NPC_TELEPORT_TO = "$PERMISSION_PREFIX.command.teleport"
     const val COMMAND_NPC_TELEPORT_HERE = "$PERMISSION_PREFIX.command.teleporthere"
+
+    const val COMMAND_NPC_PROPERTY = "$PERMISSION_PREFIX.command.property"
+    const val COMMAND_NPC_PROPERTY_ADD = "$PERMISSION_PREFIX.command.property.add"
+    const val COMMAND_NPC_PROPERTY_REMOVE = "$PERMISSION_PREFIX.command.property.remove"
+    const val COMMAND_NPC_PROPERTY_LIST = "$PERMISSION_PREFIX.command.property.list"
 }
