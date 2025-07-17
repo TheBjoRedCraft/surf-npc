@@ -62,6 +62,6 @@ fun SNpcLocation.toLocation(): Location? {
     )
 }
 
-fun Location.readableString(): String {
+fun SNpcLocation.readableString(): String {
     return "${x.toInt()}, ${y.toInt()}, ${z.toInt()} in '$world'"
 }

@@ -4,6 +4,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.npc.api.npc.SNpc
+import dev.slne.surf.npc.api.npc.SNpcLocation
 import dev.slne.surf.npc.api.npc.SNpcProperty
 import dev.slne.surf.npc.bukkit.command.argument.npcArgument
 import dev.slne.surf.npc.bukkit.util.PermissionRegistry
@@ -23,7 +24,7 @@ class NpcInfoCommand(commandName: String) : CommandAPICommand(commandName) {
             val npc: SNpc by args
 
             val displayName = npc.getProperty(SNpcProperty.Internal.DISPLAYNAME)?.value as? Component ?: error("NPC ${npc.internalName} has no display name set")
-            val location = npc.getProperty(SNpcProperty.Internal.LOCATION)?.value as? Location ?: error("NPC ${npc.internalName} has no location set")
+            val location = npc.getProperty(SNpcProperty.Internal.LOCATION)?.value as? SNpcLocation ?: error("NPC ${npc.internalName} has no location set")
 
             val rotationType = npc.getProperty(SNpcProperty.Internal.ROTATION_TYPE)?.value as? Boolean ?: error("NPC ${npc.internalName} has no rotation type set")
             val skinOwner = npc.getProperty(SNpcProperty.Internal.SKIN_OWNER)?.value as? String ?: error("NPC ${npc.internalName} has no skin owner set")
