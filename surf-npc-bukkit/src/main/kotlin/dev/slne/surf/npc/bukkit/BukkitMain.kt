@@ -13,7 +13,7 @@ import dev.slne.surf.npc.bukkit.property.impl.ComponentPropertyType
 import dev.slne.surf.npc.bukkit.property.impl.DoublePropertyType
 import dev.slne.surf.npc.bukkit.property.impl.FloatPropertyType
 import dev.slne.surf.npc.bukkit.property.impl.IntPropertyType
-import dev.slne.surf.npc.bukkit.property.impl.LocationPropertyType
+import dev.slne.surf.npc.bukkit.property.impl.NpcLocationPropertyType
 import dev.slne.surf.npc.bukkit.property.impl.LongPropertyType
 import dev.slne.surf.npc.bukkit.property.impl.NamedTextColorPropertyType
 import dev.slne.surf.npc.bukkit.property.impl.NpcRotationPropertyType
@@ -40,7 +40,7 @@ class BukkitMain : SuspendingJavaPlugin() {
         propertyTypeRegistry.register(LongPropertyType(SNpcPropertyType.Types.LONG))
         propertyTypeRegistry.register(StringPropertyType(SNpcPropertyType.Types.STRING))
         propertyTypeRegistry.register(DoublePropertyType(SNpcPropertyType.Types.DOUBLE))
-        propertyTypeRegistry.register(LocationPropertyType(SNpcPropertyType.Types.LOCATION))
+        propertyTypeRegistry.register(NpcLocationPropertyType(SNpcPropertyType.Types.NPC_LOCATION))
         propertyTypeRegistry.register(UuidPropertyType(SNpcPropertyType.Types.UUID))
         propertyTypeRegistry.register(NamedTextColorPropertyType(SNpcPropertyType.Types.NAMED_TEXT_COLOR))
         propertyTypeRegistry.register(NpcRotationPropertyType(SNpcPropertyType.Types.NPC_ROTATION))

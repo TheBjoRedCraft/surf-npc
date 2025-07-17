@@ -84,7 +84,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
         ))
         npc.addProperty(BukkitSNpcProperty(
             SNpcProperty.Internal.LOCATION, location, propertyTypeRegistry.get(
-                SNpcPropertyType.Types.LOCATION) ?: error("LOCATION property type not found")
+                SNpcPropertyType.Types.NPC_LOCATION) ?: error("LOCATION property type not found")
         ))
         npc.addProperty(BukkitSNpcProperty(
             SNpcProperty.Internal.ROTATION_TYPE, rotationType == SNpcRotationType.PER_PLAYER, propertyTypeRegistry.get(

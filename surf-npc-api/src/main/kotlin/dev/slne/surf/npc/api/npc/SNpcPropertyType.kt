@@ -14,10 +14,10 @@ interface SNpcPropertyType {
         const val DOUBLE = "double"
         const val FLOAT = "float"
         const val UUID = "uuid"
-        const val LOCATION = "location"
         const val COMPONENT = "component"
         const val NAMED_TEXT_COLOR = "named_text_color"
 
+        const val NPC_LOCATION = "npc_location"
         const val NPC_ROTATION = "npc_rotation"
     }
 }
