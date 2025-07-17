@@ -15,6 +15,7 @@ import dev.slne.surf.npc.bukkit.property.impl.FloatPropertyType
 import dev.slne.surf.npc.bukkit.property.impl.IntPropertyType
 import dev.slne.surf.npc.bukkit.property.impl.LocationPropertyType
 import dev.slne.surf.npc.bukkit.property.impl.LongPropertyType
+import dev.slne.surf.npc.bukkit.property.impl.NamedTextColorPropertyType
 import dev.slne.surf.npc.bukkit.property.impl.StringPropertyType
 import dev.slne.surf.npc.bukkit.property.impl.UuidPropertyType
 import dev.slne.surf.npc.core.property.propertyTypeRegistry
@@ -40,6 +41,7 @@ class BukkitMain : SuspendingJavaPlugin() {
         propertyTypeRegistry.register(DoublePropertyType(SNpcPropertyType.Types.DOUBLE))
         propertyTypeRegistry.register(LocationPropertyType(SNpcPropertyType.Types.LOCATION))
         propertyTypeRegistry.register(UuidPropertyType(SNpcPropertyType.Types.UUID))
+        propertyTypeRegistry.register(NamedTextColorPropertyType(SNpcPropertyType.Types.NAMED_TEXT_COLOR))
 
         NpcCommand("npc").register()
     }

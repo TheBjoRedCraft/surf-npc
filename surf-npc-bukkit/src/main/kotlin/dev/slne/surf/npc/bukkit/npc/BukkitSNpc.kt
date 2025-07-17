@@ -26,10 +26,13 @@ import dev.slne.surf.npc.bukkit.createTeamCreatePacket
 import dev.slne.surf.npc.bukkit.plugin
 import dev.slne.surf.npc.bukkit.util.toUser
 import dev.slne.surf.npc.core.controller.npcController
+import dev.slne.surf.surfapi.bukkit.api.glow.glowingApi
 import dev.slne.surf.surfapi.bukkit.api.surfBukkitApi
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
 import java.util.UUID
 import kotlin.math.atan2
@@ -60,6 +63,9 @@ class BukkitSNpc (
         val rotation = this.getProperty(SNpcProperty.Internal.ROTATION_FIXED)?.value as? SNpcRotation ?: return
         val location = this.getProperty(SNpcProperty.Internal.LOCATION)?.value as? org.bukkit.Location ?: return
 
+        val glowing = this.getProperty("glowing")?.value as? Boolean ?: false
+        val glowingColor = this.getProperty("glowing_color")?.value as? NamedTextColor ?: NamedTextColor.WHITE
+
         profile.textureProperties.add(TextureProperty(
             "textures",
             skinValue,
@@ -71,7 +77,6 @@ class BukkitSNpc (
             rotation.pitch
         )
 
-
         user.sendPacket(createPlayerInfoPacket(profile, displayName))
         user.sendPacket(createSpawnEntityPacket(id, npcUuid, location, rotationPair.first, rotationPair.second))
         user.sendPacket(createEntityMetadataPacket(id))
@@ -81,6 +86,10 @@ class BukkitSNpc (
 
         user.sendPacket(createNametagSpawnPacket(id, npcUuid, location))
         user.sendPacket(createNametagMetadataPacket(id, displayName))
+
+        if(glowing) {
+            glowingApi.makeGlowing(id, "npc_$id", player, glowingColor)
+        }
 
         Bukkit.getScheduler().runTaskLater(plugin, Runnable {
             Bukkit.getPluginManager().callEvent(NpcSpawnEvent (
