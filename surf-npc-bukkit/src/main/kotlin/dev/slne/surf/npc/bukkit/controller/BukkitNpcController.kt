@@ -113,8 +113,6 @@ class BukkitNpcController : NpcController, Services.Fallback {
             ))
         }, 1L)
 
-
-
         return NpcCreationResult.SUCCESS
     }
 
