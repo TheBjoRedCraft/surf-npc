@@ -10,6 +10,7 @@ import dev.slne.surf.npc.api.event.NpcSpawnEvent
 import dev.slne.surf.npc.api.npc.SNpc
 import dev.slne.surf.npc.api.npc.SNpcLocation
 import dev.slne.surf.npc.api.npc.SNpcProperty
+import dev.slne.surf.npc.api.npc.SNpcPropertyType
 import dev.slne.surf.npc.api.rotation.SNpcRotation
 import dev.slne.surf.npc.api.rotation.SNpcRotationType
 import dev.slne.surf.npc.bukkit.createDestroyPacket
@@ -24,11 +25,15 @@ import dev.slne.surf.npc.bukkit.createTeamAddEntityPacket
 import dev.slne.surf.npc.bukkit.createTeamCreatePacket
 import dev.slne.surf.npc.bukkit.createTeleportPacket
 import dev.slne.surf.npc.bukkit.plugin
+import dev.slne.surf.npc.bukkit.property.BukkitSNpcProperty
 import dev.slne.surf.npc.bukkit.rotation.BukkitSNpcRotation
 import dev.slne.surf.npc.bukkit.util.toLocation
 import dev.slne.surf.npc.bukkit.util.toUser
 import dev.slne.surf.npc.core.controller.npcController
+import dev.slne.surf.npc.core.property.propertyTypeRegistry
 import dev.slne.surf.surfapi.bukkit.api.glow.glowingApi
+import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
@@ -41,7 +46,7 @@ import kotlin.math.sqrt
 
 class BukkitSNpc (
     override val id: Int,
-    override val properties: ObjectSet<SNpcProperty>,
+    override val properties: Object2ObjectMap<String, SNpcProperty>,
     override val viewers: ObjectSet<UUID>,
     override val npcUuid: UUID,
     override val nameTagId: Int,
@@ -180,29 +185,41 @@ class BukkitSNpc (
 
     override fun teleport(player: Player) {
         val location = player.location
+        val global = this.getProperty(SNpcProperty.Internal.VISIBILITY_GLOBAL)?.value as? Boolean ?: false
+
+        this.addProperty(BukkitSNpcProperty(
+            SNpcProperty.Internal.LOCATION, BukkitSNpcLocation(location.x, location.y, location.z, location.world.name), propertyTypeRegistry.get(
+                SNpcPropertyType.Types.NPC_LOCATION) ?: error("LOCATION property type not found")
+        ))
+
+        if(global) {
+            forEachPlayer {
+                val user = PacketEvents.getAPI().playerManager.getUser(it)
+                user.sendPacket(createTeleportPacket(id, location))
+                user.sendPacket(createTeleportPacket(nameTagId, location.clone().add(0.0, 2.0, 0.0)))
+            }
+            return
+        }
 
         viewers.forEach {
             val target = Bukkit.getPlayer(it) ?: return@forEach
             val user = PacketEvents.getAPI().playerManager.getUser(target)
 
             user.sendPacket(createTeleportPacket(id, location))
-            user.sendPacket(createTeleportPacket(nameTagId, location))
+            user.sendPacket(createTeleportPacket(nameTagId, location.clone().add(0.0, 2.0, 0.0)))
         }
     }
 
     override fun addProperty(property: SNpcProperty) {
-        if (properties.any { it.key == property.key }) {
-            return
-        }
-        properties.add(property)
+        properties[property.key] = property
     }
 
     override fun getProperty(key: String): SNpcProperty? {
-        return properties.find { it.key == key }
+        return properties.values.find { it.key == key }
     }
 
     override fun removeProperty(key: String) {
-        properties.removeIf { it.key == key }
+        properties.remove(key)
     }
 
     override fun hasProperty(key: String): Boolean {

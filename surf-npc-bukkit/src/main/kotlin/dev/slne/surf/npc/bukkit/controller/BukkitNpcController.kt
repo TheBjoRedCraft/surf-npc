@@ -20,9 +20,11 @@ import dev.slne.surf.npc.bukkit.property.BukkitSNpcProperty
 import dev.slne.surf.npc.core.controller.NpcController
 import dev.slne.surf.npc.core.property.propertyTypeRegistry
 import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
+import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import dev.slne.surf.surfapi.core.api.util.random
 import dev.slne.surf.surfapi.core.api.util.toObjectList
+import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
@@ -58,7 +60,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
 
         val npc = BukkitSNpc (
             id,
-            mutableObjectSetOf<SNpcProperty>(),
+            mutableObject2ObjectMapOf<String, SNpcProperty>(),
             mutableObjectSetOf<UUID>(),
             uuid,
             nameTagId,
@@ -281,7 +283,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
     }
 
     override fun getProperties(npc: SNpc): ObjectSet<SNpcProperty> {
-        return npc.properties
+        return npc.properties.values.toObjectSet()
     }
 
     override fun addProperty(

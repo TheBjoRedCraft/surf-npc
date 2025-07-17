@@ -9,6 +9,7 @@ import dev.slne.surf.surfapi.core.api.util.logger
 import dev.slne.surf.npc.api.npc.*
 import dev.slne.surf.npc.bukkit.property.BukkitSNpcProperty
 import dev.slne.surf.npc.core.property.propertyTypeRegistry
+import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import dev.slne.surf.surfapi.core.api.util.toMutableObjectSet
 
@@ -49,7 +50,7 @@ class BukkitStorageService : StorageService, Services.Fallback {
                     nameTagId = nameTagId,
                     nameTagUuid = nameTagUuid,
                     viewers = viewers,
-                    properties = mutableObjectSetOf<SNpcProperty>(),
+                    properties = mutableObject2ObjectMapOf<String, SNpcProperty>(),
                     internalName = internalName
                 )
 
@@ -95,7 +96,7 @@ class BukkitStorageService : StorageService, Services.Fallback {
 
             config.set("npc.data.viewers", npc.viewers.map(UUID::toString))
 
-            npc.properties.forEach {
+            npc.properties.values.forEach {
                 val path = "npc.data.properties.${it.key}"
                 config.set("$path.value", it.type.encode(it.value))
                 config.set("$path.type", it.type.id)

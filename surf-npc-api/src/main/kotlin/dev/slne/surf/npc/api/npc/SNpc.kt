@@ -1,5 +1,6 @@
 package dev.slne.surf.npc.api.npc
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import org.bukkit.entity.Player
 import java.util.UUID
@@ -13,7 +14,7 @@ interface SNpc {
     val npcUuid: UUID
     val nameTagId: Int
     val nameTagUuid: UUID
-    val properties: ObjectSet<SNpcProperty>
+    val properties: Object2ObjectMap<String, SNpcProperty>
     val viewers: ObjectSet<UUID>
 
     fun spawn(uuid: UUID)
