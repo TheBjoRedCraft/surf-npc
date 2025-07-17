@@ -23,6 +23,7 @@ import dev.slne.surf.npc.bukkit.createPlayerSpawnPacket
 import dev.slne.surf.npc.bukkit.createTeamAddEntityPacket
 import dev.slne.surf.npc.bukkit.createTeamCreatePacket
 import dev.slne.surf.npc.bukkit.plugin
+import dev.slne.surf.npc.bukkit.rotation.BukkitSNpcRotation
 import dev.slne.surf.npc.bukkit.util.toLocation
 import dev.slne.surf.npc.bukkit.util.toUser
 import dev.slne.surf.npc.core.controller.npcController
@@ -76,13 +77,13 @@ class BukkitSNpc (
         )
 
         user.sendPacket(createPlayerInfoPacket(profile, displayName))
-        user.sendPacket(createPlayerSpawnPacket(id, npcUuid, location.toLocation() ?: error("Location is null for NPC: $internalName"), rotationPair.first, rotationPair.second))
+        user.sendPacket(createPlayerSpawnPacket(id, npcUuid, location.toLocation(), rotationPair.first, rotationPair.second))
         user.sendPacket(createEntityMetadataPacket(id))
 
         user.sendPacket(createTeamCreatePacket("npc_$id", displayName))
         user.sendPacket(createTeamAddEntityPacket("npc_$id", internalName))
 
-        user.sendPacket(createNametagSpawnPacket(nameTagId, nameTagUuid, location.toLocation() ?: error("Location is null for NPC: $internalName")))
+        user.sendPacket(createNametagSpawnPacket(nameTagId, nameTagUuid, location.toLocation()))
         user.sendPacket(createNametagMetadataPacket(nameTagId, displayName))
 
         if(glowing) {
@@ -138,13 +139,9 @@ class BukkitSNpc (
         val player = Bukkit.getPlayer(uuid) ?: return
         val user = PacketEvents.getAPI().playerManager.getUser(player)
 
-        println("Refreshing rotation for NPC: $internalName")
-
-        val rotationType = this.getProperty(SNpcProperty.Internal.ROTATION_TYPE)?.value as? SNpcRotationType ?: return
-        val fixedRotation = this.getProperty(SNpcProperty.Internal.ROTATION_FIXED)?.value as? SNpcRotation ?: return
-        val location = this.getProperty(SNpcProperty.Internal.LOCATION)?.value as? SNpcLocation ?: return
-
-        println("Rotation Type: $rotationType")
+        val rotationType = if (this.getProperty(SNpcProperty.Internal.ROTATION_TYPE)?.value as? Boolean ?: error("Rotation type is not set for NPC: $internalName")) SNpcRotationType.PER_PLAYER else SNpcRotationType.FIXED
+        val fixedRotation = this.getProperty(SNpcProperty.Internal.ROTATION_FIXED)?.value as? SNpcRotation ?: BukkitSNpcRotation(0f, 0f)
+        val location = this.getProperty(SNpcProperty.Internal.LOCATION)?.value as? SNpcLocation ?: error("Location is not set for NPC: $internalName")
 
         val yawPitch: Pair<Float, Float> = when (rotationType) {
             SNpcRotationType.FIXED -> {
@@ -167,16 +164,10 @@ class BukkitSNpc (
             }
         }
 
-        println("Calculated Yaw: ${yawPitch.first}, Pitch: ${yawPitch.second}")
-
         val rotationPackets = createRotationPackets(id, yawPitch.first, yawPitch.second)
-
-        println("Sending rotation packets for NPC: $internalName")
 
         user.sendPacket(rotationPackets.first)
         user.sendPacket(rotationPackets.second)
-
-        println("Rotation packets sent for NPC: $internalName")
     }
 
 
