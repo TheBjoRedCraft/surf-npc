@@ -30,9 +30,6 @@ class BukkitMain : SuspendingJavaPlugin() {
         PacketEvents.getAPI().eventManager.registerListener(NpcListener(), PacketListenerPriority.NORMAL)
         Bukkit.getPluginManager().registerEvents(ConnectionListener(), this)
 
-        storageService.initialize()
-        storageService.loadNpcs()
-
         propertyTypeRegistry.register(BooleanPropertyType(SNpcPropertyType.Types.BOOLEAN))
         propertyTypeRegistry.register(ComponentPropertyType(SNpcPropertyType.Types.COMPONENT))
         propertyTypeRegistry.register(FloatPropertyType(SNpcPropertyType.Types.FLOAT))
@@ -44,6 +41,9 @@ class BukkitMain : SuspendingJavaPlugin() {
         propertyTypeRegistry.register(UuidPropertyType(SNpcPropertyType.Types.UUID))
         propertyTypeRegistry.register(NamedTextColorPropertyType(SNpcPropertyType.Types.NAMED_TEXT_COLOR))
         propertyTypeRegistry.register(NpcRotationPropertyType(SNpcPropertyType.Types.NPC_ROTATION))
+
+        storageService.initialize()
+        storageService.loadNpcs()
 
         NpcCommand("npc").register()
     }
