@@ -53,9 +53,9 @@ fun skinDataDefault() : SNpcSkinData {
     )
 }
 
-fun SNpcLocation.toLocation(): Location? {
+fun SNpcLocation.toLocation(): Location {
     return Location(
-        Bukkit.getWorld(world) ?: return null,
+        Bukkit.getWorld(world) ?: error("World '$world' not found"),
         this.x,
         this.y,
         this.z
