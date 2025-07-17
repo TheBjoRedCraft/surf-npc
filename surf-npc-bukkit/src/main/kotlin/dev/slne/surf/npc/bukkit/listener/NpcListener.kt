@@ -52,7 +52,7 @@ class NpcListener : PacketListener {
                 val packet = WrapperPlayClientInteractEntity(event)
                 val npc = npcController.getNpc(packet.entityId) ?: return
 
-                if(packet.action != WrapperPlayClientInteractEntity.InteractAction.INTERACT) {
+                if(packet.action != WrapperPlayClientInteractEntity.InteractAction.ATTACK) {
                     return
                 }
 
