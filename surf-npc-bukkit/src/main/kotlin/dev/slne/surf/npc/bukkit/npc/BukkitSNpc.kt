@@ -4,15 +4,14 @@ import com.github.retrooper.packetevents.PacketEvents
 import com.github.retrooper.packetevents.protocol.player.TextureProperty
 import com.github.retrooper.packetevents.protocol.player.UserProfile
 import com.github.retrooper.packetevents.util.Vector3d
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams
 
 import dev.slne.surf.npc.api.event.NpcDespawnEvent
 import dev.slne.surf.npc.api.event.NpcSpawnEvent
 import dev.slne.surf.npc.api.npc.SNpc
+import dev.slne.surf.npc.api.npc.SNpcLocation
 import dev.slne.surf.npc.api.npc.SNpcProperty
 import dev.slne.surf.npc.api.rotation.SNpcRotation
 import dev.slne.surf.npc.api.rotation.SNpcRotationType
-import dev.slne.surf.npc.api.surfNpcApi
 import dev.slne.surf.npc.bukkit.createDestroyPacket
 import dev.slne.surf.npc.bukkit.createEntityMetadataPacket
 import dev.slne.surf.npc.bukkit.createNametagMetadataPacket
@@ -24,15 +23,14 @@ import dev.slne.surf.npc.bukkit.createSpawnEntityPacket
 import dev.slne.surf.npc.bukkit.createTeamAddEntityPacket
 import dev.slne.surf.npc.bukkit.createTeamCreatePacket
 import dev.slne.surf.npc.bukkit.plugin
+import dev.slne.surf.npc.bukkit.util.toLocation
 import dev.slne.surf.npc.bukkit.util.toUser
 import dev.slne.surf.npc.core.controller.npcController
 import dev.slne.surf.surfapi.bukkit.api.glow.glowingApi
-import dev.slne.surf.surfapi.bukkit.api.surfBukkitApi
 
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
 import java.util.UUID
 import kotlin.math.atan2
@@ -61,7 +59,7 @@ class BukkitSNpc (
         val skinSignature = this.getProperty(SNpcProperty.Internal.SKIN_SIGNATURE)?.value as? String ?: return
 
         val rotation = this.getProperty(SNpcProperty.Internal.ROTATION_FIXED)?.value as? SNpcRotation ?: return
-        val location = this.getProperty(SNpcProperty.Internal.LOCATION)?.value as? org.bukkit.Location ?: return
+        val location = this.getProperty(SNpcProperty.Internal.LOCATION)?.value as? SNpcLocation ?: return
 
         val glowing = this.getProperty("glowing")?.value as? Boolean ?: false
         val glowingColor = this.getProperty("glowing_color")?.value as? NamedTextColor ?: NamedTextColor.WHITE
@@ -78,13 +76,13 @@ class BukkitSNpc (
         )
 
         user.sendPacket(createPlayerInfoPacket(profile, displayName))
-        user.sendPacket(createSpawnEntityPacket(id, npcUuid, location, rotationPair.first, rotationPair.second))
+        user.sendPacket(createSpawnEntityPacket(id, npcUuid, location.toLocation() ?: error("Location is null for NPC: $internalName"), rotationPair.first, rotationPair.second))
         user.sendPacket(createEntityMetadataPacket(id))
 
         user.sendPacket(createTeamCreatePacket("npc_$id", displayName))
         user.sendPacket(createTeamAddEntityPacket("npc_$id", internalName))
 
-        user.sendPacket(createNametagSpawnPacket(id, npcUuid, location))
+        user.sendPacket(createNametagSpawnPacket(id, npcUuid, location.toLocation() ?: error("Location is null for NPC: $internalName")))
         user.sendPacket(createNametagMetadataPacket(id, displayName))
 
         if(glowing) {
