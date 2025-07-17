@@ -19,7 +19,7 @@ import dev.slne.surf.npc.bukkit.createNametagSpawnPacket
 import dev.slne.surf.npc.bukkit.createPlayerInfoPacket
 import dev.slne.surf.npc.bukkit.createPlayerInfoRemovePacket
 import dev.slne.surf.npc.bukkit.createRotationPackets
-import dev.slne.surf.npc.bukkit.createSpawnEntityPacket
+import dev.slne.surf.npc.bukkit.createPlayerSpawnPacket
 import dev.slne.surf.npc.bukkit.createTeamAddEntityPacket
 import dev.slne.surf.npc.bukkit.createTeamCreatePacket
 import dev.slne.surf.npc.bukkit.plugin
@@ -76,14 +76,14 @@ class BukkitSNpc (
         )
 
         user.sendPacket(createPlayerInfoPacket(profile, displayName))
-        user.sendPacket(createSpawnEntityPacket(id, npcUuid, location.toLocation() ?: error("Location is null for NPC: $internalName"), rotationPair.first, rotationPair.second))
+        user.sendPacket(createPlayerSpawnPacket(id, npcUuid, location.toLocation() ?: error("Location is null for NPC: $internalName"), rotationPair.first, rotationPair.second))
         user.sendPacket(createEntityMetadataPacket(id))
 
         user.sendPacket(createTeamCreatePacket("npc_$id", displayName))
         user.sendPacket(createTeamAddEntityPacket("npc_$id", internalName))
 
-        user.sendPacket(createNametagSpawnPacket(id, npcUuid, location.toLocation() ?: error("Location is null for NPC: $internalName")))
-        user.sendPacket(createNametagMetadataPacket(id, displayName))
+        user.sendPacket(createNametagSpawnPacket(nameTagId, nameTagUuid, location.toLocation() ?: error("Location is null for NPC: $internalName")))
+        user.sendPacket(createNametagMetadataPacket(nameTagId, displayName))
 
         if(glowing) {
             glowingApi.makeGlowing(id, "npc_$id", player, glowingColor)

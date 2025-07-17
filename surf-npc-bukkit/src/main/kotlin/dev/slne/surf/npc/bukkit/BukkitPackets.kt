@@ -4,7 +4,6 @@ import com.github.retrooper.packetevents.protocol.entity.data.EntityData
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes
 import com.github.retrooper.packetevents.protocol.player.GameMode
-import com.github.retrooper.packetevents.protocol.player.TextureProperty
 import com.github.retrooper.packetevents.protocol.player.UserProfile
 import com.github.retrooper.packetevents.protocol.world.Location
 import com.github.retrooper.packetevents.util.Vector3d
@@ -39,7 +38,7 @@ fun createEntityMetadataPacket(npcEntityId: Int): WrapperPlayServerEntityMetadat
     )
 }
 
-fun createSpawnEntityPacket(
+fun createPlayerSpawnPacket(
     entityId: Int,
     uuid: UUID,
     location: BukkitLocation,
