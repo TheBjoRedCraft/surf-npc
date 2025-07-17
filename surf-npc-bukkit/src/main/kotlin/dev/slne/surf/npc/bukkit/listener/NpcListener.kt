@@ -12,7 +12,6 @@ import dev.slne.surf.npc.bukkit.plugin
 import dev.slne.surf.npc.bukkit.util.toLocation
 import dev.slne.surf.npc.core.controller.npcController
 import org.bukkit.Bukkit
-import org.bukkit.Location
 import org.bukkit.entity.Player
 
 class NpcListener : PacketListener {

@@ -14,7 +14,6 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.clickRunsCommand
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
-import org.bukkit.Location
 
 class NpcInfoCommand(commandName: String) : CommandAPICommand(commandName) {
     init {

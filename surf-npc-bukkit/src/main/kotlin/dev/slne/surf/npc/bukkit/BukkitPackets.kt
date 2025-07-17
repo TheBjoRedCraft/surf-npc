@@ -5,14 +5,13 @@ import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes
 import com.github.retrooper.packetevents.protocol.player.GameMode
 import com.github.retrooper.packetevents.protocol.player.UserProfile
-import com.github.retrooper.packetevents.protocol.world.Location
 import com.github.retrooper.packetevents.util.Vector3d
 import com.github.retrooper.packetevents.wrapper.play.server.*
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import org.bukkit.Location
 import java.util.UUID
-import org.bukkit.Location as BukkitLocation
 
 fun createPlayerInfoPacket(profile: UserProfile, displayName: Component, listed: Boolean = false): WrapperPlayServerPlayerInfoUpdate {
     return WrapperPlayServerPlayerInfoUpdate(
@@ -41,7 +40,7 @@ fun createEntityMetadataPacket(npcEntityId: Int): WrapperPlayServerEntityMetadat
 fun createPlayerSpawnPacket(
     entityId: Int,
     uuid: UUID,
-    location: BukkitLocation,
+    location: Location,
     yaw: Float,
     pitch: Float
 ): WrapperPlayServerSpawnEntity {
@@ -49,7 +48,7 @@ fun createPlayerSpawnPacket(
         entityId,
         uuid,
         EntityTypes.PLAYER,
-        Location(Vector3d(location.x, location.y, location.z), yaw, pitch),
+        com.github.retrooper.packetevents.protocol.world.Location(Vector3d(location.x, location.y, location.z), yaw, pitch),
         yaw,
         0,
         null
@@ -59,13 +58,13 @@ fun createPlayerSpawnPacket(
 fun createNametagSpawnPacket(
     entityId: Int,
     uuid: UUID,
-    location: BukkitLocation
+    location: Location
 ): WrapperPlayServerSpawnEntity {
     return WrapperPlayServerSpawnEntity(
         entityId,
         uuid,
         EntityTypes.TEXT_DISPLAY,
-        Location(Vector3d(location.x, location.y + 2, location.z), 0f, 0f),
+        com.github.retrooper.packetevents.protocol.world.Location(Vector3d(location.x, location.y + 2, location.z), 0f, 0f),
         0f,
         0,
         null

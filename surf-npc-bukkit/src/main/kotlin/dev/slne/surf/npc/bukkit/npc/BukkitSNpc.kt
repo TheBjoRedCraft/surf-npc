@@ -140,7 +140,7 @@ class BukkitSNpc (
 
         val rotationType = this.getProperty(SNpcProperty.Internal.ROTATION_TYPE)?.value as? SNpcRotationType ?: return
         val fixedRotation = this.getProperty(SNpcProperty.Internal.ROTATION_FIXED)?.value as? SNpcRotation ?: return
-        val location = this.getProperty(SNpcProperty.Internal.LOCATION)?.value as? org.bukkit.Location ?: return
+        val location = this.getProperty(SNpcProperty.Internal.LOCATION)?.value as? SNpcLocation ?: return
 
         val yawPitch: Pair<Float, Float> = when (rotationType) {
             SNpcRotationType.FIXED -> {
