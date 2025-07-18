@@ -23,8 +23,7 @@ class NpcTeleportToCommand(commandName: String) : CommandAPICommand(commandName)
             val npc: Npc by args
             val target: Player? by args
 
-            val location = npc.getProperty(NpcProperty.Internal.LOCATION)?.value as? NpcLocation
-                ?: return@playerExecutor run {
+            val location = npc.getPropertyValue(NpcProperty.Internal.LOCATION, NpcLocation::class.java) ?: return@playerExecutor run {
                     player.sendText {
                         appendPrefix()
                         error("Der NPC hat keine gültige Position.")

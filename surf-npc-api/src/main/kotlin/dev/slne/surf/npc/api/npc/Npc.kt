@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import org.bukkit.entity.Player
 import java.util.UUID
+import kotlin.reflect.KClass
 
 /**
  * Represents a non-player character (NPC) in the game.
@@ -41,6 +42,7 @@ interface Npc {
      * @return The value of the property.
      */
     fun getProperty(key: String): NpcProperty?
+    fun <T : Any> getPropertyValue(key: String, clazz: Class<T>): T?
 
     /**
      * Removes a property from the NPC.

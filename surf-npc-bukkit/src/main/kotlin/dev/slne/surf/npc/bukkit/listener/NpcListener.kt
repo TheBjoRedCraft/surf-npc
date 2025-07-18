@@ -21,7 +21,7 @@ class NpcListener : PacketListener {
         when(event.packetType) {
             PacketType.Play.Client.PLAYER_POSITION_AND_ROTATION -> {
                 for (npc in npcController.getNpcs()) {
-                    val npcLoc = npc.getProperty(NpcProperty.Internal.LOCATION)?.value as? NpcLocation ?: continue
+                    val npcLoc = npc.getPropertyValue(NpcProperty.Internal.LOCATION, NpcLocation::class.java) ?: continue
                     val playerLoc = player.location
 
                     if (playerLoc.distanceSquared(npcLoc.toLocation()) > 20 * 20) {
@@ -33,7 +33,7 @@ class NpcListener : PacketListener {
             }
             PacketType.Play.Client.PLAYER_POSITION -> {
                 for (npc in npcController.getNpcs()) {
-                    val npcLoc = npc.getProperty(NpcProperty.Internal.LOCATION)?.value as? NpcLocation ?: continue
+                    val npcLoc = npc.getPropertyValue(NpcProperty.Internal.LOCATION, NpcLocation::class.java) ?: continue
                     val playerLoc = player.location
 
                     if (playerLoc.distanceSquared(npcLoc.toLocation()) > 1 * 1) {

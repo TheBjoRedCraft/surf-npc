@@ -123,7 +123,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
             return NpcDeletionResult.FAILED_NOT_FOUND
         }
 
-        val global = npc.getProperty(NpcProperty.Internal.VISIBILITY_GLOBAL)?.value as? Boolean ?: false
+        val global = npc.getPropertyValue(NpcProperty.Internal.VISIBILITY_GLOBAL, Boolean::class.java) ?: false
 
         if(global) {
             forEachPlayer { player ->
@@ -261,7 +261,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
         val count = npcs.size
 
         npcs.forEach {
-            val global = it.getProperty(NpcProperty.Internal.VISIBILITY_GLOBAL)?.value as? Boolean ?: false
+            val global = it.getPropertyValue(NpcProperty.Internal.VISIBILITY_GLOBAL, Boolean::class.java) ?: false
             if(global) {
                 forEachPlayer { player ->
                     it.despawn(player.uniqueId)

@@ -44,6 +44,8 @@ import org.bukkit.entity.Player
 import java.util.UUID
 import kotlin.math.atan2
 import kotlin.math.sqrt
+import kotlin.reflect.KClass
+import kotlin.reflect.cast
 
 class BukkitNpc (
     override val id: Int,
@@ -61,17 +63,17 @@ class BukkitNpc (
         val player = Bukkit.getPlayer(uuid) ?: return
         val user = playerManager.getUser(player)
 
-        val displayName = this.getProperty(NpcProperty.Internal.DISPLAYNAME)?.value as? Component ?: return
+        val displayName = this.getPropertyValue(NpcProperty.Internal.DISPLAYNAME, Component::class.java) ?: return
         val profile = UserProfile(npcUuid, internalName)
 
-        val skinValue = this.getProperty(NpcProperty.Internal.SKIN_TEXTURE)?.value as? String ?: return
-        val skinSignature = this.getProperty(NpcProperty.Internal.SKIN_SIGNATURE)?.value as? String ?: return
+        val skinValue = this.getPropertyValue(NpcProperty.Internal.SKIN_TEXTURE, String::class.java) ?: return
+        val skinSignature = this.getPropertyValue(NpcProperty.Internal.SKIN_SIGNATURE, String::class.java) ?: return
 
-        val rotation = this.getProperty(NpcProperty.Internal.ROTATION_FIXED)?.value as? NpcRotation ?: return
-        val location = this.getProperty(NpcProperty.Internal.LOCATION)?.value as? NpcLocation ?: return
+        val rotation = this.getPropertyValue(NpcProperty.Internal.ROTATION_FIXED, NpcRotation::class.java) ?: return
+        val location = this.getPropertyValue(NpcProperty.Internal.LOCATION, NpcLocation::class.java) ?: return
 
-        val glowing = this.getProperty("glowing")?.value as? Boolean ?: false
-        val glowingColor = this.getProperty("glowing_color")?.value as? NamedTextColor ?: NamedTextColor.WHITE
+        val glowing = this.getPropertyValue("glowing", Boolean::class.java) ?: false
+        val glowingColor = this.getPropertyValue("glowing_color", NamedTextColor::class.java) ?: NamedTextColor.WHITE
 
         profile.textureProperties.add(TextureProperty(
             "textures",
@@ -95,7 +97,7 @@ class BukkitNpc (
         user.sendPacket(createNametagMetadataPacket(nameTagId, displayName))
 
         if(glowing) {
-            glowingApi.makeGlowing(id, "npc_$id", player, glowingColor)
+            glowingApi.makeGlowing(id, "npc_$id-glow", player, glowingColor)
         }
 
         Bukkit.getScheduler().runTaskLater(plugin, Runnable {
@@ -126,11 +128,11 @@ class BukkitNpc (
 
     override fun refresh() {
         for (user in viewers) {
-            val displayName = this.getProperty(NpcProperty.Internal.DISPLAYNAME)?.value as? Component ?: return
+            val displayName = this.getPropertyValue(NpcProperty.Internal.DISPLAYNAME, Component::class.java) ?: return
             val profile = UserProfile(npcUuid, internalName)
 
-            val skinValue = this.getProperty(NpcProperty.Internal.SKIN_TEXTURE)?.value as? String ?: return
-            val skinSignature = this.getProperty(NpcProperty.Internal.SKIN_SIGNATURE)?.value as? String ?: return
+            val skinValue = this.getPropertyValue(NpcProperty.Internal.SKIN_TEXTURE, String::class.java) ?: return
+            val skinSignature = this.getPropertyValue(NpcProperty.Internal.SKIN_SIGNATURE, String::class.java) ?: return
 
             profile.textureProperties.clear()
             profile.textureProperties.add(TextureProperty(
@@ -147,9 +149,9 @@ class BukkitNpc (
         val player = Bukkit.getPlayer(uuid) ?: return
         val user = PacketEvents.getAPI().playerManager.getUser(player)
 
-        val rotationType = if (this.getProperty(NpcProperty.Internal.ROTATION_TYPE)?.value as? Boolean ?: error("Rotation type is not set for NPC: $internalName")) NpcRotationType.PER_PLAYER else NpcRotationType.FIXED
-        val fixedRotation = this.getProperty(NpcProperty.Internal.ROTATION_FIXED)?.value as? NpcRotation ?: BukkitNpcRotation(0f, 0f)
-        val location = this.getProperty(NpcProperty.Internal.LOCATION)?.value as? NpcLocation ?: error("Location is not set for NPC: $internalName")
+        val rotationType = if (this.getPropertyValue(NpcProperty.Internal.ROTATION_TYPE, Boolean::class.java) ?: error("Rotation type is not set for NPC: $internalName")) NpcRotationType.PER_PLAYER else NpcRotationType.FIXED
+        val fixedRotation = this.getPropertyValue(NpcProperty.Internal.ROTATION_FIXED, NpcRotation::class.java) ?: BukkitNpcRotation(0f, 0f)
+        val location = this.getPropertyValue(NpcProperty.Internal.LOCATION, NpcLocation::class.java) ?: error("Location is not set for NPC: $internalName")
 
         val yawPitch: Pair<Float, Float> = when (rotationType) {
             NpcRotationType.FIXED -> {
@@ -186,7 +188,7 @@ class BukkitNpc (
 
     override fun teleport(player: Player) {
         val location = player.location
-        val global = this.getProperty(NpcProperty.Internal.VISIBILITY_GLOBAL)?.value as? Boolean ?: false
+        val global = this.getPropertyValue(NpcProperty.Internal.VISIBILITY_GLOBAL, Boolean::class.java) ?: false
 
         this.addProperty(BukkitNpcProperty(
             NpcProperty.Internal.LOCATION,
@@ -234,5 +236,15 @@ class BukkitNpc (
 
     override fun hasProperties(): Boolean {
         return properties.isNotEmpty()
+    }
+
+    override fun <T : Any> getPropertyValue(key: String, clazz: Class<T>): T? {
+        val property = this.getProperty(key)?.value ?: return null
+
+        if (!clazz.isInstance(property)) {
+            return null
+        }
+
+        return clazz.cast(property)
     }
 }
