@@ -127,21 +127,19 @@ class BukkitNpc (
     }
 
     override fun refresh() {
+        val global = this.getPropertyValue(NpcProperty.Internal.VISIBILITY_GLOBAL, Boolean::class.java) ?: false
+
+        if(global) {
+            forEachPlayer { player ->
+                this.despawn(player.uniqueId)
+                this.spawn(player.uniqueId)
+            }
+            return
+        }
+
         for (user in viewers) {
-            val displayName = this.getPropertyValue(NpcProperty.Internal.DISPLAYNAME, Component::class.java) ?: return
-            val profile = UserProfile(npcUuid, internalName)
-
-            val skinValue = this.getPropertyValue(NpcProperty.Internal.SKIN_TEXTURE, String::class.java) ?: return
-            val skinSignature = this.getPropertyValue(NpcProperty.Internal.SKIN_SIGNATURE, String::class.java) ?: return
-
-            profile.textureProperties.clear()
-            profile.textureProperties.add(TextureProperty(
-                "textures",
-                skinValue,
-                skinSignature
-            ))
-
-            user.toUser()?.sendPacket(createPlayerInfoPacket(profile, displayName))
+            this.despawn(user)
+            this.spawn(user)
         }
     }
 
