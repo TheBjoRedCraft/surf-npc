@@ -90,7 +90,7 @@ class BukkitNpc (
         user.sendPacket(createEntityMetadataPacket(id))
 
         user.sendPacket(createTeamCreatePacket("npc_$id", displayName))
-        user.sendPacket(createTeamAddEntityPacket("npc_$id", npcUuid.toString()))
+        user.sendPacket(createTeamAddEntityPacket("npc_$id", internalName))
 
         user.sendPacket(createNametagSpawnPacket(nameTagId, nameTagUuid, location.toLocation()))
         user.sendPacket(createNametagMetadataPacket(nameTagId, displayName))
