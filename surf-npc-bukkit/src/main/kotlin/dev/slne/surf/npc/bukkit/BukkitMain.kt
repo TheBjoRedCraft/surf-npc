@@ -1,5 +1,6 @@
 package dev.slne.surf.npc.bukkit
 
+import com.cjcrafter.foliascheduler.FoliaCompatibility
 import com.github.retrooper.packetevents.PacketEvents
 import com.github.retrooper.packetevents.event.PacketListenerPriority
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
@@ -52,5 +53,7 @@ class BukkitMain : SuspendingJavaPlugin() {
         storageService.saveNpcs()
     }
 }
+
+val scheduler get() = FoliaCompatibility(plugin).serverImplementation
 
 val plugin get() = JavaPlugin.getPlugin(BukkitMain::class.java)

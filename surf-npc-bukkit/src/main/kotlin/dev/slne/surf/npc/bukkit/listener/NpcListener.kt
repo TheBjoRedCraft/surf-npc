@@ -4,14 +4,11 @@ import com.github.retrooper.packetevents.event.PacketListener
 import com.github.retrooper.packetevents.event.PacketReceiveEvent
 import com.github.retrooper.packetevents.protocol.packettype.PacketType
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity
-import com.github.shynixn.mccoroutine.folia.launch
-import com.github.shynixn.mccoroutine.folia.mainDispatcher
 import dev.slne.surf.npc.api.event.NpcCollisionEvent
 import dev.slne.surf.npc.api.event.NpcInteractEvent
-import dev.slne.surf.npc.api.event.NpcSpawnEvent
 import dev.slne.surf.npc.api.npc.location.NpcLocation
 import dev.slne.surf.npc.api.npc.property.NpcProperty
-import dev.slne.surf.npc.bukkit.plugin
+import dev.slne.surf.npc.bukkit.scheduler
 import dev.slne.surf.npc.bukkit.util.toLocation
 import dev.slne.surf.npc.core.controller.npcController
 import org.bukkit.Bukkit
@@ -43,12 +40,12 @@ class NpcListener : PacketListener {
                         continue
                     }
 
-                    plugin.launch(plugin.mainDispatcher) {
-                        Bukkit.getPluginManager().callEvent(NpcCollisionEvent (
+                    scheduler.global().run(Runnable {
+                        Bukkit.getPluginManager().callEvent(NpcCollisionEvent(
                             npc,
                             player
                         ))
-                    }
+                    })
                 }
             }
             PacketType.Play.Client.INTERACT_ENTITY -> {
@@ -59,12 +56,12 @@ class NpcListener : PacketListener {
                     return
                 }
 
-                plugin.launch(plugin.mainDispatcher) {
-                    Bukkit.getPluginManager().callEvent(NpcInteractEvent (
+                scheduler.global().run(Runnable {
+                    Bukkit.getPluginManager().callEvent(NpcInteractEvent(
                         npc,
                         player
                     ))
-                }
+                })
             }
         }
     }

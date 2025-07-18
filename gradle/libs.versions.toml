@@ -1,7 +1,0 @@
-[versions]
-surf-database = "2.0.4-SNAPSHOT"
-packetevents-spigot = "2.8.0"
-
-[libraries]
-surf-database = { module = "dev.slne.surf:surf-database", version.ref = "surf-database" }
-packetevents-spigot = { module = "com.github.retrooper:packetevents-spigot", version.ref = "packetevents-spigot" }

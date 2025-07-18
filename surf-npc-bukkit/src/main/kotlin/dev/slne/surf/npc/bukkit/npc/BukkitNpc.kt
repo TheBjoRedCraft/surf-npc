@@ -4,8 +4,6 @@ import com.github.retrooper.packetevents.PacketEvents
 import com.github.retrooper.packetevents.protocol.player.TextureProperty
 import com.github.retrooper.packetevents.protocol.player.UserProfile
 import com.github.retrooper.packetevents.util.Vector3d
-import com.github.shynixn.mccoroutine.folia.launch
-import com.github.shynixn.mccoroutine.folia.mainDispatcher
 
 import dev.slne.surf.npc.api.event.NpcDespawnEvent
 import dev.slne.surf.npc.api.event.NpcSpawnEvent
@@ -27,9 +25,9 @@ import dev.slne.surf.npc.bukkit.createTeamAddEntityPacket
 import dev.slne.surf.npc.bukkit.createTeamCreatePacket
 import dev.slne.surf.npc.bukkit.createTeleportPacket
 import dev.slne.surf.npc.bukkit.npc.location.BukkitNpcLocation
-import dev.slne.surf.npc.bukkit.plugin
 import dev.slne.surf.npc.bukkit.property.BukkitNpcProperty
 import dev.slne.surf.npc.bukkit.rotation.BukkitNpcRotation
+import dev.slne.surf.npc.bukkit.scheduler
 import dev.slne.surf.npc.bukkit.util.toLocation
 import dev.slne.surf.npc.core.controller.npcController
 import dev.slne.surf.npc.core.property.propertyTypeRegistry
@@ -101,12 +99,12 @@ class BukkitNpc (
             glowingApi.makeGlowing(id, "npc_$id-glow", player, glowingColor)
         }
 
-        plugin.launch(plugin.mainDispatcher) {
+        scheduler.global().run (Runnable {
             Bukkit.getPluginManager().callEvent(NpcSpawnEvent (
                 this@BukkitNpc,
                 player
             ))
-        }
+        })
     }
 
     override fun despawn(uuid: UUID) {
@@ -119,12 +117,12 @@ class BukkitNpc (
         user.sendPacket(createDestroyPacket(this.id, nameTagId))
         user.sendPacket(createPlayerInfoRemovePacket(npcUuid))
 
-        plugin.launch(plugin.mainDispatcher) {
+        scheduler.global().run(Runnable {
             Bukkit.getPluginManager().callEvent(NpcDespawnEvent (
                 this@BukkitNpc,
                 player
             ))
-        }
+        })
     }
 
     override fun refresh() {

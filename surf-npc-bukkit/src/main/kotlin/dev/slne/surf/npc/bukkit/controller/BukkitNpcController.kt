@@ -1,7 +1,5 @@
 package dev.slne.surf.npc.bukkit.controller
 
-import com.github.shynixn.mccoroutine.folia.launch
-import com.github.shynixn.mccoroutine.folia.mainDispatcher
 import com.google.auto.service.AutoService
 import dev.slne.surf.npc.api.event.NpcCreateEvent
 import dev.slne.surf.npc.api.event.NpcDeleteEvent
@@ -17,8 +15,8 @@ import dev.slne.surf.npc.api.npc.rotation.NpcRotation
 import dev.slne.surf.npc.api.npc.rotation.NpcRotationType
 import dev.slne.surf.npc.api.npc.skin.NpcSkin
 import dev.slne.surf.npc.bukkit.npc.BukkitNpc
-import dev.slne.surf.npc.bukkit.plugin
 import dev.slne.surf.npc.bukkit.property.BukkitNpcProperty
+import dev.slne.surf.npc.bukkit.scheduler
 import dev.slne.surf.npc.core.controller.NpcController
 import dev.slne.surf.npc.core.property.propertyTypeRegistry
 import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
@@ -29,7 +27,6 @@ import dev.slne.surf.surfapi.core.api.util.toObjectList
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
-import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.util.Services
 import org.bukkit.Bukkit
@@ -112,11 +109,11 @@ class BukkitNpcController : NpcController, Services.Fallback {
             }
         }
 
-        plugin.launch(plugin.mainDispatcher) {
+        scheduler.global().run(Runnable {
             Bukkit.getPluginManager().callEvent(NpcCreateEvent (
                 npc
             ))
-        }
+        })
 
         return NpcCreationResult.SUCCESS
     }
@@ -141,11 +138,11 @@ class BukkitNpcController : NpcController, Services.Fallback {
         npc.clearProperties()
         npc.viewers.clear()
 
-        plugin.launch(plugin.mainDispatcher) {
-            Bukkit.getPluginManager().callEvent(NpcDeleteEvent (
+        scheduler.global().run(Runnable {
+            Bukkit.getPluginManager().callEvent(NpcDeleteEvent(
                 npc
             ))
-        }
+        })
 
         return NpcDeletionResult.SUCCESS
     }

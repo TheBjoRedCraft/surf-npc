@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     api(project(":surf-npc-core"))
+    implementation("com.cjcrafter:foliascheduler:0.7.0")
 }
 
 surfPaperPluginApi {
@@ -12,4 +13,8 @@ surfPaperPluginApi {
     foliaSupported(true)
 
     generateLibraryLoader(false)
+}
+
+tasks.shadowJar {
+    relocate("com.cjcrafter.foliascheduler", "dev.slne.surf.npc.bukkit.libs")
 }
