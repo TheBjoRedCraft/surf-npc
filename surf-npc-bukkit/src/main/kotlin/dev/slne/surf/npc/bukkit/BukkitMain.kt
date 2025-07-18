@@ -13,7 +13,7 @@ import dev.slne.surf.npc.bukkit.property.impl.ComponentPropertyType
 import dev.slne.surf.npc.bukkit.property.impl.DoublePropertyType
 import dev.slne.surf.npc.bukkit.property.impl.FloatPropertyType
 import dev.slne.surf.npc.bukkit.property.impl.IntPropertyType
-import dev.slne.surf.npc.bukkit.property.impl.NpcLocationPropertyType
+import dev.slne.surf.npc.bukkit.npc.property.impl.NpcLocationPropertyType
 import dev.slne.surf.npc.bukkit.property.impl.LongPropertyType
 import dev.slne.surf.npc.bukkit.property.impl.NamedTextColorPropertyType
 import dev.slne.surf.npc.bukkit.property.impl.NpcRotationPropertyType
