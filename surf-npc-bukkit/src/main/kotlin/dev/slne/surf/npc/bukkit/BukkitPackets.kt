@@ -107,12 +107,12 @@ fun createTeamCreatePacket(
 
 private val nullInfo: WrapperPlayServerTeams.ScoreBoardTeamInfo? = null
 
-fun createTeamAddEntityPacket(teamName: String, entityName: String): WrapperPlayServerTeams {
+fun createTeamAddEntityPacket(teamName: String, entityUuid: String): WrapperPlayServerTeams {
     return WrapperPlayServerTeams(
         teamName,
         WrapperPlayServerTeams.TeamMode.ADD_ENTITIES,
         nullInfo,
-        entityName
+        entityUuid
     )
 }
 
