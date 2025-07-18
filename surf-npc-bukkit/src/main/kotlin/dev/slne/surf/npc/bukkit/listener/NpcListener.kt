@@ -4,8 +4,11 @@ import com.github.retrooper.packetevents.event.PacketListener
 import com.github.retrooper.packetevents.event.PacketReceiveEvent
 import com.github.retrooper.packetevents.protocol.packettype.PacketType
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity
+import com.github.shynixn.mccoroutine.folia.launch
+import com.github.shynixn.mccoroutine.folia.mainDispatcher
 import dev.slne.surf.npc.api.event.NpcCollisionEvent
 import dev.slne.surf.npc.api.event.NpcInteractEvent
+import dev.slne.surf.npc.api.event.NpcSpawnEvent
 import dev.slne.surf.npc.api.npc.location.NpcLocation
 import dev.slne.surf.npc.api.npc.property.NpcProperty
 import dev.slne.surf.npc.bukkit.plugin
@@ -40,12 +43,12 @@ class NpcListener : PacketListener {
                         continue
                     }
 
-                    Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+                    plugin.launch(plugin.mainDispatcher) {
                         Bukkit.getPluginManager().callEvent(NpcCollisionEvent (
                             npc,
                             player
                         ))
-                    }, 1L)
+                    }
                 }
             }
             PacketType.Play.Client.INTERACT_ENTITY -> {
@@ -56,12 +59,12 @@ class NpcListener : PacketListener {
                     return
                 }
 
-                Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+                plugin.launch(plugin.mainDispatcher) {
                     Bukkit.getPluginManager().callEvent(NpcInteractEvent (
                         npc,
                         player
                     ))
-                }, 1L)
+                }
             }
         }
     }

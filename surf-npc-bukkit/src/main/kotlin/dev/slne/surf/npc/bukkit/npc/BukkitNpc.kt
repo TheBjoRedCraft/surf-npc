@@ -4,6 +4,8 @@ import com.github.retrooper.packetevents.PacketEvents
 import com.github.retrooper.packetevents.protocol.player.TextureProperty
 import com.github.retrooper.packetevents.protocol.player.UserProfile
 import com.github.retrooper.packetevents.util.Vector3d
+import com.github.shynixn.mccoroutine.folia.launch
+import com.github.shynixn.mccoroutine.folia.mainDispatcher
 
 import dev.slne.surf.npc.api.event.NpcDespawnEvent
 import dev.slne.surf.npc.api.event.NpcSpawnEvent
@@ -99,12 +101,12 @@ class BukkitNpc (
             glowingApi.makeGlowing(id, "npc_$id-glow", player, glowingColor)
         }
 
-        Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+        plugin.launch(plugin.mainDispatcher) {
             Bukkit.getPluginManager().callEvent(NpcSpawnEvent (
-                this,
+                this@BukkitNpc,
                 player
             ))
-        }, 1L)
+        }
     }
 
     override fun despawn(uuid: UUID) {
@@ -117,12 +119,12 @@ class BukkitNpc (
         user.sendPacket(createDestroyPacket(this.id, nameTagId))
         user.sendPacket(createPlayerInfoRemovePacket(npcUuid))
 
-        Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+        plugin.launch(plugin.mainDispatcher) {
             Bukkit.getPluginManager().callEvent(NpcDespawnEvent (
-                this,
+                this@BukkitNpc,
                 player
             ))
-        }, 1L)
+        }
     }
 
     override fun refresh() {

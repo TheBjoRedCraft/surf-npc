@@ -1,5 +1,7 @@
 package dev.slne.surf.npc.bukkit.controller
 
+import com.github.shynixn.mccoroutine.folia.launch
+import com.github.shynixn.mccoroutine.folia.mainDispatcher
 import com.google.auto.service.AutoService
 import dev.slne.surf.npc.api.event.NpcCreateEvent
 import dev.slne.surf.npc.api.event.NpcDeleteEvent
@@ -27,6 +29,7 @@ import dev.slne.surf.surfapi.core.api.util.toObjectList
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
+import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.util.Services
 import org.bukkit.Bukkit
@@ -109,11 +112,11 @@ class BukkitNpcController : NpcController, Services.Fallback {
             }
         }
 
-        Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+        plugin.launch(plugin.mainDispatcher) {
             Bukkit.getPluginManager().callEvent(NpcCreateEvent (
                 npc
             ))
-        }, 1L)
+        }
 
         return NpcCreationResult.SUCCESS
     }
@@ -138,11 +141,11 @@ class BukkitNpcController : NpcController, Services.Fallback {
         npc.clearProperties()
         npc.viewers.clear()
 
-        Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+        plugin.launch(plugin.mainDispatcher) {
             Bukkit.getPluginManager().callEvent(NpcDeleteEvent (
                 npc
             ))
-        }, 1L)
+        }
 
         return NpcDeletionResult.SUCCESS
     }
