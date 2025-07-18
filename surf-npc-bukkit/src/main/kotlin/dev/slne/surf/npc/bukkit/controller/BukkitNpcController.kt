@@ -1,5 +1,9 @@
 package dev.slne.surf.npc.bukkit.controller
 
+import com.github.shynixn.mccoroutine.folia.entityDispatcher
+import com.github.shynixn.mccoroutine.folia.globalRegionDispatcher
+import com.github.shynixn.mccoroutine.folia.launch
+import com.github.shynixn.mccoroutine.folia.mainDispatcher
 import com.google.auto.service.AutoService
 import dev.slne.surf.npc.api.event.NpcCreateEvent
 import dev.slne.surf.npc.api.event.NpcDeleteEvent
@@ -15,8 +19,8 @@ import dev.slne.surf.npc.api.npc.rotation.NpcRotation
 import dev.slne.surf.npc.api.npc.rotation.NpcRotationType
 import dev.slne.surf.npc.api.npc.skin.NpcSkin
 import dev.slne.surf.npc.bukkit.npc.BukkitNpc
+import dev.slne.surf.npc.bukkit.plugin
 import dev.slne.surf.npc.bukkit.property.BukkitNpcProperty
-import dev.slne.surf.npc.bukkit.scheduler
 import dev.slne.surf.npc.core.controller.NpcController
 import dev.slne.surf.npc.core.property.propertyTypeRegistry
 import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
@@ -109,11 +113,9 @@ class BukkitNpcController : NpcController, Services.Fallback {
             }
         }
 
-        scheduler.global().run(Runnable {
-            Bukkit.getPluginManager().callEvent(NpcCreateEvent (
-                npc
-            ))
-        })
+        plugin.launch(plugin.globalRegionDispatcher) {
+            NpcCreateEvent(npc).callEvent()
+        }
 
         return NpcCreationResult.SUCCESS
     }
@@ -138,11 +140,9 @@ class BukkitNpcController : NpcController, Services.Fallback {
         npc.clearProperties()
         npc.viewers.clear()
 
-        scheduler.global().run(Runnable {
-            Bukkit.getPluginManager().callEvent(NpcDeleteEvent(
-                npc
-            ))
-        })
+        plugin.launch(plugin.globalRegionDispatcher) {
+            NpcDeleteEvent(npc).callEvent()
+        }
 
         return NpcDeletionResult.SUCCESS
     }
