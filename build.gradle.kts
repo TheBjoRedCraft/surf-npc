@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 buildscript {
     repositories {
         gradlePluginPortal()
@@ -11,4 +13,8 @@ buildscript {
 allprojects {
     group = "dev.slne"
     version = "1.0-SNAPSHOT"
+
+    tasks.withType<ShadowJar> {
+        archiveClassifier = ""
+    }
 }
