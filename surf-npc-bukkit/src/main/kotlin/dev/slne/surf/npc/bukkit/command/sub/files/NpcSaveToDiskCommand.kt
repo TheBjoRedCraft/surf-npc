@@ -11,7 +11,6 @@ class NpcSaveToDiskCommand(commandName: String) : CommandAPICommand(commandName)
     init {
         withPermission(PermissionRegistry.COMMAND_NPC_SAVE_TO_DISK)
         playerExecutor { player, args ->
-
             val amount = storageService.saveToDisk()
 
             player.sendText {

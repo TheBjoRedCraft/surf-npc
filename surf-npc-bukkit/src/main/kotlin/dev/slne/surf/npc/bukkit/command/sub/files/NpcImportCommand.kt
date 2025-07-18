@@ -15,7 +15,6 @@ class NpcImportCommand(commandName: String) : CommandAPICommand(commandName) {
         stringArgument("fileName")
         playerExecutor { player, args ->
             val fileName: String by args
-
             val result = storageService.import(fileName)
 
             player.sendText {

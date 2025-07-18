@@ -11,7 +11,6 @@ class NpcImportAllCommand(commandName: String) : CommandAPICommand(commandName) 
     init {
         withPermission(PermissionRegistry.COMMAND_NPC_IMPORT_ALL)
         playerExecutor { player, args ->
-
             val amount = storageService.importAll()
 
             player.sendText {

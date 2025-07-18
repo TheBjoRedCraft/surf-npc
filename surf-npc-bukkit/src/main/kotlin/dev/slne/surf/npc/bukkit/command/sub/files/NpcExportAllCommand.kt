@@ -11,7 +11,6 @@ class NpcExportAllCommand(commandName: String) : CommandAPICommand(commandName) 
     init {
         withPermission(PermissionRegistry.COMMAND_NPC_EXPORT_ALL)
         playerExecutor { player, args ->
-
             val amount = storageService.exportAll()
 
             player.sendText {

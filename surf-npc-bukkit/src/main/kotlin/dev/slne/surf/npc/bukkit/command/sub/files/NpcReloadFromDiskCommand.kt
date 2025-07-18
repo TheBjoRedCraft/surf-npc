@@ -11,7 +11,6 @@ class NpcReloadFromDiskCommand(commandName: String) : CommandAPICommand(commandN
     init {
         withPermission(PermissionRegistry.COMMAND_NPC_RELOAD_FROM_DISK)
         playerExecutor { player, args ->
-
             val amount = storageService.reloadFromDisk()
 
             player.sendText {
