@@ -90,7 +90,7 @@ class BukkitNpc (
         user.sendPacket(createEntityMetadataPacket(id))
 
         user.sendPacket(createTeamCreatePacket("npc_$id", displayName))
-        user.sendPacket(createTeamAddEntityPacket("npc_$id", internalName))
+        user.sendPacket(createTeamAddEntityPacket("npc_$id", npcUuid.toString()))
 
         user.sendPacket(createNametagSpawnPacket(nameTagId, nameTagUuid, location.toLocation()))
         user.sendPacket(createNametagMetadataPacket(nameTagId, displayName))
@@ -236,16 +236,12 @@ class BukkitNpc (
     }
 
     override fun <T : Any> getPropertyValue(key: String, clazz: KClass<T>): T? {
-        println("Checking property: $key of type $clazz for NPC: $internalName")
         val propertyValue = this.getProperty(key)?.value ?: return null
-        println("Property value found: $propertyValue")
 
         if (!clazz.isInstance(propertyValue)) {
-            println("Property value is not of expected type ${clazz}, found: ${propertyValue::class}")
             return null
         }
 
-        println("Property value is of type ${clazz}, returning value.")
         return propertyValue as T
     }
 }
