@@ -22,7 +22,7 @@ class ExampleNpcListener : Listener {
         val npc = event.npc
         val player = event.player
 
-        val displayName = npc.getPropertyValue(NpcProperty.Internal.DISPLAYNAME, Component::class.java) ?: return
+        val displayName = npc.getPropertyValue(NpcProperty.Internal.DISPLAYNAME, Component::class) ?: return
 
         if(npc.hasProperty("example_npc")) {
             player.sendText {
