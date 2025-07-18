@@ -1,6 +1,8 @@
 package dev.slne.surf.npc.bukkit.util
 
-object PermissionRegistry {
+import dev.slne.surf.surfapi.bukkit.api.permission.PermissionRegistry
+
+object PermissionRegistry : PermissionRegistry() {
     const val PERMISSION_PREFIX = "surf.npc"
 
     const val COMMAND_NPC = "$PERMISSION_PREFIX.command"
