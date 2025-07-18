@@ -236,16 +236,16 @@ class BukkitNpc (
     }
 
     override fun <T : Any> getPropertyValue(key: String, clazz: KClass<T>): T? {
-        println("Checking property: $key of type ${clazz.simpleName} for NPC: $internalName")
+        println("Checking property: $key of type $clazz for NPC: $internalName")
         val propertyValue = this.getProperty(key)?.value ?: return null
         println("Property value found: $propertyValue")
 
-        if (!clazz.java.isInstance(propertyValue)) {
-            println("Property value is not of expected type ${clazz.simpleName}, found: ${propertyValue::class.java.simpleName}")
+        if (!clazz.isInstance(propertyValue)) {
+            println("Property value is not of expected type ${clazz}, found: ${propertyValue::class}")
             return null
         }
 
-        println("Property value is of type ${clazz.simpleName}, returning value.")
+        println("Property value is of type ${clazz}, returning value.")
         return propertyValue as T
     }
 }
