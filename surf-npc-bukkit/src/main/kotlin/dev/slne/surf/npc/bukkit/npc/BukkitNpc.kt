@@ -29,7 +29,6 @@ import dev.slne.surf.npc.bukkit.plugin
 import dev.slne.surf.npc.bukkit.property.BukkitNpcProperty
 import dev.slne.surf.npc.bukkit.rotation.BukkitNpcRotation
 import dev.slne.surf.npc.bukkit.util.toLocation
-import dev.slne.surf.npc.bukkit.util.toUser
 import dev.slne.surf.npc.core.controller.npcController
 import dev.slne.surf.npc.core.property.propertyTypeRegistry
 import dev.slne.surf.surfapi.bukkit.api.glow.glowingApi
@@ -45,8 +44,8 @@ import java.util.UUID
 import kotlin.math.atan2
 import kotlin.math.sqrt
 import kotlin.reflect.KClass
-import kotlin.reflect.cast
 
+@Suppress("UNCHECKED_CAST")
 class BukkitNpc (
     override val id: Int,
     override val properties: Object2ObjectMap<String, NpcProperty>,
@@ -63,17 +62,17 @@ class BukkitNpc (
         val player = Bukkit.getPlayer(uuid) ?: return
         val user = playerManager.getUser(player)
 
-        val displayName = this.getPropertyValue(NpcProperty.Internal.DISPLAYNAME, Component::class.java) ?: return
+        val displayName = this.getPropertyValue(NpcProperty.Internal.DISPLAYNAME, Component::class) ?: return
         val profile = UserProfile(npcUuid, internalName)
 
-        val skinValue = this.getPropertyValue(NpcProperty.Internal.SKIN_TEXTURE, String::class.java) ?: return
-        val skinSignature = this.getPropertyValue(NpcProperty.Internal.SKIN_SIGNATURE, String::class.java) ?: return
+        val skinValue = this.getPropertyValue(NpcProperty.Internal.SKIN_TEXTURE, String::class) ?: return
+        val skinSignature = this.getPropertyValue(NpcProperty.Internal.SKIN_SIGNATURE, String::class) ?: return
 
-        val rotation = this.getPropertyValue(NpcProperty.Internal.ROTATION_FIXED, NpcRotation::class.java) ?: return
-        val location = this.getPropertyValue(NpcProperty.Internal.LOCATION, NpcLocation::class.java) ?: return
+        val rotation = this.getPropertyValue(NpcProperty.Internal.ROTATION_FIXED, NpcRotation::class) ?: return
+        val location = this.getPropertyValue(NpcProperty.Internal.LOCATION, NpcLocation::class) ?: return
 
-        val glowing = this.getPropertyValue("glowing", Boolean::class.java) ?: false
-        val glowingColor = this.getPropertyValue("glowing_color", NamedTextColor::class.java) ?: NamedTextColor.WHITE
+        val glowing = this.getPropertyValue("glowing", Boolean::class) ?: false
+        val glowingColor = this.getPropertyValue("glowing_color", NamedTextColor::class) ?: NamedTextColor.WHITE
 
         profile.textureProperties.add(TextureProperty(
             "textures",
@@ -127,7 +126,7 @@ class BukkitNpc (
     }
 
     override fun refresh() {
-        val global = this.getPropertyValue(NpcProperty.Internal.VISIBILITY_GLOBAL, Boolean::class.java) ?: false
+        val global = this.getPropertyValue(NpcProperty.Internal.VISIBILITY_GLOBAL, Boolean::class) ?: false
 
         if(global) {
             forEachPlayer { player ->
@@ -147,9 +146,9 @@ class BukkitNpc (
         val player = Bukkit.getPlayer(uuid) ?: return
         val user = PacketEvents.getAPI().playerManager.getUser(player)
 
-        val rotationType = if (this.getPropertyValue(NpcProperty.Internal.ROTATION_TYPE, Boolean::class.java) ?: error("Rotation type is not set for NPC: $internalName")) NpcRotationType.PER_PLAYER else NpcRotationType.FIXED
-        val fixedRotation = this.getPropertyValue(NpcProperty.Internal.ROTATION_FIXED, NpcRotation::class.java) ?: BukkitNpcRotation(0f, 0f)
-        val location = this.getPropertyValue(NpcProperty.Internal.LOCATION, NpcLocation::class.java) ?: error("Location is not set for NPC: $internalName")
+        val rotationType = if (this.getPropertyValue(NpcProperty.Internal.ROTATION_TYPE, Boolean::class) ?: error("Rotation type is not set for NPC: $internalName")) NpcRotationType.PER_PLAYER else NpcRotationType.FIXED
+        val fixedRotation = this.getPropertyValue(NpcProperty.Internal.ROTATION_FIXED, NpcRotation::class) ?: BukkitNpcRotation(0f, 0f)
+        val location = this.getPropertyValue(NpcProperty.Internal.LOCATION, NpcLocation::class) ?: error("Location is not set for NPC: $internalName")
 
         val yawPitch: Pair<Float, Float> = when (rotationType) {
             NpcRotationType.FIXED -> {
@@ -186,7 +185,7 @@ class BukkitNpc (
 
     override fun teleport(player: Player) {
         val location = player.location
-        val global = this.getPropertyValue(NpcProperty.Internal.VISIBILITY_GLOBAL, Boolean::class.java) ?: false
+        val global = this.getPropertyValue(NpcProperty.Internal.VISIBILITY_GLOBAL, Boolean::class) ?: false
 
         this.addProperty(BukkitNpcProperty(
             NpcProperty.Internal.LOCATION,
@@ -236,13 +235,17 @@ class BukkitNpc (
         return properties.isNotEmpty()
     }
 
-    override fun <T : Any> getPropertyValue(key: String, clazz: Class<T>): T? {
-        val property = this.getProperty(key)?.value ?: return null
+    override fun <T : Any> getPropertyValue(key: String, clazz: KClass<T>): T? {
+        println("Checking property: $key of type ${clazz.simpleName} for NPC: $internalName")
+        val propertyValue = this.getProperty(key)?.value ?: return null
+        println("Property value found: $propertyValue")
 
-        if (!clazz.isInstance(property)) {
+        if (!clazz.java.isInstance(propertyValue)) {
+            println("Property value is not of expected type ${clazz.simpleName}, found: ${propertyValue::class.java.simpleName}")
             return null
         }
 
-        return clazz.cast(property)
+        println("Property value is of type ${clazz.simpleName}, returning value.")
+        return propertyValue as T
     }
 }

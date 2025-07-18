@@ -12,7 +12,7 @@ class ConnectionListener : Listener {
         val player = event.player
 
         npcController.getNpcs()
-            .filter { it.getPropertyValue(NpcProperty.Internal.VISIBILITY_GLOBAL, Boolean::class.java) ?: false }
+            .filter { it.getPropertyValue(NpcProperty.Internal.VISIBILITY_GLOBAL, Boolean::class) ?: false }
             .forEach {
             it.spawn(player.uniqueId)
         }

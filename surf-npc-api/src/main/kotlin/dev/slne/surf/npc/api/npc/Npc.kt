@@ -42,7 +42,7 @@ interface Npc {
      * @return The value of the property.
      */
     fun getProperty(key: String): NpcProperty?
-    fun <T : Any> getPropertyValue(key: String, clazz: Class<T>): T?
+    fun <T : Any> getPropertyValue(key: String, clazz: KClass<T>): T?
 
     /**
      * Removes a property from the NPC.
