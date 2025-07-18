@@ -41,7 +41,7 @@ suspend fun skinDataFromName(name: String): NpcSkin = withContext(Dispatchers.IO
         }
 
         if (!response.status.isSuccess()) {
-            logger().atSevere().log("Fehler beim Abrufen der Skin-Daten von $name: ${response.status.value} - ${response.status.description}")
+            logger().atSevere().log("Error retrieving skin data for $name: ${response.status.value} - ${response.status.description}")
             return@withContext skinDataDefault()
         }
 
