@@ -6,6 +6,7 @@ import dev.slne.surf.npc.bukkit.command.sub.NpcCreateCommand
 import dev.slne.surf.npc.bukkit.command.sub.NpcDeleteCommand
 import dev.slne.surf.npc.bukkit.command.sub.NpcInfoCommand
 import dev.slne.surf.npc.bukkit.command.sub.NpcListCommand
+import dev.slne.surf.npc.bukkit.command.sub.NpcRefreshCommand
 import dev.slne.surf.npc.bukkit.command.sub.NpcTeleportHereCommand
 import dev.slne.surf.npc.bukkit.command.sub.NpcTeleportToCommand
 import dev.slne.surf.npc.bukkit.command.sub.edit.NpcEditCommand
@@ -35,5 +36,6 @@ class NpcCommand(commandName: String) : CommandAPICommand(commandName) {
         subcommand(NpcImportAllCommand("importall"))
         subcommand(NpcReloadFromDiskCommand("loadFromDisk"))
         subcommand(NpcSaveToDiskCommand("saveToDisk"))
+        subcommand(NpcRefreshCommand("refresh"))
     }
 }
