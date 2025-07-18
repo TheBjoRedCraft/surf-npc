@@ -16,11 +16,16 @@ class NpcImportCommand(commandName: String) : CommandAPICommand(commandName) {
         playerExecutor { player, args ->
             val fileName: String by args
 
-            storageService.import(fileName)
+            val result = storageService.import(fileName)
 
             player.sendText {
                 appendPrefix()
-                success("Der Npc aus der Datei '$fileName' wurde erfolgreich importiert.")
+
+                if(result) {
+                    success("Die NPCs aus der Datei '$fileName' wurden erfolgreich importiert.")
+                } else {
+                    error("Fehler beim Importieren der NPCs aus der Datei '$fileName'.")
+                }
             }
         }
     }
