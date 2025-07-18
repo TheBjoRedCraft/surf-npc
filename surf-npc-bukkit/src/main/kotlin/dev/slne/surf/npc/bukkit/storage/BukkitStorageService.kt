@@ -1,6 +1,7 @@
 package dev.slne.surf.npc.bukkit.storage
 
 import com.google.auto.service.AutoService
+import dev.slne.surf.npc.api.npc.Npc
 import dev.slne.surf.npc.bukkit.npc.BukkitNpc
 import dev.slne.surf.npc.bukkit.plugin
 import dev.slne.surf.npc.core.controller.npcController
@@ -29,7 +30,7 @@ class BukkitStorageService : StorageService, Services.Fallback {
         }
     }
 
-    override fun loadNpcs() {
+    override fun loadNpcs(): Int {
         val files = Files.list(npcFolder).filter { it.toString().endsWith(".yml") }.toList()
 
         files.forEach { path ->
@@ -76,9 +77,11 @@ class BukkitStorageService : StorageService, Services.Fallback {
         }
 
         logger().atInfo().log("Successfully loaded ${npcController.getNpcs().size} NPCs from ${files.size} files!")
+
+        return npcController.getNpcs().size
     }
 
-    override fun saveNpcs() {
+    override fun saveNpcs(): Int {
         Files.list(npcFolder)
             .filter { it.toString().endsWith(".yml") }
             .forEach(Files::delete)
@@ -104,6 +107,185 @@ class BukkitStorageService : StorageService, Services.Fallback {
             config.save(file)
         }
 
-        logger().atInfo().log("Successfully saved ${npcController.getNpcs().size} NPCs to separate files!")
+        logger().atInfo().log("Successfully saved ${npcController.getNpcs().size} NPCs to files!")
+        return npcController.getNpcs().size
+    }
+
+    override fun import(fileName: String): Boolean {
+        val file = npcFolder.resolve("$fileName.yml").toFile()
+
+        if (!file.exists()) {
+            logger().atWarning().log("NPC file $fileName does not exist in the NPC folder.")
+            return false
+        }
+
+        val config = YamlConfiguration.loadConfiguration(file)
+        try {
+            val internalName = config.getString("npc.data.internalName") ?: error("Internal name is missing in NPC config file: $fileName.yml")
+
+            if (npcController.getNpc(internalName) != null) {
+                logger().atWarning().log("NPC with internal name '$internalName' already exists. Skipping import.")
+                return false
+            }
+
+            val id = config.getInt("npc.data.id")
+            val uuid = UUID.fromString(config.getString("npc.data.uuid"))
+            val nameTagId = config.getInt("npc.data.nameTagId")
+            val nameTagUuid = UUID.fromString(config.getString("npc.data.nameTagUuid") ?: error("NameTag UUID is missing in NPC config file: $fileName.yml"))
+
+            val viewers = config.getStringList("npc.data.viewers").map(UUID::fromString).toMutableObjectSet()
+
+            val npc = BukkitNpc(
+                id = id,
+                npcUuid = uuid,
+                nameTagId = nameTagId,
+                nameTagUuid = nameTagUuid,
+                viewers = viewers,
+                properties = mutableObject2ObjectMapOf<String, NpcProperty>(),
+                internalName = internalName
+            )
+
+            val propsSection = config.getConfigurationSection("npc.data.properties") ?: return false
+            val sectionKeys = propsSection.getKeys(false)
+
+            sectionKeys.forEach { key ->
+                val valueString = config.getString("npc.data.properties.$key.value") ?: return@forEach
+                val typeString = config.getString("npc.data.properties.$key.type") ?: return@forEach
+
+                val type = propertyTypeRegistry.get(typeString)
+                    ?: error("Unknown property type: $typeString")
+                val value = type.decode(valueString)
+
+                npc.addProperty(BukkitNpcProperty(
+                    key, value, type
+                ))
+            }
+
+            npcController.registerNpc(npc)
+        } catch (e: Exception) {
+            logger().atWarning().log("Failed to import NPC from file $fileName.yml: ${e.message}")
+            return false
+        }
+
+        return true
+    }
+
+    override fun export(npc: Npc) {
+        val file = npcFolder.resolve("${npc.internalName}.yml").toFile()
+        val config = YamlConfiguration()
+
+        config.set("npc.data.id", npc.id)
+        config.set("npc.data.uuid", npc.npcUuid.toString())
+        config.set("npc.data.nameTagId", npc.nameTagId)
+        config.set("npc.data.nameTagUuid", npc.nameTagUuid.toString())
+        config.set("npc.data.internalName", npc.internalName)
+
+        config.set("npc.data.viewers", npc.viewers.map(UUID::toString))
+
+        npc.properties.values.forEach {
+            val path = "npc.data.properties.${it.key}"
+            config.set("$path.value", it.type.encode(it.value))
+            config.set("$path.type", it.type.id)
+        }
+
+        config.save(file)
+    }
+
+    override fun importAll(): Int {
+        val existingNames = npcController.getNpcs().map { it.internalName }.toSet()
+        val files = Files.list(npcFolder).filter { it.toString().endsWith(".yml") }.toList()
+        var importedCount = 0
+
+        files.forEach { path ->
+            val config = YamlConfiguration.loadConfiguration(path.toFile())
+
+            try {
+                val internalName = config.getString("npc.data.internalName") ?: error("Internal name is missing in NPC config file: ${path.fileName}")
+
+                if (existingNames.contains(internalName)) {
+                    return@forEach
+                }
+
+                val id = config.getInt("npc.data.id")
+                val uuid = UUID.fromString(config.getString("npc.data.uuid"))
+                val nameTagId = config.getInt("npc.data.nameTagId")
+                val nameTagUuid = UUID.fromString(config.getString("npc.data.nameTagUuid") ?: error("NameTag UUID is missing in NPC config file: ${path.fileName}"))
+
+                val viewers = config.getStringList("npc.data.viewers").map(UUID::fromString).toMutableObjectSet()
+
+                val npc = BukkitNpc(
+                    id = id,
+                    npcUuid = uuid,
+                    nameTagId = nameTagId,
+                    nameTagUuid = nameTagUuid,
+                    viewers = viewers,
+                    properties = mutableObject2ObjectMapOf<String, NpcProperty>(),
+                    internalName = internalName
+                )
+
+                val propsSection = config.getConfigurationSection("npc.data.properties") ?: return@forEach
+                val sectionKeys = propsSection.getKeys(false)
+
+                sectionKeys.forEach { key ->
+                    val valueString = config.getString("npc.data.properties.$key.value") ?: return@forEach
+                    val typeString = config.getString("npc.data.properties.$key.type") ?: return@forEach
+
+                    val type = propertyTypeRegistry.get(typeString)
+                        ?: error("Unknown property type: $typeString")
+                    val value = type.decode(valueString)
+
+                    npc.addProperty(BukkitNpcProperty(
+                        key, value, type
+                    ))
+                }
+
+                npcController.registerNpc(npc)
+                importedCount++
+            } catch (e: Exception) {
+                logger().atWarning().log("Failed to import NPC from file ${path.fileName}: ${e.message}")
+            }
+        }
+        return importedCount
+    }
+
+
+    override fun exportAll(): Int {
+        Files.list(npcFolder)
+            .filter { it.toString().endsWith(".yml") }
+            .forEach(Files::delete)
+
+        npcController.getNpcs().forEach { npc ->
+            val file = npcFolder.resolve("${npc.internalName}.yml").toFile()
+            val config = YamlConfiguration()
+
+            config.set("npc.data.id", npc.id)
+            config.set("npc.data.uuid", npc.npcUuid.toString())
+            config.set("npc.data.nameTagId", npc.nameTagId)
+            config.set("npc.data.nameTagUuid", npc.nameTagUuid.toString())
+            config.set("npc.data.internalName", npc.internalName)
+
+            config.set("npc.data.viewers", npc.viewers.map(UUID::toString))
+
+            npc.properties.values.forEach {
+                val path = "npc.data.properties.${it.key}"
+                config.set("$path.value", it.type.encode(it.value))
+                config.set("$path.type", it.type.id)
+            }
+
+            config.save(file)
+        }
+
+        return npcController.getNpcs().size
+    }
+
+    override fun reloadFromDisk(): Int {
+        npcController.despawnAllNpcs()
+        npcController.getNpcs().forEach { it.delete() }
+
+        return loadNpcs()
+    }
+
+    override fun saveToDisk(): Int {
+        return saveNpcs()
     }
 }
