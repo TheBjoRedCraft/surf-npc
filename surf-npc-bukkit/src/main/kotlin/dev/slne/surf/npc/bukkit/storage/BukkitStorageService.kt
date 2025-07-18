@@ -162,6 +162,7 @@ class BukkitStorageService : StorageService, Services.Fallback {
             }
 
             npcController.registerNpc(npc)
+            npc.show()
         } catch (e: Exception) {
             logger().atWarning().log("Failed to import NPC from file $fileName.yml: ${e.message}")
             return false
@@ -240,6 +241,7 @@ class BukkitStorageService : StorageService, Services.Fallback {
                 }
 
                 npcController.registerNpc(npc)
+                npc.show()
                 importedCount++
             } catch (e: Exception) {
                 logger().atWarning().log("Failed to import NPC from file ${path.fileName}: ${e.message}")

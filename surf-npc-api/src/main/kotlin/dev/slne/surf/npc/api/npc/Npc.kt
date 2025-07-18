@@ -28,6 +28,9 @@ interface Npc {
     fun delete()
     fun teleport(player: Player)
 
+    fun show()
+    fun hide()
+
     /**
      * Adds a property to the NPC.
      *

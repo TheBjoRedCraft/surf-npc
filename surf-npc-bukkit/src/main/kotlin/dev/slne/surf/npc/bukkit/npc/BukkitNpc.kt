@@ -211,6 +211,36 @@ class BukkitNpc (
         }
     }
 
+    override fun show() {
+        val global = this.getPropertyValue(NpcProperty.Internal.VISIBILITY_GLOBAL, Boolean::class) ?: false
+
+        if (global) {
+            forEachPlayer { player ->
+                this.spawn(player.uniqueId)
+            }
+            return
+        }
+
+        viewers.forEach { user ->
+            this.spawn(user)
+        }
+    }
+
+    override fun hide() {
+        val global = this.getPropertyValue(NpcProperty.Internal.VISIBILITY_GLOBAL, Boolean::class) ?: false
+
+        if (global) {
+            forEachPlayer { player ->
+                this.despawn(player.uniqueId)
+            }
+            return
+        }
+
+        viewers.forEach { user ->
+            this.despawn(user)
+        }
+    }
+
     override fun addProperty(property: NpcProperty) {
         properties[property.key] = property
     }
