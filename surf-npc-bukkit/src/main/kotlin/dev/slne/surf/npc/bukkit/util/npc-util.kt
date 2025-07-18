@@ -58,7 +58,7 @@ suspend fun skinDataFromName(name: String): NpcSkin = withContext(Dispatchers.IO
 
         return@withContext BukkitSNpcSkinData(name, value, signature)
     } catch (e: Exception) {
-        logger().atSevere().log("Exception beim Abrufen der Skin-Daten: ${e.message}")
+        logger().atSevere().log("Exception while retrieving skin data: ${e.message}")
         return@withContext skinDataDefault()
     } finally {
         client.close()
