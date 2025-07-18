@@ -3,7 +3,7 @@ package dev.slne.surf.npc.bukkit
 import com.github.retrooper.packetevents.PacketEvents
 import com.github.retrooper.packetevents.event.PacketListenerPriority
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
-import dev.slne.surf.npc.api.npc.SNpcPropertyType
+import dev.slne.surf.npc.api.npc.property.NpcPropertyType
 
 import dev.slne.surf.npc.bukkit.command.NpcCommand
 import dev.slne.surf.npc.bukkit.listener.ConnectionListener
@@ -30,17 +30,17 @@ class BukkitMain : SuspendingJavaPlugin() {
         PacketEvents.getAPI().eventManager.registerListener(NpcListener(), PacketListenerPriority.NORMAL)
         Bukkit.getPluginManager().registerEvents(ConnectionListener(), this)
 
-        propertyTypeRegistry.register(BooleanPropertyType(SNpcPropertyType.Types.BOOLEAN))
-        propertyTypeRegistry.register(ComponentPropertyType(SNpcPropertyType.Types.COMPONENT))
-        propertyTypeRegistry.register(FloatPropertyType(SNpcPropertyType.Types.FLOAT))
-        propertyTypeRegistry.register(IntPropertyType(SNpcPropertyType.Types.INT))
-        propertyTypeRegistry.register(LongPropertyType(SNpcPropertyType.Types.LONG))
-        propertyTypeRegistry.register(StringPropertyType(SNpcPropertyType.Types.STRING))
-        propertyTypeRegistry.register(DoublePropertyType(SNpcPropertyType.Types.DOUBLE))
-        propertyTypeRegistry.register(NpcLocationPropertyType(SNpcPropertyType.Types.NPC_LOCATION))
-        propertyTypeRegistry.register(UuidPropertyType(SNpcPropertyType.Types.UUID))
-        propertyTypeRegistry.register(NamedTextColorPropertyType(SNpcPropertyType.Types.NAMED_TEXT_COLOR))
-        propertyTypeRegistry.register(NpcRotationPropertyType(SNpcPropertyType.Types.NPC_ROTATION))
+        propertyTypeRegistry.register(BooleanPropertyType(NpcPropertyType.Types.BOOLEAN))
+        propertyTypeRegistry.register(ComponentPropertyType(NpcPropertyType.Types.COMPONENT))
+        propertyTypeRegistry.register(FloatPropertyType(NpcPropertyType.Types.FLOAT))
+        propertyTypeRegistry.register(IntPropertyType(NpcPropertyType.Types.INT))
+        propertyTypeRegistry.register(LongPropertyType(NpcPropertyType.Types.LONG))
+        propertyTypeRegistry.register(StringPropertyType(NpcPropertyType.Types.STRING))
+        propertyTypeRegistry.register(DoublePropertyType(NpcPropertyType.Types.DOUBLE))
+        propertyTypeRegistry.register(NpcLocationPropertyType(NpcPropertyType.Types.NPC_LOCATION))
+        propertyTypeRegistry.register(UuidPropertyType(NpcPropertyType.Types.UUID))
+        propertyTypeRegistry.register(NamedTextColorPropertyType(NpcPropertyType.Types.NAMED_TEXT_COLOR))
+        propertyTypeRegistry.register(NpcRotationPropertyType(NpcPropertyType.Types.NPC_ROTATION))
 
         storageService.initialize()
         storageService.loadNpcs()

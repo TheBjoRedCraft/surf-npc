@@ -1,10 +1,10 @@
 package dev.slne.surf.npc.api.dsl
 
-import dev.slne.surf.npc.api.npc.SNpcLocation
-import dev.slne.surf.npc.api.npc.SNpcProperty
-import dev.slne.surf.npc.api.npc.SNpcPropertyType
-import dev.slne.surf.npc.api.rotation.SNpcRotation
-import dev.slne.surf.npc.api.skin.SNpcSkinData
+import dev.slne.surf.npc.api.npc.location.NpcLocation
+import dev.slne.surf.npc.api.npc.property.NpcProperty
+import dev.slne.surf.npc.api.npc.property.NpcPropertyType
+import dev.slne.surf.npc.api.npc.rotation.NpcRotation
+import dev.slne.surf.npc.api.npc.skin.NpcSkin
 import dev.slne.surf.npc.api.surfNpcApi
 
 class SkinBuilder {
@@ -12,7 +12,7 @@ class SkinBuilder {
     lateinit var value: String
     lateinit var signature: String
 
-    fun build(): SNpcSkinData = object : SNpcSkinData {
+    fun build(): NpcSkin = object : NpcSkin {
         override val ownerName = this@SkinBuilder.ownerName
         override val value = this@SkinBuilder.value
         override val signature = this@SkinBuilder.signature
@@ -25,7 +25,7 @@ class LocationBuilder {
     var z: Double = 0.0
     lateinit var world: String
 
-    fun build(): SNpcLocation = object : SNpcLocation {
+    fun build(): NpcLocation = object : NpcLocation {
         override val x = this@LocationBuilder.x
         override val y = this@LocationBuilder.y
         override val z = this@LocationBuilder.z
@@ -37,7 +37,7 @@ class RotationBuilder {
     var yaw: Float = 0f
     var pitch: Float = 0f
 
-    fun build(): SNpcRotation = object : SNpcRotation {
+    fun build(): NpcRotation = object : NpcRotation {
         override val yaw = this@RotationBuilder.yaw
         override val pitch = this@RotationBuilder.pitch
     }
@@ -46,9 +46,9 @@ class RotationBuilder {
 class NpcPropertyBuilder {
     var key: String = ""
     var value: Any = ""
-    var type: SNpcPropertyType = surfNpcApi.getPropertyType("string") ?: error("Default property type 'string' not found")
+    var type: NpcPropertyType = surfNpcApi.getPropertyType("string") ?: error("Default property type 'string' not found")
 
-    fun build(): SNpcProperty = object : SNpcProperty {
+    fun build(): NpcProperty = object : NpcProperty {
         override val key = this@NpcPropertyBuilder.key
         override val value = this@NpcPropertyBuilder.value
         override val type = this@NpcPropertyBuilder.type

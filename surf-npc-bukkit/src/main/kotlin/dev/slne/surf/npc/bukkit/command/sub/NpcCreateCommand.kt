@@ -8,11 +8,11 @@ import dev.jorel.commandapi.kotlindsl.stringArgument
 import dev.jorel.commandapi.kotlindsl.textArgument
 
 import dev.slne.surf.npc.api.result.NpcCreationResult
-import dev.slne.surf.npc.api.rotation.SNpcRotationType
+import dev.slne.surf.npc.api.npc.rotation.NpcRotationType
 import dev.slne.surf.npc.bukkit.command.argument.rotationTypeArgument
-import dev.slne.surf.npc.bukkit.npc.BukkitSNpcLocation
+import dev.slne.surf.npc.bukkit.npc.location.BukkitNpcLocation
 import dev.slne.surf.npc.bukkit.plugin
-import dev.slne.surf.npc.bukkit.rotation.BukkitSNpcRotation
+import dev.slne.surf.npc.bukkit.rotation.BukkitNpcRotation
 import dev.slne.surf.npc.bukkit.util.PermissionRegistry
 import dev.slne.surf.npc.bukkit.util.skinDataFromName
 import dev.slne.surf.npc.core.controller.npcController
@@ -31,7 +31,7 @@ class NpcCreateCommand(commandName: String) : CommandAPICommand(commandName) {
             val name: String by args
             val internalName: String by args
             val skin: String by args
-            val rotationType: SNpcRotationType by args
+            val rotationType: NpcRotationType by args
             val location = player.location
 
             if(!this.isValidName(name)) {
@@ -55,9 +55,9 @@ class NpcCreateCommand(commandName: String) : CommandAPICommand(commandName) {
                     internalName,
                     parsedName,
                     skinData,
-                    BukkitSNpcLocation(location.x, location.y, location.z, location.world.name),
+                    BukkitNpcLocation(location.x, location.y, location.z, location.world.name),
                     rotationType,
-                    BukkitSNpcRotation(location.yaw, location.pitch),
+                    BukkitNpcRotation(location.yaw, location.pitch),
                     true
                 )
 

@@ -1,5 +1,6 @@
 package dev.slne.surf.npc.api.npc
 
+import dev.slne.surf.npc.api.npc.property.NpcProperty
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import org.bukkit.entity.Player
@@ -8,13 +9,13 @@ import java.util.UUID
 /**
  * Represents a non-player character (NPC) in the game.
  */
-interface SNpc {
+interface Npc {
     val id: Int
     val internalName: String
     val npcUuid: UUID
     val nameTagId: Int
     val nameTagUuid: UUID
-    val properties: Object2ObjectMap<String, SNpcProperty>
+    val properties: Object2ObjectMap<String, NpcProperty>
     val viewers: ObjectSet<UUID>
 
     fun spawn(uuid: UUID)
@@ -31,7 +32,7 @@ interface SNpc {
      *
      * @param property The property
      */
-    fun addProperty(property: SNpcProperty)
+    fun addProperty(property: NpcProperty)
 
     /**
      * Retrieves the value of a property.
@@ -39,7 +40,7 @@ interface SNpc {
      * @param key The key of the property.
      * @return The value of the property.
      */
-    fun getProperty(key: String): SNpcProperty?
+    fun getProperty(key: String): NpcProperty?
 
     /**
      * Removes a property from the NPC.

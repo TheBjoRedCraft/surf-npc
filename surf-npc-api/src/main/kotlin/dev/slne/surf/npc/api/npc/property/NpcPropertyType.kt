@@ -1,6 +1,6 @@
-package dev.slne.surf.npc.api.npc
+package dev.slne.surf.npc.api.npc.property
 
-interface SNpcPropertyType {
+interface NpcPropertyType {
     val id: String
     fun encode(value: Any): String
     fun decode(value: String): Any

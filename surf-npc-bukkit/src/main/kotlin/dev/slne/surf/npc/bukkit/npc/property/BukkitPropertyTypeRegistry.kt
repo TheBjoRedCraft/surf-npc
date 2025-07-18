@@ -1,7 +1,7 @@
 package dev.slne.surf.npc.bukkit.property
 
 import com.google.auto.service.AutoService
-import dev.slne.surf.npc.api.npc.SNpcPropertyType
+import dev.slne.surf.npc.api.npc.property.NpcPropertyType
 import dev.slne.surf.npc.core.property.PropertyTypeRegistry
 import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
@@ -10,9 +10,9 @@ import net.kyori.adventure.util.Services
 
 @AutoService(PropertyTypeRegistry::class)
 class BukkitPropertyTypeRegistry : PropertyTypeRegistry, Services.Fallback {
-    val types = mutableObjectSetOf<SNpcPropertyType>()
+    val types = mutableObjectSetOf<NpcPropertyType>()
 
-    override fun register(type: SNpcPropertyType) {
+    override fun register(type: NpcPropertyType) {
         val existing = types.firstOrNull { it.id == type.id }
 
         if (existing != null) {
@@ -22,11 +22,11 @@ class BukkitPropertyTypeRegistry : PropertyTypeRegistry, Services.Fallback {
         types.add(type)
     }
 
-    override fun unregister(type: SNpcPropertyType) {
+    override fun unregister(type: NpcPropertyType) {
         types.remove(type)
     }
 
-    override fun get(id: String): SNpcPropertyType? {
+    override fun get(id: String): NpcPropertyType? {
         return types.firstOrNull() { it.id == id}
     }
 

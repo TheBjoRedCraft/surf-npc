@@ -3,20 +3,20 @@ package dev.slne.surf.npc.bukkit.controller
 import com.google.auto.service.AutoService
 import dev.slne.surf.npc.api.event.NpcCreateEvent
 import dev.slne.surf.npc.api.event.NpcDeleteEvent
-import dev.slne.surf.npc.api.npc.SNpc
-import dev.slne.surf.npc.api.npc.SNpcLocation
-import dev.slne.surf.npc.api.npc.SNpcProperty
-import dev.slne.surf.npc.api.npc.SNpcPropertyType
+import dev.slne.surf.npc.api.npc.Npc
+import dev.slne.surf.npc.api.npc.location.NpcLocation
+import dev.slne.surf.npc.api.npc.property.NpcProperty
+import dev.slne.surf.npc.api.npc.property.NpcPropertyType
 import dev.slne.surf.npc.api.result.NpcCreationResult
 import dev.slne.surf.npc.api.result.NpcDeletionResult
 import dev.slne.surf.npc.api.result.NpcRespawnResult
 import dev.slne.surf.npc.api.result.NpcSpawnResult
-import dev.slne.surf.npc.api.rotation.SNpcRotation
-import dev.slne.surf.npc.api.rotation.SNpcRotationType
-import dev.slne.surf.npc.api.skin.SNpcSkinData
-import dev.slne.surf.npc.bukkit.npc.BukkitSNpc
+import dev.slne.surf.npc.api.npc.rotation.NpcRotation
+import dev.slne.surf.npc.api.npc.rotation.NpcRotationType
+import dev.slne.surf.npc.api.npc.skin.NpcSkin
+import dev.slne.surf.npc.bukkit.npc.BukkitNpc
 import dev.slne.surf.npc.bukkit.plugin
-import dev.slne.surf.npc.bukkit.property.BukkitSNpcProperty
+import dev.slne.surf.npc.bukkit.property.BukkitNpcProperty
 import dev.slne.surf.npc.core.controller.NpcController
 import dev.slne.surf.npc.core.property.propertyTypeRegistry
 import dev.slne.surf.surfapi.bukkit.api.util.forEachPlayer
@@ -34,15 +34,15 @@ import java.util.UUID
 
 @AutoService(NpcController::class)
 class BukkitNpcController : NpcController, Services.Fallback {
-    val npcs = mutableObjectSetOf<SNpc>()
+    val npcs = mutableObjectSetOf<Npc>()
 
     override fun createNpc(
         internalName: String,
         displayName: Component,
-        skinData: SNpcSkinData,
-        location: SNpcLocation,
-        rotationType: SNpcRotationType,
-        rotation: SNpcRotation,
+        skinData: NpcSkin,
+        location: NpcLocation,
+        rotationType: NpcRotationType,
+        rotation: NpcRotation,
         global: Boolean
     ): NpcCreationResult {
         val id = random.nextInt()
@@ -58,9 +58,9 @@ class BukkitNpcController : NpcController, Services.Fallback {
             return NpcCreationResult.FAILED_ALREADY_EXISTS
         }
 
-        val npc = BukkitSNpc (
+        val npc = BukkitNpc (
             id,
-            mutableObject2ObjectMapOf<String, SNpcProperty>(),
+            mutableObject2ObjectMapOf<String, NpcProperty>(),
             mutableObjectSetOf<UUID>(),
             uuid,
             nameTagId,
@@ -68,37 +68,37 @@ class BukkitNpcController : NpcController, Services.Fallback {
             internalName
         )
 
-        npc.addProperty(BukkitSNpcProperty(
-            SNpcProperty.Internal.DISPLAYNAME, displayName, propertyTypeRegistry.get(
-                SNpcPropertyType.Types.COMPONENT) ?: error("Component property type not found")
+        npc.addProperty(BukkitNpcProperty(
+            NpcProperty.Internal.DISPLAYNAME, displayName, propertyTypeRegistry.get(
+                NpcPropertyType.Types.COMPONENT) ?: error("Component property type not found")
         ))
-        npc.addProperty(BukkitSNpcProperty(
-            SNpcProperty.Internal.SKIN_OWNER, skinData.ownerName, propertyTypeRegistry.get(
-                SNpcPropertyType.Types.STRING) ?: error("STRING property type not found")
+        npc.addProperty(BukkitNpcProperty(
+            NpcProperty.Internal.SKIN_OWNER, skinData.ownerName, propertyTypeRegistry.get(
+                NpcPropertyType.Types.STRING) ?: error("STRING property type not found")
         ))
-        npc.addProperty(BukkitSNpcProperty(
-            SNpcProperty.Internal.SKIN_TEXTURE, skinData.value, propertyTypeRegistry.get(
-                SNpcPropertyType.Types.STRING) ?: error("STRING property type not found")
+        npc.addProperty(BukkitNpcProperty(
+            NpcProperty.Internal.SKIN_TEXTURE, skinData.value, propertyTypeRegistry.get(
+                NpcPropertyType.Types.STRING) ?: error("STRING property type not found")
         ))
-        npc.addProperty(BukkitSNpcProperty(
-            SNpcProperty.Internal.SKIN_SIGNATURE, skinData.signature, propertyTypeRegistry.get(
-                SNpcPropertyType.Types.STRING) ?: error("STRING property type not found")
+        npc.addProperty(BukkitNpcProperty(
+            NpcProperty.Internal.SKIN_SIGNATURE, skinData.signature, propertyTypeRegistry.get(
+                NpcPropertyType.Types.STRING) ?: error("STRING property type not found")
         ))
-        npc.addProperty(BukkitSNpcProperty(
-            SNpcProperty.Internal.LOCATION, location, propertyTypeRegistry.get(
-                SNpcPropertyType.Types.NPC_LOCATION) ?: error("LOCATION property type not found")
+        npc.addProperty(BukkitNpcProperty(
+            NpcProperty.Internal.LOCATION, location, propertyTypeRegistry.get(
+                NpcPropertyType.Types.NPC_LOCATION) ?: error("LOCATION property type not found")
         ))
-        npc.addProperty(BukkitSNpcProperty(
-            SNpcProperty.Internal.ROTATION_TYPE, rotationType == SNpcRotationType.PER_PLAYER, propertyTypeRegistry.get(
-                SNpcPropertyType.Types.BOOLEAN) ?: error("BOOLEAN property type not found")
+        npc.addProperty(BukkitNpcProperty(
+            NpcProperty.Internal.ROTATION_TYPE, rotationType == NpcRotationType.PER_PLAYER, propertyTypeRegistry.get(
+                NpcPropertyType.Types.BOOLEAN) ?: error("BOOLEAN property type not found")
         ))
-        npc.addProperty(BukkitSNpcProperty(
-            SNpcProperty.Internal.ROTATION_FIXED, rotation, propertyTypeRegistry.get(
-                SNpcPropertyType.Types.NPC_ROTATION) ?: error("ROTATION property type not found")
+        npc.addProperty(BukkitNpcProperty(
+            NpcProperty.Internal.ROTATION_FIXED, rotation, propertyTypeRegistry.get(
+                NpcPropertyType.Types.NPC_ROTATION) ?: error("ROTATION property type not found")
         ))
-        npc.addProperty(BukkitSNpcProperty(
-            SNpcProperty.Internal.VISIBILITY_GLOBAL, global, propertyTypeRegistry.get(
-                SNpcPropertyType.Types.BOOLEAN) ?: error("BOOLEAN property type not found")
+        npc.addProperty(BukkitNpcProperty(
+            NpcProperty.Internal.VISIBILITY_GLOBAL, global, propertyTypeRegistry.get(
+                NpcPropertyType.Types.BOOLEAN) ?: error("BOOLEAN property type not found")
         ))
 
         this.registerNpc(npc)
@@ -118,12 +118,12 @@ class BukkitNpcController : NpcController, Services.Fallback {
         return NpcCreationResult.SUCCESS
     }
 
-    override fun deleteNpc(npc: SNpc): NpcDeletionResult {
+    override fun deleteNpc(npc: Npc): NpcDeletionResult {
         if(!this.unregisterNpc(npc)) {
             return NpcDeletionResult.FAILED_NOT_FOUND
         }
 
-        val global = npc.getProperty(SNpcProperty.Internal.VISIBILITY_GLOBAL)?.value as? Boolean ?: false
+        val global = npc.getProperty(NpcProperty.Internal.VISIBILITY_GLOBAL)?.value as? Boolean ?: false
 
         if(global) {
             forEachPlayer { player ->
@@ -147,16 +147,16 @@ class BukkitNpcController : NpcController, Services.Fallback {
         return NpcDeletionResult.SUCCESS
     }
 
-    override fun registerNpc(npc: SNpc) {
+    override fun registerNpc(npc: Npc) {
         npcs.add(npc)
     }
 
-    override fun unregisterNpc(npc: SNpc): Boolean {
+    override fun unregisterNpc(npc: Npc): Boolean {
         return npcs.remove(npc)
     }
 
     override fun showNpc(
-        npc: SNpc,
+        npc: Npc,
         uuid: UUID
     ): NpcSpawnResult {
         if(!npcs.contains(npc)) {
@@ -173,7 +173,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
     }
 
     override fun hideNpc(
-        npc: SNpc,
+        npc: Npc,
         uuid: UUID
     ): NpcDeletionResult {
         if(!npcs.contains(npc)) {
@@ -190,7 +190,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
     }
 
     override fun reShowNpc(
-        npc: SNpc,
+        npc: Npc,
         uuid: UUID
     ): NpcRespawnResult {
         if(!npcs.contains(npc)) {
@@ -208,52 +208,52 @@ class BukkitNpcController : NpcController, Services.Fallback {
     }
 
     override fun setSkin(
-        npc: SNpc,
-        skin: SNpcSkinData
+        npc: Npc,
+        skin: NpcSkin
     ) {
-        npc.addProperty(BukkitSNpcProperty(
-            SNpcProperty.Internal.SKIN_OWNER, skin.ownerName, propertyTypeRegistry.get(
-                SNpcPropertyType.Types.STRING) ?: error("STRING property type not found")
+        npc.addProperty(BukkitNpcProperty(
+            NpcProperty.Internal.SKIN_OWNER, skin.ownerName, propertyTypeRegistry.get(
+                NpcPropertyType.Types.STRING) ?: error("STRING property type not found")
         ))
-        npc.addProperty(BukkitSNpcProperty(
-            SNpcProperty.Internal.SKIN_TEXTURE, skin.value, propertyTypeRegistry.get(
-                SNpcPropertyType.Types.STRING) ?: error("STRING property type not found")
+        npc.addProperty(BukkitNpcProperty(
+            NpcProperty.Internal.SKIN_TEXTURE, skin.value, propertyTypeRegistry.get(
+                NpcPropertyType.Types.STRING) ?: error("STRING property type not found")
         ))
-        npc.addProperty(BukkitSNpcProperty(
-            SNpcProperty.Internal.SKIN_SIGNATURE, skin.signature, propertyTypeRegistry.get(
-                SNpcPropertyType.Types.STRING) ?: error("STRING property type not found")
+        npc.addProperty(BukkitNpcProperty(
+            NpcProperty.Internal.SKIN_SIGNATURE, skin.signature, propertyTypeRegistry.get(
+                NpcPropertyType.Types.STRING) ?: error("STRING property type not found")
         ))
     }
 
     override fun setRotationType(
-        npc: SNpc,
-        rotationType: SNpcRotationType
+        npc: Npc,
+        rotationType: NpcRotationType
     ) {
-        npc.addProperty(BukkitSNpcProperty(
-            SNpcProperty.Internal.ROTATION_TYPE, rotationType == SNpcRotationType.PER_PLAYER, propertyTypeRegistry.get(
-                SNpcPropertyType.Types.BOOLEAN) ?: error("BOOLEAN property type not found")
+        npc.addProperty(BukkitNpcProperty(
+            NpcProperty.Internal.ROTATION_TYPE, rotationType == NpcRotationType.PER_PLAYER, propertyTypeRegistry.get(
+                NpcPropertyType.Types.BOOLEAN) ?: error("BOOLEAN property type not found")
         ))
     }
 
     override fun setRotation(
-        npc: SNpc,
-        rotation: SNpcRotation
+        npc: Npc,
+        rotation: NpcRotation
     ) {
-        npc.addProperty(BukkitSNpcProperty(
-            SNpcProperty.Internal.ROTATION_FIXED, rotation, propertyTypeRegistry.get(
-                SNpcPropertyType.Types.NPC_ROTATION) ?: error("ROTATION property type not found")
+        npc.addProperty(BukkitNpcProperty(
+            NpcProperty.Internal.ROTATION_FIXED, rotation, propertyTypeRegistry.get(
+                NpcPropertyType.Types.NPC_ROTATION) ?: error("ROTATION property type not found")
         ))
     }
 
-    override fun getNpc(id: Int): SNpc? {
+    override fun getNpc(id: Int): Npc? {
         return npcs.find { it.id == id }
     }
 
-    override fun getNpc(internalName: String): SNpc? {
+    override fun getNpc(internalName: String): Npc? {
         return npcs.find { it.internalName.equals(internalName, ignoreCase = true) }
     }
 
-    override fun getNpcs(): ObjectList<SNpc> {
+    override fun getNpcs(): ObjectList<Npc> {
         return npcs.toObjectList()
     }
 
@@ -261,7 +261,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
         val count = npcs.size
 
         npcs.forEach {
-            val global = it.getProperty(SNpcProperty.Internal.VISIBILITY_GLOBAL)?.value as? Boolean ?: false
+            val global = it.getProperty(NpcProperty.Internal.VISIBILITY_GLOBAL)?.value as? Boolean ?: false
             if(global) {
                 forEachPlayer { player ->
                     it.despawn(player.uniqueId)
@@ -282,13 +282,13 @@ class BukkitNpcController : NpcController, Services.Fallback {
         return count
     }
 
-    override fun getProperties(npc: SNpc): ObjectSet<SNpcProperty> {
+    override fun getProperties(npc: Npc): ObjectSet<NpcProperty> {
         return npc.properties.values.toObjectSet()
     }
 
     override fun addProperty(
-        npc: SNpc,
-        property: SNpcProperty
+        npc: Npc,
+        property: NpcProperty
     ): Boolean {
         if (npc.hasProperty(property.key)) {
             npc.removeProperty(property.key)
@@ -299,7 +299,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
     }
 
     override fun removeProperty(
-        npc: SNpc,
+        npc: Npc,
         key: String
     ): Boolean {
         if (!npc.hasProperty(key)) {

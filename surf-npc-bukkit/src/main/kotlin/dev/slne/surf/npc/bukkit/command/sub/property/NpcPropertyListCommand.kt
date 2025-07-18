@@ -4,7 +4,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.npc.api.npc.SNpc
+import dev.slne.surf.npc.api.npc.Npc
 import dev.slne.surf.npc.bukkit.command.argument.npcArgument
 import dev.slne.surf.npc.bukkit.util.PageableMessageBuilder
 import dev.slne.surf.npc.bukkit.util.PermissionRegistry
@@ -19,7 +19,7 @@ class NpcPropertyListCommand(commandName: String) : CommandAPICommand(commandNam
         npcArgument("npc")
         integerArgument("page", optional = true)
         playerExecutor { player, args ->
-            val npc: SNpc by args
+            val npc: Npc by args
             val properties = npc.properties.values
             val page = args.getOrDefaultUnchecked("page", 1)
 

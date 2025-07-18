@@ -1,14 +1,13 @@
 package dev.slne.surf.npc.bukkit.property.impl
 
-import dev.slne.surf.npc.api.npc.SNpcLocation
-import dev.slne.surf.npc.api.npc.SNpcPropertyType
+import dev.slne.surf.npc.api.npc.location.NpcLocation
+import dev.slne.surf.npc.api.npc.property.NpcPropertyType
 import org.bukkit.Bukkit
 import org.bukkit.Location
-import java.util.UUID
 
-class NpcLocationPropertyType(override val id: String) : SNpcPropertyType {
+class NpcLocationPropertyType(override val id: String) : NpcPropertyType {
     override fun encode(value: Any): String {
-        require(value is SNpcLocation) { "Expected SNpcLocation, got ${value::class}" }
+        require(value is NpcLocation) { "Expected SNpcLocation, got ${value::class}" }
         return "${value.world}:${value.x}:${value.y}:${value.z}"
     }
 

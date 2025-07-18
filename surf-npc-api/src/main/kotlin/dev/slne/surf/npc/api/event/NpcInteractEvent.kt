@@ -1,12 +1,12 @@
 package dev.slne.surf.npc.api.event
 
-import dev.slne.surf.npc.api.npc.SNpc
+import dev.slne.surf.npc.api.npc.Npc
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
 class NpcInteractEvent(
-    val npc: SNpc,
+    val npc: Npc,
     val player: Player
 ) : Event() {
 

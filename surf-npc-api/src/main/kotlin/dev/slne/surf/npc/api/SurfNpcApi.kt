@@ -1,14 +1,14 @@
 package dev.slne.surf.npc.api
 
-import dev.slne.surf.npc.api.npc.SNpc
-import dev.slne.surf.npc.api.npc.SNpcLocation
-import dev.slne.surf.npc.api.npc.SNpcProperty
-import dev.slne.surf.npc.api.npc.SNpcPropertyType
+import dev.slne.surf.npc.api.npc.Npc
+import dev.slne.surf.npc.api.npc.location.NpcLocation
+import dev.slne.surf.npc.api.npc.property.NpcProperty
+import dev.slne.surf.npc.api.npc.property.NpcPropertyType
 import dev.slne.surf.npc.api.result.NpcCreationResult
 import dev.slne.surf.npc.api.result.NpcDeletionResult
-import dev.slne.surf.npc.api.rotation.SNpcRotation
-import dev.slne.surf.npc.api.rotation.SNpcRotationType
-import dev.slne.surf.npc.api.skin.SNpcSkinData
+import dev.slne.surf.npc.api.npc.rotation.NpcRotation
+import dev.slne.surf.npc.api.npc.rotation.NpcRotationType
+import dev.slne.surf.npc.api.npc.skin.NpcSkin
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -35,11 +35,11 @@ interface SurfNpcApi {
     fun createNpc(
         displayName: Component,
         internalName: String,
-        skin: SNpcSkinData,
-        location: SNpcLocation,
+        skin: NpcSkin,
+        location: NpcLocation,
         global: Boolean = true,
-        rotationType: SNpcRotationType = SNpcRotationType.PER_PLAYER,
-        fixedRotation: SNpcRotation? = null
+        rotationType: NpcRotationType = NpcRotationType.PER_PLAYER,
+        fixedRotation: NpcRotation? = null
     ): NpcCreationResult
 
     /**
@@ -48,7 +48,7 @@ interface SurfNpcApi {
      * @param npc The NPC to delete.
      * @return The result of the NPC deletion.
      */
-    fun deleteNpc(npc: SNpc): NpcDeletionResult
+    fun deleteNpc(npc: Npc): NpcDeletionResult
 
     /**
      * Shows an NPC to a specific player.
@@ -56,7 +56,7 @@ interface SurfNpcApi {
      * @param npc The NPC to show.
      * @param uuid The UUID of the player.
      */
-    fun showNpc(npc: SNpc, uuid: UUID)
+    fun showNpc(npc: Npc, uuid: UUID)
 
     /**
      * Hides an NPC from a specific player.
@@ -64,7 +64,7 @@ interface SurfNpcApi {
      * @param npc The NPC to hide.
      * @param uuid The UUID of the player.
      */
-    fun hideNpc(npc: SNpc, uuid: UUID)
+    fun hideNpc(npc: Npc, uuid: UUID)
 
     /**
      * Sets the skin of an NPC.
@@ -72,7 +72,7 @@ interface SurfNpcApi {
      * @param npc The NPC to update.
      * @param skin The new skin data.
      */
-    fun setSkin(npc: SNpc, skin: SNpcSkinData)
+    fun setSkin(npc: Npc, skin: NpcSkin)
 
     /**
      * Sets the rotation type of an NPC.
@@ -80,7 +80,7 @@ interface SurfNpcApi {
      * @param npc The NPC to update.
      * @param rotationType The new rotation type.
      */
-    fun setRotationType(npc: SNpc, rotationType: SNpcRotationType)
+    fun setRotationType(npc: Npc, rotationType: NpcRotationType)
 
     /**
      * Sets the rotation of an NPC.
@@ -88,7 +88,7 @@ interface SurfNpcApi {
      * @param npc The NPC to update.
      * @param rotation The new rotation.
      */
-    fun setRotation(npc: SNpc, rotation: SNpcRotation)
+    fun setRotation(npc: Npc, rotation: NpcRotation)
 
     /**
      * Retrieves the properties of an NPC.
@@ -96,7 +96,7 @@ interface SurfNpcApi {
      * @param npc The NPC whose properties are to be retrieved.
      * @return A set of properties associated with the NPC.
      */
-    fun getProperties(npc: SNpc): ObjectSet<SNpcProperty>
+    fun getProperties(npc: Npc): ObjectSet<NpcProperty>
 
     /**
      * Adds a property to an NPC.
@@ -105,7 +105,7 @@ interface SurfNpcApi {
      * @param property The property to add.
      * @return True if the property was added, false otherwise.
      */
-    fun addProperty(npc: SNpc, property: SNpcProperty): Boolean
+    fun addProperty(npc: Npc, property: NpcProperty): Boolean
 
     /**
      * Removes a property from an NPC.
@@ -114,7 +114,7 @@ interface SurfNpcApi {
      * @param key The property key
      * @return True if the property was removed, false otherwise.
      */
-    fun removeProperty(npc: SNpc, key: String): Boolean
+    fun removeProperty(npc: Npc, key: String): Boolean
 
     /**
      * Creates a new property for an NPC.
@@ -127,10 +127,10 @@ interface SurfNpcApi {
     fun createProperty(
         key: String,
         value: Any,
-        type: SNpcPropertyType
-    ): SNpcProperty
+        type: NpcPropertyType
+    ): NpcProperty
 
-    suspend fun getSkin(name: String): SNpcSkinData
+    suspend fun getSkin(name: String): NpcSkin
 
     /**
      * Retrieves an NPC by its ID.
@@ -138,7 +138,7 @@ interface SurfNpcApi {
      * @param id The ID of the NPC.
      * @return The NPC with the specified ID, or null if not found.
      */
-    fun getNpc(id: Int): SNpc?
+    fun getNpc(id: Int): Npc?
 
     /**
      * Retrieves an NPC by its internal name.
@@ -146,14 +146,14 @@ interface SurfNpcApi {
      * @param internalName The internal name of the NPC.
      * @return The NPC with the specified internal name, or null if not found.
      */
-    fun getNpc(internalName: String): SNpc?
+    fun getNpc(internalName: String): Npc?
 
     /**
      * Retrieves all NPCs.
      *
      * @return A list of all NPCs.
      */
-    fun getNpcs(): ObjectList<SNpc>
+    fun getNpcs(): ObjectList<Npc>
 
     /**
      * Despawns all NPCs.
@@ -170,7 +170,7 @@ interface SurfNpcApi {
     fun createRotation(
         yaw: Float,
         pitch: Float
-    ): SNpcRotation
+    ): NpcRotation
 
     /**
      * Creates new skin data.
@@ -184,7 +184,7 @@ interface SurfNpcApi {
         owner: String,
         value: String,
         signature: String
-    ): SNpcSkinData
+    ): NpcSkin
 
     /**
      * Creates a new location.
@@ -200,12 +200,12 @@ interface SurfNpcApi {
         y: Double,
         z: Double,
         worldName: String
-    ): SNpcLocation
+    ): NpcLocation
 
-    fun registerPropertyType(type: SNpcPropertyType)
-    fun unregisterPropertyType(type: SNpcPropertyType)
+    fun registerPropertyType(type: NpcPropertyType)
+    fun unregisterPropertyType(type: NpcPropertyType)
 
-    fun getPropertyType(id: String): SNpcPropertyType?
+    fun getPropertyType(id: String): NpcPropertyType?
 
     companion object {
         /**

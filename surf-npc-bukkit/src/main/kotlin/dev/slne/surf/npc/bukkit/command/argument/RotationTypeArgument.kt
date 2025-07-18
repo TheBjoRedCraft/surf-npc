@@ -5,14 +5,11 @@ import dev.jorel.commandapi.arguments.Argument
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.StringArgument
-import dev.slne.surf.npc.api.npc.SNpc
-import dev.slne.surf.npc.api.rotation.SNpcRotationType
-import dev.slne.surf.npc.bukkit.util.toPlain
-import dev.slne.surf.npc.core.controller.npcController
+import dev.slne.surf.npc.api.npc.rotation.NpcRotationType
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 
-class RotationTypeArgument(nodeName: String) : CustomArgument<SNpcRotationType, String>(StringArgument(nodeName), { info ->
-    SNpcRotationType.entries.find { it.name.equals(info.input, ignoreCase = true) } ?: throw CustomArgumentException.fromAdventureComponent (
+class RotationTypeArgument(nodeName: String) : CustomArgument<NpcRotationType, String>(StringArgument(nodeName), { info ->
+    NpcRotationType.entries.find { it.name.equals(info.input, ignoreCase = true) } ?: throw CustomArgumentException.fromAdventureComponent (
         buildText {
             appendPrefix()
             error("Der Npc '${info.input}' wurde nicht gefunden.")
@@ -20,7 +17,7 @@ class RotationTypeArgument(nodeName: String) : CustomArgument<SNpcRotationType, 
 }) {
     init {
         replaceSuggestions(ArgumentSuggestions.stringCollection {
-            SNpcRotationType.entries.map { it.name }
+            NpcRotationType.entries.map { it.name }
         })
     }
 }

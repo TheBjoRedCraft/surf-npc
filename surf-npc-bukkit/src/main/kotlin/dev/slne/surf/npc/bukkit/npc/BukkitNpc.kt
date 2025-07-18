@@ -7,12 +7,12 @@ import com.github.retrooper.packetevents.util.Vector3d
 
 import dev.slne.surf.npc.api.event.NpcDespawnEvent
 import dev.slne.surf.npc.api.event.NpcSpawnEvent
-import dev.slne.surf.npc.api.npc.SNpc
-import dev.slne.surf.npc.api.npc.SNpcLocation
-import dev.slne.surf.npc.api.npc.SNpcProperty
-import dev.slne.surf.npc.api.npc.SNpcPropertyType
-import dev.slne.surf.npc.api.rotation.SNpcRotation
-import dev.slne.surf.npc.api.rotation.SNpcRotationType
+import dev.slne.surf.npc.api.npc.Npc
+import dev.slne.surf.npc.api.npc.location.NpcLocation
+import dev.slne.surf.npc.api.npc.property.NpcProperty
+import dev.slne.surf.npc.api.npc.property.NpcPropertyType
+import dev.slne.surf.npc.api.npc.rotation.NpcRotation
+import dev.slne.surf.npc.api.npc.rotation.NpcRotationType
 import dev.slne.surf.npc.bukkit.createDestroyPacket
 import dev.slne.surf.npc.bukkit.createEntityMetadataPacket
 import dev.slne.surf.npc.bukkit.createNametagMetadataPacket
@@ -24,9 +24,10 @@ import dev.slne.surf.npc.bukkit.createPlayerSpawnPacket
 import dev.slne.surf.npc.bukkit.createTeamAddEntityPacket
 import dev.slne.surf.npc.bukkit.createTeamCreatePacket
 import dev.slne.surf.npc.bukkit.createTeleportPacket
+import dev.slne.surf.npc.bukkit.npc.location.BukkitNpcLocation
 import dev.slne.surf.npc.bukkit.plugin
-import dev.slne.surf.npc.bukkit.property.BukkitSNpcProperty
-import dev.slne.surf.npc.bukkit.rotation.BukkitSNpcRotation
+import dev.slne.surf.npc.bukkit.property.BukkitNpcProperty
+import dev.slne.surf.npc.bukkit.rotation.BukkitNpcRotation
 import dev.slne.surf.npc.bukkit.util.toLocation
 import dev.slne.surf.npc.bukkit.util.toUser
 import dev.slne.surf.npc.core.controller.npcController
@@ -44,15 +45,15 @@ import java.util.UUID
 import kotlin.math.atan2
 import kotlin.math.sqrt
 
-class BukkitSNpc (
+class BukkitNpc (
     override val id: Int,
-    override val properties: Object2ObjectMap<String, SNpcProperty>,
+    override val properties: Object2ObjectMap<String, NpcProperty>,
     override val viewers: ObjectSet<UUID>,
     override val npcUuid: UUID,
     override val nameTagId: Int,
     override val nameTagUuid: UUID,
     override val internalName: String
-) : SNpc {
+) : Npc {
     override fun spawn(uuid: UUID) {
         val packetEvents = PacketEvents.getAPI()
         val playerManager = packetEvents.playerManager
@@ -60,14 +61,14 @@ class BukkitSNpc (
         val player = Bukkit.getPlayer(uuid) ?: return
         val user = playerManager.getUser(player)
 
-        val displayName = this.getProperty(SNpcProperty.Internal.DISPLAYNAME)?.value as? Component ?: return
+        val displayName = this.getProperty(NpcProperty.Internal.DISPLAYNAME)?.value as? Component ?: return
         val profile = UserProfile(npcUuid, internalName)
 
-        val skinValue = this.getProperty(SNpcProperty.Internal.SKIN_TEXTURE)?.value as? String ?: return
-        val skinSignature = this.getProperty(SNpcProperty.Internal.SKIN_SIGNATURE)?.value as? String ?: return
+        val skinValue = this.getProperty(NpcProperty.Internal.SKIN_TEXTURE)?.value as? String ?: return
+        val skinSignature = this.getProperty(NpcProperty.Internal.SKIN_SIGNATURE)?.value as? String ?: return
 
-        val rotation = this.getProperty(SNpcProperty.Internal.ROTATION_FIXED)?.value as? SNpcRotation ?: return
-        val location = this.getProperty(SNpcProperty.Internal.LOCATION)?.value as? SNpcLocation ?: return
+        val rotation = this.getProperty(NpcProperty.Internal.ROTATION_FIXED)?.value as? NpcRotation ?: return
+        val location = this.getProperty(NpcProperty.Internal.LOCATION)?.value as? NpcLocation ?: return
 
         val glowing = this.getProperty("glowing")?.value as? Boolean ?: false
         val glowingColor = this.getProperty("glowing_color")?.value as? NamedTextColor ?: NamedTextColor.WHITE
@@ -125,11 +126,11 @@ class BukkitSNpc (
 
     override fun refresh() {
         for (user in viewers) {
-            val displayName = this.getProperty(SNpcProperty.Internal.DISPLAYNAME)?.value as? Component ?: return
+            val displayName = this.getProperty(NpcProperty.Internal.DISPLAYNAME)?.value as? Component ?: return
             val profile = UserProfile(npcUuid, internalName)
 
-            val skinValue = this.getProperty(SNpcProperty.Internal.SKIN_TEXTURE)?.value as? String ?: return
-            val skinSignature = this.getProperty(SNpcProperty.Internal.SKIN_SIGNATURE)?.value as? String ?: return
+            val skinValue = this.getProperty(NpcProperty.Internal.SKIN_TEXTURE)?.value as? String ?: return
+            val skinSignature = this.getProperty(NpcProperty.Internal.SKIN_SIGNATURE)?.value as? String ?: return
 
             profile.textureProperties.clear()
             profile.textureProperties.add(TextureProperty(
@@ -146,16 +147,16 @@ class BukkitSNpc (
         val player = Bukkit.getPlayer(uuid) ?: return
         val user = PacketEvents.getAPI().playerManager.getUser(player)
 
-        val rotationType = if (this.getProperty(SNpcProperty.Internal.ROTATION_TYPE)?.value as? Boolean ?: error("Rotation type is not set for NPC: $internalName")) SNpcRotationType.PER_PLAYER else SNpcRotationType.FIXED
-        val fixedRotation = this.getProperty(SNpcProperty.Internal.ROTATION_FIXED)?.value as? SNpcRotation ?: BukkitSNpcRotation(0f, 0f)
-        val location = this.getProperty(SNpcProperty.Internal.LOCATION)?.value as? SNpcLocation ?: error("Location is not set for NPC: $internalName")
+        val rotationType = if (this.getProperty(NpcProperty.Internal.ROTATION_TYPE)?.value as? Boolean ?: error("Rotation type is not set for NPC: $internalName")) NpcRotationType.PER_PLAYER else NpcRotationType.FIXED
+        val fixedRotation = this.getProperty(NpcProperty.Internal.ROTATION_FIXED)?.value as? NpcRotation ?: BukkitNpcRotation(0f, 0f)
+        val location = this.getProperty(NpcProperty.Internal.LOCATION)?.value as? NpcLocation ?: error("Location is not set for NPC: $internalName")
 
         val yawPitch: Pair<Float, Float> = when (rotationType) {
-            SNpcRotationType.FIXED -> {
+            NpcRotationType.FIXED -> {
                 Pair(fixedRotation.yaw, fixedRotation.pitch)
             }
 
-            SNpcRotationType.PER_PLAYER -> {
+            NpcRotationType.PER_PLAYER -> {
                 val npcVec = Vector3d(location.x, location.y, location.z)
                 val playerLoc = player.location
 
@@ -185,11 +186,12 @@ class BukkitSNpc (
 
     override fun teleport(player: Player) {
         val location = player.location
-        val global = this.getProperty(SNpcProperty.Internal.VISIBILITY_GLOBAL)?.value as? Boolean ?: false
+        val global = this.getProperty(NpcProperty.Internal.VISIBILITY_GLOBAL)?.value as? Boolean ?: false
 
-        this.addProperty(BukkitSNpcProperty(
-            SNpcProperty.Internal.LOCATION, BukkitSNpcLocation(location.x, location.y, location.z, location.world.name), propertyTypeRegistry.get(
-                SNpcPropertyType.Types.NPC_LOCATION) ?: error("LOCATION property type not found")
+        this.addProperty(BukkitNpcProperty(
+            NpcProperty.Internal.LOCATION,
+            BukkitNpcLocation(location.x, location.y, location.z, location.world.name), propertyTypeRegistry.get(
+                NpcPropertyType.Types.NPC_LOCATION) ?: error("LOCATION property type not found")
         ))
 
         if(global) {
@@ -210,11 +212,11 @@ class BukkitSNpc (
         }
     }
 
-    override fun addProperty(property: SNpcProperty) {
+    override fun addProperty(property: NpcProperty) {
         properties[property.key] = property
     }
 
-    override fun getProperty(key: String): SNpcProperty? {
+    override fun getProperty(key: String): NpcProperty? {
         return properties.values.find { it.key == key }
     }
 

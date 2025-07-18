@@ -5,9 +5,9 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 
-import dev.slne.surf.npc.api.npc.SNpc
-import dev.slne.surf.npc.api.npc.SNpcLocation
-import dev.slne.surf.npc.api.npc.SNpcProperty
+import dev.slne.surf.npc.api.npc.Npc
+import dev.slne.surf.npc.api.npc.location.NpcLocation
+import dev.slne.surf.npc.api.npc.property.NpcProperty
 import dev.slne.surf.npc.bukkit.command.argument.npcArgument
 import dev.slne.surf.npc.bukkit.util.PermissionRegistry
 import dev.slne.surf.npc.bukkit.util.toLocation
@@ -20,10 +20,10 @@ class NpcTeleportToCommand(commandName: String) : CommandAPICommand(commandName)
         npcArgument("npc")
         playerArgument("target", true)
         playerExecutor { player, args ->
-            val npc: SNpc by args
+            val npc: Npc by args
             val target: Player? by args
 
-            val location = npc.getProperty(SNpcProperty.Internal.LOCATION)?.value as? SNpcLocation
+            val location = npc.getProperty(NpcProperty.Internal.LOCATION)?.value as? NpcLocation
                 ?: return@playerExecutor run {
                     player.sendText {
                         appendPrefix()

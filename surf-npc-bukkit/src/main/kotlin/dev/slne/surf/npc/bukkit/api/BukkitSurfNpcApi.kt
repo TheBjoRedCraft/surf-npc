@@ -3,18 +3,18 @@ package dev.slne.surf.npc.bukkit.api
 import com.google.auto.service.AutoService
 
 import dev.slne.surf.npc.api.SurfNpcApi
-import dev.slne.surf.npc.api.npc.SNpc
-import dev.slne.surf.npc.api.npc.SNpcLocation
-import dev.slne.surf.npc.api.npc.SNpcProperty
-import dev.slne.surf.npc.api.npc.SNpcPropertyType
+import dev.slne.surf.npc.api.npc.Npc
+import dev.slne.surf.npc.api.npc.location.NpcLocation
+import dev.slne.surf.npc.api.npc.property.NpcProperty
+import dev.slne.surf.npc.api.npc.property.NpcPropertyType
 import dev.slne.surf.npc.api.result.NpcCreationResult
 import dev.slne.surf.npc.api.result.NpcDeletionResult
-import dev.slne.surf.npc.api.rotation.SNpcRotation
-import dev.slne.surf.npc.api.rotation.SNpcRotationType
-import dev.slne.surf.npc.api.skin.SNpcSkinData
-import dev.slne.surf.npc.bukkit.npc.BukkitSNpcLocation
-import dev.slne.surf.npc.bukkit.property.BukkitSNpcProperty
-import dev.slne.surf.npc.bukkit.rotation.BukkitSNpcRotation
+import dev.slne.surf.npc.api.npc.rotation.NpcRotation
+import dev.slne.surf.npc.api.npc.rotation.NpcRotationType
+import dev.slne.surf.npc.api.npc.skin.NpcSkin
+import dev.slne.surf.npc.bukkit.npc.location.BukkitNpcLocation
+import dev.slne.surf.npc.bukkit.property.BukkitNpcProperty
+import dev.slne.surf.npc.bukkit.rotation.BukkitNpcRotation
 import dev.slne.surf.npc.bukkit.skin.BukkitSNpcSkinData
 import dev.slne.surf.npc.bukkit.util.skinDataFromName
 import dev.slne.surf.npc.core.controller.npcController
@@ -33,11 +33,11 @@ class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
     override fun createNpc(
         displayName: Component,
         internalName: String,
-        skin: SNpcSkinData,
-        location: SNpcLocation,
+        skin: NpcSkin,
+        location: NpcLocation,
         global: Boolean,
-        rotationType: SNpcRotationType,
-        fixedRotation: SNpcRotation?
+        rotationType: NpcRotationType,
+        fixedRotation: NpcRotation?
     ): NpcCreationResult {
         return npcController.createNpc(
             internalName,
@@ -45,51 +45,51 @@ class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
             skin,
             location,
             rotationType,
-            fixedRotation ?: BukkitSNpcRotation(0f, 0f),
+            fixedRotation ?: BukkitNpcRotation(0f, 0f),
             global
         )
     }
 
-    override fun deleteNpc(npc: SNpc): NpcDeletionResult {
+    override fun deleteNpc(npc: Npc): NpcDeletionResult {
         return npcController.deleteNpc(npc)
     }
 
-    override fun showNpc(npc: SNpc, uuid: UUID) {
+    override fun showNpc(npc: Npc, uuid: UUID) {
         npcController.showNpc(npc, uuid)
     }
 
-    override fun hideNpc(npc: SNpc, uuid: UUID) {
+    override fun hideNpc(npc: Npc, uuid: UUID) {
         npcController.hideNpc(npc, uuid)
     }
 
-    override fun setSkin(npc: SNpc, skin: SNpcSkinData) {
+    override fun setSkin(npc: Npc, skin: NpcSkin) {
         npcController.setSkin(npc, skin)
     }
 
     override fun setRotationType(
-        npc: SNpc,
-        rotationType: SNpcRotationType
+        npc: Npc,
+        rotationType: NpcRotationType
     ) {
         npcController.setRotationType(npc, rotationType)
     }
 
-    override fun setRotation(npc: SNpc, rotation: SNpcRotation) {
+    override fun setRotation(npc: Npc, rotation: NpcRotation) {
         npcController.setRotation(npc, rotation)
     }
 
-    override fun getProperties(npc: SNpc): ObjectSet<SNpcProperty> {
+    override fun getProperties(npc: Npc): ObjectSet<NpcProperty> {
         return npcController.getProperties(npc)
     }
 
     override fun addProperty(
-        npc: SNpc,
-        property: SNpcProperty
+        npc: Npc,
+        property: NpcProperty
     ): Boolean {
         return npcController.addProperty(npc, property)
     }
 
     override fun removeProperty(
-        npc: SNpc,
+        npc: Npc,
         key: String
     ): Boolean {
         return npcController.removeProperty(npc, key)
@@ -98,24 +98,24 @@ class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
     override fun createProperty(
         key: String,
         value: Any,
-        type: SNpcPropertyType
-    ): SNpcProperty {
-        return BukkitSNpcProperty(key, value, type)
+        type: NpcPropertyType
+    ): NpcProperty {
+        return BukkitNpcProperty(key, value, type)
     }
 
-    override suspend fun getSkin(name: String): SNpcSkinData {
+    override suspend fun getSkin(name: String): NpcSkin {
         return skinDataFromName(name)
     }
 
-    override fun getNpc(id: Int): SNpc? {
+    override fun getNpc(id: Int): Npc? {
         return npcController.getNpc(id)
     }
 
-    override fun getNpc(internalName: String): SNpc? {
+    override fun getNpc(internalName: String): Npc? {
         return npcController.getNpc(internalName)
     }
 
-    override fun getNpcs(): ObjectList<SNpc> {
+    override fun getNpcs(): ObjectList<Npc> {
         return npcController.getNpcs()
     }
 
@@ -126,15 +126,15 @@ class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
     override fun createRotation(
         yaw: Float,
         pitch: Float
-    ): SNpcRotation {
-        return BukkitSNpcRotation(yaw, pitch)
+    ): NpcRotation {
+        return BukkitNpcRotation(yaw, pitch)
     }
 
     override fun createSkinData(
         owner: String,
         value: String,
         signature: String
-    ): SNpcSkinData {
+    ): NpcSkin {
         return BukkitSNpcSkinData(owner, value, signature)
     }
 
@@ -143,19 +143,19 @@ class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
         y: Double,
         z: Double,
         worldName: String
-    ): SNpcLocation {
-        return BukkitSNpcLocation(x, y, z, worldName)
+    ): NpcLocation {
+        return BukkitNpcLocation(x, y, z, worldName)
     }
 
-    override fun registerPropertyType(type: SNpcPropertyType) {
+    override fun registerPropertyType(type: NpcPropertyType) {
         propertyTypeRegistry.register(type)
     }
 
-    override fun unregisterPropertyType(type: SNpcPropertyType) {
+    override fun unregisterPropertyType(type: NpcPropertyType) {
         propertyTypeRegistry.unregister(type)
     }
 
-    override fun getPropertyType(id: String): SNpcPropertyType? {
+    override fun getPropertyType(id: String): NpcPropertyType? {
         return propertyTypeRegistry.get(id)
     }
 }

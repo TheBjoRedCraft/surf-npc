@@ -1,16 +1,15 @@
 package dev.slne.surf.npc.bukkit.storage
 
 import com.google.auto.service.AutoService
-import dev.slne.surf.npc.bukkit.npc.BukkitSNpc
+import dev.slne.surf.npc.bukkit.npc.BukkitNpc
 import dev.slne.surf.npc.bukkit.plugin
 import dev.slne.surf.npc.core.controller.npcController
 import dev.slne.surf.npc.core.service.StorageService
 import dev.slne.surf.surfapi.core.api.util.logger
-import dev.slne.surf.npc.api.npc.*
-import dev.slne.surf.npc.bukkit.property.BukkitSNpcProperty
+import dev.slne.surf.npc.api.npc.property.NpcProperty
+import dev.slne.surf.npc.bukkit.property.BukkitNpcProperty
 import dev.slne.surf.npc.core.property.propertyTypeRegistry
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
-import dev.slne.surf.surfapi.core.api.util.mutableObjectSetOf
 import dev.slne.surf.surfapi.core.api.util.toMutableObjectSet
 
 import net.kyori.adventure.util.Services
@@ -44,13 +43,13 @@ class BukkitStorageService : StorageService, Services.Fallback {
 
                 val viewers = config.getStringList("npc.data.viewers").map(UUID::fromString).toMutableObjectSet()
 
-                val npc = BukkitSNpc(
+                val npc = BukkitNpc(
                     id = id,
                     npcUuid = uuid,
                     nameTagId = nameTagId,
                     nameTagUuid = nameTagUuid,
                     viewers = viewers,
-                    properties = mutableObject2ObjectMapOf<String, SNpcProperty>(),
+                    properties = mutableObject2ObjectMapOf<String, NpcProperty>(),
                     internalName = internalName
                 )
 
@@ -65,7 +64,7 @@ class BukkitStorageService : StorageService, Services.Fallback {
                         ?: error("Unknown property type: $typeString")
                     val value = type.decode(valueString)
 
-                    npc.addProperty(BukkitSNpcProperty(
+                    npc.addProperty(BukkitNpcProperty(
                         key, value, type
                     ))
                 }

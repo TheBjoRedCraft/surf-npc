@@ -1,9 +1,9 @@
-package dev.slne.surf.npc.api.npc
+package dev.slne.surf.npc.api.npc.property
 
-interface SNpcProperty {
+interface NpcProperty {
     val key: String
     val value: Any
-    val type: SNpcPropertyType
+    val type: NpcPropertyType
 
     object Internal {
         const val DISPLAYNAME = "displayname"

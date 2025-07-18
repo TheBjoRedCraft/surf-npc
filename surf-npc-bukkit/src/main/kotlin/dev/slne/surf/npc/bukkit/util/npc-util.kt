@@ -1,7 +1,7 @@
 package dev.slne.surf.npc.bukkit.util
 
-import dev.slne.surf.npc.api.npc.SNpcLocation
-import dev.slne.surf.npc.api.skin.SNpcSkinData
+import dev.slne.surf.npc.api.npc.location.NpcLocation
+import dev.slne.surf.npc.api.npc.skin.NpcSkin
 import dev.slne.surf.npc.bukkit.skin.BukkitSNpcSkinData
 import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 import dev.slne.surf.surfapi.core.api.util.logger
@@ -15,9 +15,6 @@ import kotlinx.serialization.json.jsonPrimitive
 import org.bukkit.Bukkit
 import org.bukkit.Location
 
-import java.net.HttpURLConnection
-import java.net.URL
-
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.contentnegotiation.*
@@ -27,7 +24,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.*
 
-suspend fun skinDataFromName(name: String): SNpcSkinData = withContext(Dispatchers.IO) {
+suspend fun skinDataFromName(name: String): NpcSkin = withContext(Dispatchers.IO) {
     val uuid = PlayerLookupService.getUuid(name) ?: return@withContext skinDataDefault()
 
     val client = HttpClient(OkHttp) {
@@ -70,7 +67,7 @@ suspend fun skinDataFromName(name: String): SNpcSkinData = withContext(Dispatche
 }
 
 
-fun skinDataDefault() : SNpcSkinData {
+fun skinDataDefault() : NpcSkin {
     return BukkitSNpcSkinData(
         "default",
         "ewogICJ0aW1lc3RhbXAiIDogMTc0ODc1ODY4OTg4NCwKICAicHJvZmlsZUlkIiA6ICI2NGY0MGFiNzFmM2E0NGZiYjg0N2I5ZWFhOWZjNDRlNSIsCiAgInByb2ZpbGVOYW1lIiA6ICJvZGF2aWRjZXNhciIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9mNzY5YmJiOWZiMjMxNjgwODEzMWU2YzJkMDJjZTE0ZTNhYWI2NzRkZWI0YjU1OGJiMjY1YzMxNDFkMTk5YjA4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=",
@@ -78,7 +75,7 @@ fun skinDataDefault() : SNpcSkinData {
     )
 }
 
-fun SNpcLocation.toLocation(): Location {
+fun NpcLocation.toLocation(): Location {
     return Location(
         Bukkit.getWorld(world) ?: error("World '$world' not found"),
         this.x,
@@ -87,6 +84,6 @@ fun SNpcLocation.toLocation(): Location {
     )
 }
 
-fun SNpcLocation.readableString(): String {
+fun NpcLocation.readableString(): String {
     return "${x.toInt()}, ${y.toInt()}, ${z.toInt()} in '$world'"
 }

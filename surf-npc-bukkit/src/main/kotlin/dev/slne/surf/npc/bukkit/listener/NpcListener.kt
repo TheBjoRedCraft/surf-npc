@@ -6,8 +6,8 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity
 import dev.slne.surf.npc.api.event.NpcCollisionEvent
 import dev.slne.surf.npc.api.event.NpcInteractEvent
-import dev.slne.surf.npc.api.npc.SNpcLocation
-import dev.slne.surf.npc.api.npc.SNpcProperty
+import dev.slne.surf.npc.api.npc.location.NpcLocation
+import dev.slne.surf.npc.api.npc.property.NpcProperty
 import dev.slne.surf.npc.bukkit.plugin
 import dev.slne.surf.npc.bukkit.util.toLocation
 import dev.slne.surf.npc.core.controller.npcController
@@ -21,7 +21,7 @@ class NpcListener : PacketListener {
         when(event.packetType) {
             PacketType.Play.Client.PLAYER_POSITION_AND_ROTATION -> {
                 for (npc in npcController.getNpcs()) {
-                    val npcLoc = npc.getProperty(SNpcProperty.Internal.LOCATION)?.value as? SNpcLocation ?: continue
+                    val npcLoc = npc.getProperty(NpcProperty.Internal.LOCATION)?.value as? NpcLocation ?: continue
                     val playerLoc = player.location
 
                     if (playerLoc.distanceSquared(npcLoc.toLocation()) > 20 * 20) {
@@ -33,7 +33,7 @@ class NpcListener : PacketListener {
             }
             PacketType.Play.Client.PLAYER_POSITION -> {
                 for (npc in npcController.getNpcs()) {
-                    val npcLoc = npc.getProperty(SNpcProperty.Internal.LOCATION)?.value as? SNpcLocation ?: continue
+                    val npcLoc = npc.getProperty(NpcProperty.Internal.LOCATION)?.value as? NpcLocation ?: continue
                     val playerLoc = player.location
 
                     if (playerLoc.distanceSquared(npcLoc.toLocation()) > 1 * 1) {

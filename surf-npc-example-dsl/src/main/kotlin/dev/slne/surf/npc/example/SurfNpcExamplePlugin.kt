@@ -3,9 +3,8 @@ package dev.slne.surf.npc.example
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import dev.slne.surf.npc.api.dsl.npc
 import dev.slne.surf.npc.api.dsl.npcProperty
-import dev.slne.surf.npc.api.npc.SNpcPropertyType
-import dev.slne.surf.npc.api.rotation.SNpcRotationType
-import dev.slne.surf.npc.api.skin.SNpcSkinData
+import dev.slne.surf.npc.api.npc.property.NpcPropertyType
+import dev.slne.surf.npc.api.npc.rotation.NpcRotationType
 import dev.slne.surf.npc.api.surfNpcApi
 import dev.slne.surf.npc.example.listener.ExampleNpcListener
 import dev.slne.surf.surfapi.core.api.util.logger
@@ -42,7 +41,7 @@ class SurfNpcExamplePlugin(): SuspendingJavaPlugin() {
                 z = 0.0
             }
             global = true
-            rotationType = SNpcRotationType.PER_PLAYER
+            rotationType = NpcRotationType.PER_PLAYER
         }
 
         /**
@@ -60,7 +59,7 @@ class SurfNpcExamplePlugin(): SuspendingJavaPlugin() {
         surfNpcApi.addProperty(npc, npcProperty {
             key = "example_npc"
             value = true
-            type = surfNpcApi.getPropertyType(SNpcPropertyType.Types.BOOLEAN) ?: return@npcProperty run {
+            type = surfNpcApi.getPropertyType(NpcPropertyType.Types.BOOLEAN) ?: return@npcProperty run {
                 logger().atWarning().log("Failed to create example NPC: Boolean property type not found.")
             }
         })

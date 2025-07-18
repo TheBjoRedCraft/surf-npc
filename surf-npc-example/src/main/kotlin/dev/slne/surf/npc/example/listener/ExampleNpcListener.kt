@@ -2,7 +2,7 @@ package dev.slne.surf.npc.example.listener
 
 import dev.slne.surf.npc.api.event.NpcCollisionEvent
 import dev.slne.surf.npc.api.event.NpcInteractEvent
-import dev.slne.surf.npc.api.npc.SNpcProperty
+import dev.slne.surf.npc.api.npc.property.NpcProperty
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import net.kyori.adventure.text.Component
 import org.bukkit.event.EventHandler
@@ -22,7 +22,7 @@ class ExampleNpcListener : Listener {
         val npc = event.npc
         val player = event.player
 
-        val displayName = npc.getProperty(SNpcProperty.Internal.DISPLAYNAME)?.value as? Component ?: return
+        val displayName = npc.getProperty(NpcProperty.Internal.DISPLAYNAME)?.value as? Component ?: return
 
         if(npc.hasProperty("example_npc")) {
             player.sendText {

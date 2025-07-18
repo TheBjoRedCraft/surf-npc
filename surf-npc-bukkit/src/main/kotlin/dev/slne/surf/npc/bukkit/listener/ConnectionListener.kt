@@ -1,6 +1,6 @@
 package dev.slne.surf.npc.bukkit.listener
 
-import dev.slne.surf.npc.api.npc.SNpcProperty
+import dev.slne.surf.npc.api.npc.property.NpcProperty
 import dev.slne.surf.npc.core.controller.npcController
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -11,7 +11,7 @@ class ConnectionListener : Listener {
     fun onConnect(event: PlayerJoinEvent) {
         val player = event.player
 
-        npcController.getNpcs().filter { it.getProperty(SNpcProperty.Internal.VISIBILITY_GLOBAL)?.value as? Boolean ?: false }.forEach {
+        npcController.getNpcs().filter { it.getProperty(NpcProperty.Internal.VISIBILITY_GLOBAL)?.value as? Boolean ?: false }.forEach {
             it.spawn(player.uniqueId)
         }
     }

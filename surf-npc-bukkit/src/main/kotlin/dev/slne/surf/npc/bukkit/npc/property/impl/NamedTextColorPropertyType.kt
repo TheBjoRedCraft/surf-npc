@@ -1,9 +1,9 @@
 package dev.slne.surf.npc.bukkit.property.impl
 
-import dev.slne.surf.npc.api.npc.SNpcPropertyType
+import dev.slne.surf.npc.api.npc.property.NpcPropertyType
 import net.kyori.adventure.text.format.NamedTextColor
 
-class NamedTextColorPropertyType(override val id: String) : SNpcPropertyType {
+class NamedTextColorPropertyType(override val id: String) : NpcPropertyType {
     override fun encode(value: Any): String {
         require(value is NamedTextColor) { "Expected NamedTextColor, got ${value::class}" }
         return value.value().toString()
