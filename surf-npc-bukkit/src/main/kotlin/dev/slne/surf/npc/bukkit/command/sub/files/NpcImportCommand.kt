@@ -21,7 +21,7 @@ class NpcImportCommand(commandName: String) : CommandAPICommand(commandName) {
                 appendPrefix()
 
                 if(result) {
-                    success("Die NPCs aus der Datei '$fileName' wurden erfolgreich importiert.")
+                    success("Der NPC aus der Datei '$fileName' wurde erfolgreich importiert.")
                 } else {
                     error("Fehler beim Importieren der NPCs aus der Datei '$fileName'.")
                 }
