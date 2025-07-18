@@ -33,21 +33,20 @@ suspend fun skinDataFromName(name: String): NpcSkin = withContext(Dispatchers.IO
         }
     }
 
-
     try {
-        val response: HttpResponse = client.get("https://api.minetools.eu/profile/$uuid") {
+        val response: HttpResponse = client.get("https://sessionserver.mojang.com/session/minecraft/profile/$uuid?unsigned=false") {
             timeout {
-                this.requestTimeoutMillis = 15_000
+                requestTimeoutMillis = 15_000
             }
         }
 
         if (!response.status.isSuccess()) {
-            logger().atSevere().log("Fehler beim Abrufen der Skin-Daten von ${name}: ${response.status.value} - ${response.status.description}")
+            logger().atSevere().log("Fehler beim Abrufen der Skin-Daten von $name: ${response.status.value} - ${response.status.description}")
             return@withContext skinDataDefault()
         }
 
         val json = Json.parseToJsonElement(response.bodyAsText()).jsonObject
-        val properties = json["raw"]?.jsonObject?.get("properties")?.jsonArray ?: return@withContext skinDataDefault()
+        val properties = json["properties"]?.jsonArray ?: return@withContext skinDataDefault()
 
         val textureProperty = properties.firstOrNull {
             it.jsonObject["name"]?.jsonPrimitive?.content == "textures"
@@ -65,6 +64,7 @@ suspend fun skinDataFromName(name: String): NpcSkin = withContext(Dispatchers.IO
         client.close()
     }
 }
+
 
 
 fun skinDataDefault() : NpcSkin {
