@@ -13,8 +13,4 @@ buildscript {
 allprojects {
     group = "dev.slne"
     version = "1.0-SNAPSHOT"
-
-    tasks.withType<ShadowJar> {
-        archiveClassifier = ""
-    }
 }
