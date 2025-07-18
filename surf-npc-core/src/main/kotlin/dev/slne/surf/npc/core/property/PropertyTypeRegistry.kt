@@ -13,13 +13,13 @@ interface PropertyTypeRegistry {
 
     companion object {
         /**
-         * The instance of the StorageService.
+         * The instance of the PropertyTypeRegistry.
          */
         val INSTANCE = requiredService<PropertyTypeRegistry>()
     }
 }
 
 /**
- * The instance of the DatabaseService
+ * The instance of the PropertyTypeRegistry
  */
 val propertyTypeRegistry get() = PropertyTypeRegistry.INSTANCE

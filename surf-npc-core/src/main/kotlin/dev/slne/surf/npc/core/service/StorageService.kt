@@ -28,6 +28,6 @@ interface StorageService {
 }
 
 /**
- * The instance of the DatabaseService
+ * The instance of the StorageService
  */
 val storageService get() = StorageService.INSTANCE
