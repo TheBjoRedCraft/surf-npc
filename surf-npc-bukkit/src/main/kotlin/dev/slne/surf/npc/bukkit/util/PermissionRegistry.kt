@@ -3,33 +3,33 @@ package dev.slne.surf.npc.bukkit.util
 import dev.slne.surf.surfapi.bukkit.api.permission.PermissionRegistry
 
 object PermissionRegistry : PermissionRegistry() {
-    const val PERMISSION_PREFIX = "surf.npc"
+    const val PREFIX = "surf.npc"
 
-    const val COMMAND_NPC = "$PERMISSION_PREFIX.command"
-    const val COMMAND_NPC_CREATE = "$PERMISSION_PREFIX.command.create"
-    const val COMMAND_NPC_DELETE = "$PERMISSION_PREFIX.command.delete"
-    const val COMMAND_NPC_REFRESH = "$PERMISSION_PREFIX.command.refresh"
+    val COMMAND_NPC = create("$PREFIX.command")
+    val COMMAND_NPC_CREATE = create("$PREFIX.command.create")
+    val COMMAND_NPC_DELETE = create("$PREFIX.command.delete")
+    val COMMAND_NPC_REFRESH = create("$PREFIX.command.refresh")
 
-    const val COMMAND_NPC_LIST = "$PERMISSION_PREFIX.command.list"
-    const val COMMAND_NPC_INFO = "$PERMISSION_PREFIX.command.info"
+    val COMMAND_NPC_LIST = create("$PREFIX.command.list")
+    val COMMAND_NPC_INFO = create("$PREFIX.command.info")
 
-    const val COMMAND_NPC_EDIT = "$PERMISSION_PREFIX.command.edit"
-    const val COMMAND_NPC_EDIT_ROTATION = "$PERMISSION_PREFIX.command.edit.rotation"
-    const val COMMAND_NPC_EDIT_SKIN = "$PERMISSION_PREFIX.command.edit.skin"
-    const val COMMAND_NPC_DISPLAYNAME = "$PERMISSION_PREFIX.command.edit.displayname"
+    val COMMAND_NPC_EDIT = create("$PREFIX.command.edit")
+    val COMMAND_NPC_EDIT_ROTATION = create("$PREFIX.command.edit.rotation")
+    val COMMAND_NPC_EDIT_SKIN = create("$PREFIX.command.edit.skin")
+    val COMMAND_NPC_DISPLAYNAME = create("$PREFIX.command.edit.displayname")
 
-    const val COMMAND_NPC_TELEPORT_TO = "$PERMISSION_PREFIX.command.teleport"
-    const val COMMAND_NPC_TELEPORT_HERE = "$PERMISSION_PREFIX.command.teleporthere"
+    val COMMAND_NPC_TELEPORT_TO = create("$PREFIX.command.teleport")
+    val COMMAND_NPC_TELEPORT_HERE = create("$PREFIX.command.teleporthere")
 
-    const val COMMAND_NPC_PROPERTY = "$PERMISSION_PREFIX.command.property"
-    const val COMMAND_NPC_PROPERTY_ADD = "$PERMISSION_PREFIX.command.property.add"
-    const val COMMAND_NPC_PROPERTY_REMOVE = "$PERMISSION_PREFIX.command.property.remove"
-    const val COMMAND_NPC_PROPERTY_LIST = "$PERMISSION_PREFIX.command.property.list"
+    val COMMAND_NPC_PROPERTY = create("$PREFIX.command.property")
+    val COMMAND_NPC_PROPERTY_ADD = create("$PREFIX.command.property.add")
+    val COMMAND_NPC_PROPERTY_REMOVE = create("$PREFIX.command.property.remove")
+    val COMMAND_NPC_PROPERTY_LIST = create("$PREFIX.command.property.list")
 
-    const val COMMAND_NPC_IMPORT = "$PERMISSION_PREFIX.command.import"
-    const val COMMAND_NPC_IMPORT_ALL = "$PERMISSION_PREFIX.command.importall"
-    const val COMMAND_NPC_EXPORT = "$PERMISSION_PREFIX.command.export"
-    const val COMMAND_NPC_EXPORT_ALL = "$PERMISSION_PREFIX.command.exportall"
-    const val COMMAND_NPC_RELOAD_FROM_DISK = "$PERMISSION_PREFIX.command.loadFromDisk"
-    const val COMMAND_NPC_SAVE_TO_DISK = "$PERMISSION_PREFIX.command.saveToDisk"
+    val COMMAND_NPC_IMPORT = create("$PREFIX.command.import")
+    val COMMAND_NPC_IMPORT_ALL = create("$PREFIX.command.importall")
+    val COMMAND_NPC_EXPORT = create("$PREFIX.command.export")
+    val COMMAND_NPC_EXPORT_ALL = create("$PREFIX.command.exportall")
+    val COMMAND_NPC_RELOAD_FROM_DISK = create("$PREFIX.command.loadFromDisk")
+    val COMMAND_NPC_SAVE_TO_DISK = create("$PREFIX.command.saveToDisk")
 }
