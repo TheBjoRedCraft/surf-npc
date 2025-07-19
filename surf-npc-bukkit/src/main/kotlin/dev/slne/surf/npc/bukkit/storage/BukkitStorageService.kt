@@ -2,22 +2,21 @@ package dev.slne.surf.npc.bukkit.storage
 
 import com.google.auto.service.AutoService
 import dev.slne.surf.npc.api.npc.Npc
+import dev.slne.surf.npc.api.npc.property.NpcProperty
 import dev.slne.surf.npc.bukkit.npc.BukkitNpc
 import dev.slne.surf.npc.bukkit.plugin
+import dev.slne.surf.npc.bukkit.property.BukkitNpcProperty
 import dev.slne.surf.npc.core.controller.npcController
+import dev.slne.surf.npc.core.property.propertyTypeRegistry
 import dev.slne.surf.npc.core.service.StorageService
 import dev.slne.surf.surfapi.core.api.util.logger
-import dev.slne.surf.npc.api.npc.property.NpcProperty
-import dev.slne.surf.npc.bukkit.property.BukkitNpcProperty
-import dev.slne.surf.npc.core.property.propertyTypeRegistry
 import dev.slne.surf.surfapi.core.api.util.mutableObject2ObjectMapOf
 import dev.slne.surf.surfapi.core.api.util.toMutableObjectSet
-
 import net.kyori.adventure.util.Services
 import org.bukkit.configuration.file.YamlConfiguration
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.UUID
+import java.util.*
 
 @AutoService(StorageService::class)
 class BukkitStorageService : StorageService, Services.Fallback {
@@ -39,10 +38,15 @@ class BukkitStorageService : StorageService, Services.Fallback {
                 val id = config.getInt("npc.data.id")
                 val uuid = UUID.fromString(config.getString("npc.data.uuid"))
                 val nameTagId = config.getInt("npc.data.nameTagId")
-                val nameTagUuid = UUID.fromString(config.getString("npc.data.nameTagUuid") ?: error("NameTag UUID is missing in NPC config file: ${path.fileName}"))
-                val uniqueName = config.getString("npc.data.uniqueName") ?: error("Unique Name is missing in NPC config file: ${path.fileName}")
+                val nameTagUuid = UUID.fromString(
+                    config.getString("npc.data.nameTagUuid")
+                        ?: error("NameTag UUID is missing in NPC config file: ${path.fileName}")
+                )
+                val uniqueName = config.getString("npc.data.uniqueName")
+                    ?: error("Unique Name is missing in NPC config file: ${path.fileName}")
 
-                val viewers = config.getStringList("npc.data.viewers").map(UUID::fromString).toMutableObjectSet()
+                val viewers = config.getStringList("npc.data.viewers").map(UUID::fromString)
+                    .toMutableObjectSet()
 
                 val npc = BukkitNpc(
                     id = id,
@@ -54,29 +58,36 @@ class BukkitStorageService : StorageService, Services.Fallback {
                     uniqueName = uniqueName
                 )
 
-                val propsSection = config.getConfigurationSection("npc.data.properties") ?: return@forEach
+                val propsSection =
+                    config.getConfigurationSection("npc.data.properties") ?: return@forEach
                 val sectionKeys = propsSection.getKeys(false)
 
                 sectionKeys.forEach { key ->
-                    val valueString = config.getString("npc.data.properties.$key.value") ?: return@forEach
-                    val typeString = config.getString("npc.data.properties.$key.type") ?: return@forEach
+                    val valueString =
+                        config.getString("npc.data.properties.$key.value") ?: return@forEach
+                    val typeString =
+                        config.getString("npc.data.properties.$key.type") ?: return@forEach
 
                     val type = propertyTypeRegistry.get(typeString)
                         ?: error("Unknown property type: $typeString")
                     val value = type.decode(valueString)
 
-                    npc.addProperty(BukkitNpcProperty(
-                        key, value, type
-                    ))
+                    npc.addProperty(
+                        BukkitNpcProperty(
+                            key, value, type
+                        )
+                    )
                 }
 
                 npcController.registerNpc(npc)
             } catch (e: Exception) {
-                logger().atWarning().log("Failed to load NPC from file ${path.fileName}: ${e.message}")
+                logger().atWarning()
+                    .log("Failed to load NPC from file ${path.fileName}: ${e.message}")
             }
         }
 
-        logger().atInfo().log("Successfully loaded ${npcController.getNpcs().size} NPCs from ${files.size} files!")
+        logger().atInfo()
+            .log("Successfully loaded ${npcController.getNpcs().size} NPCs from ${files.size} files!")
 
         return npcController.getNpcs().size
     }
@@ -90,18 +101,18 @@ class BukkitStorageService : StorageService, Services.Fallback {
             val file = npcFolder.resolve("${npc.uniqueName}.yml").toFile()
             val config = YamlConfiguration()
 
-            config.set("npc.data.id", npc.id)
-            config.set("npc.data.uuid", npc.npcUuid.toString())
-            config.set("npc.data.nameTagId", npc.nameTagId)
-            config.set("npc.data.nameTagUuid", npc.nameTagUuid.toString())
-            config.set("npc.data.uniqueName", npc.uniqueName)
+            config["npc.data.id"] = npc.id
+            config["npc.data.uuid"] = npc.npcUuid.toString()
+            config["npc.data.nameTagId"] = npc.nameTagId
+            config["npc.data.nameTagUuid"] = npc.nameTagUuid.toString()
+            config["npc.data.uniqueName"] = npc.uniqueName
 
-            config.set("npc.data.viewers", npc.viewers.map(UUID::toString))
+            config["npc.data.viewers"] = npc.viewers.map(UUID::toString)
 
             npc.properties.values.forEach {
                 val path = "npc.data.properties.${it.key}"
-                config.set("$path.value", it.type.encode(it.value))
-                config.set("$path.type", it.type.id)
+                config["$path.value"] = it.type.encode(it.value)
+                config["$path.type"] = it.type.id
             }
 
             config.save(file)
@@ -121,19 +132,25 @@ class BukkitStorageService : StorageService, Services.Fallback {
 
         val config = YamlConfiguration.loadConfiguration(file)
         try {
-            val uniqueName = config.getString("npc.data.uniqueName") ?: error("Unique name is missing in NPC config file: $fileName.yml")
+            val uniqueName = config.getString("npc.data.uniqueName")
+                ?: error("Unique name is missing in NPC config file: $fileName.yml")
 
             if (npcController.getNpc(uniqueName) != null) {
-                logger().atWarning().log("NPC with unique name '$uniqueName' already exists. Skipping import.")
+                logger().atWarning()
+                    .log("NPC with unique name '$uniqueName' already exists. Skipping import.")
                 return false
             }
 
             val id = config.getInt("npc.data.id")
             val uuid = UUID.fromString(config.getString("npc.data.uuid"))
             val nameTagId = config.getInt("npc.data.nameTagId")
-            val nameTagUuid = UUID.fromString(config.getString("npc.data.nameTagUuid") ?: error("NameTag UUID is missing in NPC config file: $fileName.yml"))
+            val nameTagUuid = UUID.fromString(
+                config.getString("npc.data.nameTagUuid")
+                    ?: error("NameTag UUID is missing in NPC config file: $fileName.yml")
+            )
 
-            val viewers = config.getStringList("npc.data.viewers").map(UUID::fromString).toMutableObjectSet()
+            val viewers =
+                config.getStringList("npc.data.viewers").map(UUID::fromString).toMutableObjectSet()
 
             val npc = BukkitNpc(
                 id = id,
@@ -149,16 +166,19 @@ class BukkitStorageService : StorageService, Services.Fallback {
             val sectionKeys = propsSection.getKeys(false)
 
             sectionKeys.forEach { key ->
-                val valueString = config.getString("npc.data.properties.$key.value") ?: return@forEach
+                val valueString =
+                    config.getString("npc.data.properties.$key.value") ?: return@forEach
                 val typeString = config.getString("npc.data.properties.$key.type") ?: return@forEach
 
                 val type = propertyTypeRegistry.get(typeString)
                     ?: error("Unknown property type: $typeString")
                 val value = type.decode(valueString)
 
-                npc.addProperty(BukkitNpcProperty(
-                    key, value, type
-                ))
+                npc.addProperty(
+                    BukkitNpcProperty(
+                        key, value, type
+                    )
+                )
             }
 
             npcController.registerNpc(npc)
@@ -175,18 +195,18 @@ class BukkitStorageService : StorageService, Services.Fallback {
         val file = npcFolder.resolve("${npc.uniqueName}.yml").toFile()
         val config = YamlConfiguration()
 
-        config.set("npc.data.id", npc.id)
-        config.set("npc.data.uuid", npc.npcUuid.toString())
-        config.set("npc.data.nameTagId", npc.nameTagId)
-        config.set("npc.data.nameTagUuid", npc.nameTagUuid.toString())
-        config.set("npc.data.uniqueName", npc.uniqueName)
+        config["npc.data.id"] = npc.id
+        config["npc.data.uuid"] = npc.npcUuid.toString()
+        config["npc.data.nameTagId"] = npc.nameTagId
+        config["npc.data.nameTagUuid"] = npc.nameTagUuid.toString()
+        config["npc.data.uniqueName"] = npc.uniqueName
 
-        config.set("npc.data.viewers", npc.viewers.map(UUID::toString))
+        config["npc.data.viewers"] = npc.viewers.map(UUID::toString)
 
         npc.properties.values.forEach {
             val path = "npc.data.properties.${it.key}"
-            config.set("$path.value", it.type.encode(it.value))
-            config.set("$path.type", it.type.id)
+            config["$path.value"] = it.type.encode(it.value)
+            config["$path.type"] = it.type.id
         }
 
         config.save(file)
@@ -201,7 +221,8 @@ class BukkitStorageService : StorageService, Services.Fallback {
             val config = YamlConfiguration.loadConfiguration(path.toFile())
 
             try {
-                val uniqueName = config.getString("npc.data.uniqueName") ?: error("Unique name is missing in NPC config file: ${path.fileName}")
+                val uniqueName = config.getString("npc.data.uniqueName")
+                    ?: error("Unique name is missing in NPC config file: ${path.fileName}")
 
                 if (existingNames.contains(uniqueName)) {
                     return@forEach
@@ -210,9 +231,13 @@ class BukkitStorageService : StorageService, Services.Fallback {
                 val id = config.getInt("npc.data.id")
                 val uuid = UUID.fromString(config.getString("npc.data.uuid"))
                 val nameTagId = config.getInt("npc.data.nameTagId")
-                val nameTagUuid = UUID.fromString(config.getString("npc.data.nameTagUuid") ?: error("NameTag UUID is missing in NPC config file: ${path.fileName}"))
+                val nameTagUuid = UUID.fromString(
+                    config.getString("npc.data.nameTagUuid")
+                        ?: error("NameTag UUID is missing in NPC config file: ${path.fileName}")
+                )
 
-                val viewers = config.getStringList("npc.data.viewers").map(UUID::fromString).toMutableObjectSet()
+                val viewers = config.getStringList("npc.data.viewers").map(UUID::fromString)
+                    .toMutableObjectSet()
 
                 val npc = BukkitNpc(
                     id = id,
@@ -224,27 +249,33 @@ class BukkitStorageService : StorageService, Services.Fallback {
                     uniqueName = uniqueName
                 )
 
-                val propsSection = config.getConfigurationSection("npc.data.properties") ?: return@forEach
+                val propsSection =
+                    config.getConfigurationSection("npc.data.properties") ?: return@forEach
                 val sectionKeys = propsSection.getKeys(false)
 
                 sectionKeys.forEach { key ->
-                    val valueString = config.getString("npc.data.properties.$key.value") ?: return@forEach
-                    val typeString = config.getString("npc.data.properties.$key.type") ?: return@forEach
+                    val valueString =
+                        config.getString("npc.data.properties.$key.value") ?: return@forEach
+                    val typeString =
+                        config.getString("npc.data.properties.$key.type") ?: return@forEach
 
                     val type = propertyTypeRegistry.get(typeString)
                         ?: error("Unknown property type: $typeString")
                     val value = type.decode(valueString)
 
-                    npc.addProperty(BukkitNpcProperty(
-                        key, value, type
-                    ))
+                    npc.addProperty(
+                        BukkitNpcProperty(
+                            key, value, type
+                        )
+                    )
                 }
 
                 npcController.registerNpc(npc)
                 npc.show()
                 importedCount++
             } catch (e: Exception) {
-                logger().atWarning().log("Failed to import NPC from file ${path.fileName}: ${e.message}")
+                logger().atWarning()
+                    .log("Failed to import NPC from file ${path.fileName}: ${e.message}")
             }
         }
         return importedCount
@@ -260,18 +291,18 @@ class BukkitStorageService : StorageService, Services.Fallback {
             val file = npcFolder.resolve("${npc.uniqueName}.yml").toFile()
             val config = YamlConfiguration()
 
-            config.set("npc.data.id", npc.id)
-            config.set("npc.data.uuid", npc.npcUuid.toString())
-            config.set("npc.data.nameTagId", npc.nameTagId)
-            config.set("npc.data.nameTagUuid", npc.nameTagUuid.toString())
-            config.set("npc.data.uniqueName", npc.uniqueName)
+            config["npc.data.id"] = npc.id
+            config["npc.data.uuid"] = npc.npcUuid.toString()
+            config["npc.data.nameTagId"] = npc.nameTagId
+            config["npc.data.nameTagUuid"] = npc.nameTagUuid.toString()
+            config["npc.data.uniqueName"] = npc.uniqueName
 
-            config.set("npc.data.viewers", npc.viewers.map(UUID::toString))
+            config["npc.data.viewers"] = npc.viewers.map(UUID::toString)
 
             npc.properties.values.forEach {
                 val path = "npc.data.properties.${it.key}"
-                config.set("$path.value", it.type.encode(it.value))
-                config.set("$path.type", it.type.id)
+                config["$path.value"] = it.type.encode(it.value)
+                config["$path.type"] = it.type.id
             }
 
             config.save(file)
