@@ -11,6 +11,6 @@ buildscript {
 }
 
 allprojects {
-    group = "dev.slne"
-    version = "1.0-SNAPSHOT"
+    group = "dev.slne.surf.npc"
+    version = "1.21.7-1.0.0-SNAPSHOT"
 }
