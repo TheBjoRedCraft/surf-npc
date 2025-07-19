@@ -11,11 +11,9 @@ import dev.slne.surf.npc.bukkit.util.PermissionRegistry
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.CommonComponents
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.clickRunsCommand
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickSuggestsCommand
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination
-import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination.Companion.invoke
 import net.kyori.adventure.text.format.TextDecoration
 
 class NpcPropertyListCommand(commandName: String) : CommandAPICommand(commandName) {
@@ -59,7 +57,7 @@ class NpcPropertyListCommand(commandName: String) : CommandAPICommand(commandNam
             }
 
             player.sendText {
-                append(pagination.renderComponent(npcs, page))
+                append(pagination.renderComponent(properties, page))
             }
 
 //            PageableMessageBuilder {
