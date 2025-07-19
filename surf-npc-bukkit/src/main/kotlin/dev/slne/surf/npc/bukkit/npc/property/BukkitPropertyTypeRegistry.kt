@@ -27,7 +27,7 @@ class BukkitPropertyTypeRegistry : PropertyTypeRegistry, Services.Fallback {
     }
 
     override fun get(id: String): NpcPropertyType? {
-        return types.firstOrNull() { it.id == id}
+        return types.firstOrNull { it.id == id }
     }
 
     override fun getIds(): ObjectSet<String> {
