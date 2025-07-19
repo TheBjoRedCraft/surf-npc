@@ -3,11 +3,15 @@ package dev.slne.surf.npc.bukkit.command.sub
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.npc.bukkit.util.PageableMessageBuilder
+import dev.slne.surf.npc.api.npc.Npc
 import dev.slne.surf.npc.bukkit.util.PermissionRegistry
 import dev.slne.surf.npc.core.controller.npcController
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
+import dev.slne.surf.surfapi.core.api.messages.CommonComponents
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.clickRunsCommand
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination
 import net.kyori.adventure.text.format.TextDecoration
 
 class NpcListCommand(commandName: String) : CommandAPICommand(commandName) {
@@ -26,26 +30,28 @@ class NpcListCommand(commandName: String) : CommandAPICommand(commandName) {
                 return@playerExecutor
             }
 
-            PageableMessageBuilder {
-                pageCommand = "/npc list %page%"
-
+            val pagination = Pagination<Npc> {
                 title {
                     info("Npc Informationen".toSmallCaps())
                     decorate(TextDecoration.BOLD)
                 }
-
-                npcs.forEach {
-                    line {
-                        append {
-                            info("| ")
-                            decorate(TextDecoration.BOLD)
+                rowRenderer { npc, index ->
+                    listOf(
+                        buildText {
+                            append(CommonComponents.EM_DASH)
+                            appendSpace()
+                            variableValue(npc.uniqueName)
+                            appendSpace()
+                            info("(${npc.id})")
+                            clickRunsCommand("/npc info ${npc.uniqueName}")
                         }
-
-                        variableValue(it.uniqueName)
-                        spacer(" (ID: ${it.id})")
-                    }
+                    )
                 }
-            }.send(player, page)
+            }
+
+            player.sendText {
+                append(pagination.renderComponent(npcs, page))
+            }
         }
     }
 }

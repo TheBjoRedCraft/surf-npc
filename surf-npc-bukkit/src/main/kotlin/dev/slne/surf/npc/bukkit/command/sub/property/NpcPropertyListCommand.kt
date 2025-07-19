@@ -5,12 +5,17 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.npc.api.npc.Npc
+import dev.slne.surf.npc.api.npc.property.NpcProperty
 import dev.slne.surf.npc.bukkit.command.argument.npcArgument
-import dev.slne.surf.npc.bukkit.util.PageableMessageBuilder
 import dev.slne.surf.npc.bukkit.util.PermissionRegistry
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
+import dev.slne.surf.surfapi.core.api.messages.CommonComponents
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
+import dev.slne.surf.surfapi.core.api.messages.adventure.clickRunsCommand
+import dev.slne.surf.surfapi.core.api.messages.adventure.clickSuggestsCommand
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination
+import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination.Companion.invoke
 import net.kyori.adventure.text.format.TextDecoration
 
 class NpcPropertyListCommand(commandName: String) : CommandAPICommand(commandName) {
@@ -31,31 +36,57 @@ class NpcPropertyListCommand(commandName: String) : CommandAPICommand(commandNam
                 return@playerExecutor
             }
 
-            PageableMessageBuilder {
-                pageCommand = "/npc property list %page%"
-
+            val pagination = Pagination<NpcProperty> {
                 title {
                     info("Npc Eigenschaften".toSmallCaps())
                     decorate(TextDecoration.BOLD)
                 }
-
-                properties.forEach {
-                    line {
-                        append {
-                            info("| ")
-                            decorate(TextDecoration.BOLD)
-                        }
-
-                        append {
-                            variableValue(it.key)
-                            spacer(" (Typ: ${it.type.id})")
+                rowRenderer { property, index ->
+                    listOf(
+                        buildText {
+                            append(CommonComponents.EM_DASH)
+                            appendSpace()
+                            variableValue(property.key)
+                            appendSpace()
+                            info("(${property.type.id})")
                             hoverEvent(buildText {
-                                variableValue(it.type.encode(it.value))
+                                variableValue(property.type.encode(property.value))
                             })
+                            clickSuggestsCommand("/npc property remove ${npc.uniqueName} ${property.key}")
                         }
-                    }
+                    )
                 }
-            }.send(player, page)
+            }
+
+            player.sendText {
+                append(pagination.renderComponent(npcs, page))
+            }
+
+//            PageableMessageBuilder {
+//                pageCommand = "/npc property list %page%"
+//
+//                title {
+//                    info("Npc Eigenschaften".toSmallCaps())
+//                    decorate(TextDecoration.BOLD)
+//                }
+//
+//                properties.forEach {
+//                    line {
+//                        append {
+//                            info("| ")
+//                            decorate(TextDecoration.BOLD)
+//                        }
+//
+//                        append {
+//                            variableValue(it.key)
+//                            spacer(" (Typ: ${it.type.id})")
+//                            hoverEvent(buildText {
+//                                variableValue(it.type.encode(it.value))
+//                            })
+//                        }
+//                    }
+//                }
+//            }.send(player, page)
         }
     }
 }
