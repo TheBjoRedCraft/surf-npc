@@ -42,13 +42,13 @@ class NpcTeleportToCommand(commandName: String) : CommandAPICommand(commandName)
 
                 player.sendText {
                     appendPrefix()
-                    info("${targetPlayer.name} wird zu ${npc.internalName} teleportiert...")
+                    info("${targetPlayer.name} wird zu ${npc.uniqueName} teleportiert...")
                 }
 
                 targetPlayer.teleportAsync(bukkitLocation).thenRun {
                     player.sendText {
                         appendPrefix()
-                        success("${targetPlayer.name} wurde zu ${npc.internalName} teleportiert.")
+                        success("${targetPlayer.name} wurde zu ${npc.uniqueName} teleportiert.")
                     }
                 }
                 return@playerExecutor
@@ -56,13 +56,13 @@ class NpcTeleportToCommand(commandName: String) : CommandAPICommand(commandName)
 
             player.sendText {
                 appendPrefix()
-                info("Du wirst zu ${npc.internalName} teleportiert...")
+                info("Du wirst zu ${npc.uniqueName} teleportiert...")
             }
 
             player.teleportAsync(bukkitLocation).thenRun {
                 player.sendText {
                     appendPrefix()
-                    success("Du wurdest zu ${npc.internalName} teleportiert.")
+                    success("Du wurdest zu ${npc.uniqueName} teleportiert.")
                 }
             }
             return@playerExecutor

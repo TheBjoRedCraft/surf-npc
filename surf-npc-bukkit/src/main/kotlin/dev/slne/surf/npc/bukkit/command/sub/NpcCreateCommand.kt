@@ -23,13 +23,13 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 class NpcCreateCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(PermissionRegistry.COMMAND_NPC_CREATE)
-        stringArgument("internalName")
+        stringArgument("uniqueName")
         textArgument("name")
         stringArgument("skin")
         rotationTypeArgument("rotationType")
         playerExecutor { player, args ->
             val name: String by args
-            val internalName: String by args
+            val uniqueName: String by args
             val skin: String by args
             val rotationType: NpcRotationType by args
             val location = player.location
@@ -52,7 +52,7 @@ class NpcCreateCommand(commandName: String) : CommandAPICommand(commandName) {
             plugin.launch {
                 val skinData = skinDataFromName(skin)
                 val npcResult = npcController.createNpc(
-                    internalName,
+                    uniqueName,
                     parsedName,
                     skinData,
                     BukkitNpcLocation(location.x, location.y, location.z, location.world.name),
@@ -61,7 +61,7 @@ class NpcCreateCommand(commandName: String) : CommandAPICommand(commandName) {
                     true
                 )
 
-                val npc = npcController.getNpc(internalName)
+                val npc = npcController.getNpc(uniqueName)
 
                 if(npc == null) {
                     player.sendText {

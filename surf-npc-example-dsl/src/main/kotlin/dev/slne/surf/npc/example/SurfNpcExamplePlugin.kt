@@ -20,7 +20,7 @@ class SurfNpcExamplePlugin(): SuspendingJavaPlugin() {
          */
         npc {
             displayName = MiniMessage.miniMessage().deserialize("<rainbow>Example Npc by surf-npc-example")
-            internalName = "example_npc"
+            uniqueName = "example_npc"
 
             /**
              * Skin data can be created using the DSL or by using the SurfNpcApi#getSkin function.

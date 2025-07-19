@@ -7,7 +7,6 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.npc.api.npc.Npc
 import dev.slne.surf.npc.bukkit.command.argument.npcArgument
 import dev.slne.surf.npc.bukkit.util.PermissionRegistry
-import dev.slne.surf.npc.core.service.storageService
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 
 class NpcRefreshCommand(commandName: String) : CommandAPICommand(commandName) {
@@ -22,7 +21,7 @@ class NpcRefreshCommand(commandName: String) : CommandAPICommand(commandName) {
             player.sendText {
                 appendPrefix()
                 success("Der NPC ")
-                variableValue(npc.internalName)
+                variableValue(npc.uniqueName)
                 success(" wurde aktualisiert.")
             }
         }

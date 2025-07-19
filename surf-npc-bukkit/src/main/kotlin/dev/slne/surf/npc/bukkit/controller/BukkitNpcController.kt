@@ -1,9 +1,7 @@
 package dev.slne.surf.npc.bukkit.controller
 
-import com.github.shynixn.mccoroutine.folia.entityDispatcher
 import com.github.shynixn.mccoroutine.folia.globalRegionDispatcher
 import com.github.shynixn.mccoroutine.folia.launch
-import com.github.shynixn.mccoroutine.folia.mainDispatcher
 import com.google.auto.service.AutoService
 import dev.slne.surf.npc.api.event.NpcCreateEvent
 import dev.slne.surf.npc.api.event.NpcDeleteEvent
@@ -33,7 +31,6 @@ import it.unimi.dsi.fastutil.objects.ObjectList
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.util.Services
-import org.bukkit.Bukkit
 import java.util.UUID
 
 @AutoService(NpcController::class)
@@ -41,7 +38,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
     val npcs = mutableObjectSetOf<Npc>()
 
     override fun createNpc(
-        internalName: String,
+        uniqueName: String,
         displayName: Component,
         skinData: NpcSkin,
         location: NpcLocation,
@@ -58,7 +55,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
             return NpcCreationResult.FAILED_ALREADY_EXISTS
         }
 
-        if(this.getNpc(internalName) != null) {
+        if(this.getNpc(uniqueName) != null) {
             return NpcCreationResult.FAILED_ALREADY_EXISTS
         }
 
@@ -69,7 +66,7 @@ class BukkitNpcController : NpcController, Services.Fallback {
             uuid,
             nameTagId,
             nameTagUuid,
-            internalName
+            uniqueName
         )
 
         npc.addProperty(BukkitNpcProperty(
@@ -249,8 +246,8 @@ class BukkitNpcController : NpcController, Services.Fallback {
         return npcs.find { it.id == id }
     }
 
-    override fun getNpc(internalName: String): Npc? {
-        return npcs.find { it.internalName.equals(internalName, ignoreCase = true) }
+    override fun getNpc(uniqueName: String): Npc? {
+        return npcs.find { it.uniqueName.equals(uniqueName, ignoreCase = true) }
     }
 
     override fun getNpcs(): ObjectList<Npc> {

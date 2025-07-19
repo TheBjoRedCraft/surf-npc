@@ -5,7 +5,6 @@ import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.npc.bukkit.util.PageableMessageBuilder
 import dev.slne.surf.npc.bukkit.util.PermissionRegistry
-import dev.slne.surf.npc.bukkit.util.toPlain
 import dev.slne.surf.npc.core.controller.npcController
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
@@ -42,7 +41,7 @@ class NpcListCommand(commandName: String) : CommandAPICommand(commandName) {
                             decorate(TextDecoration.BOLD)
                         }
 
-                        variableValue(it.internalName)
+                        variableValue(it.uniqueName)
                         spacer(" (ID: ${it.id})")
                     }
                 }

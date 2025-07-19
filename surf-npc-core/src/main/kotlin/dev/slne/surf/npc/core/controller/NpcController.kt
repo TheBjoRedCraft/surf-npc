@@ -23,7 +23,7 @@ interface NpcController {
     /**
      * Creates a new NPC.
      *
-     * @param internalName The internal name of the NPC.
+     * @param uniqueName The internal name of the NPC.
      * @param displayName The display name of the NPC.
      * @param skinData The skin data for the NPC.
      * @param location The location where the NPC will be spawned.
@@ -32,7 +32,7 @@ interface NpcController {
      * @param global Whether the NPC is globally visible.
      * @return The result of the NPC creation.
      */
-    fun createNpc(internalName: String, displayName: Component, skinData: NpcSkin, location: NpcLocation, rotationType: NpcRotationType, rotation: NpcRotation, global: Boolean): NpcCreationResult
+    fun createNpc(uniqueName: String, displayName: Component, skinData: NpcSkin, location: NpcLocation, rotationType: NpcRotationType, rotation: NpcRotation, global: Boolean): NpcCreationResult
 
     /**
      * Deletes an NPC.
@@ -119,10 +119,10 @@ interface NpcController {
     /**
      * Retrieves an NPC by its internal name.
      *
-     * @param internalName The internal name of the NPC.
+     * @param uniqueName The internal name of the NPC.
      * @return The NPC, or null if not found.
      */
-    fun getNpc(internalName: String): Npc?
+    fun getNpc(uniqueName: String): Npc?
 
     /**
      * Retrieves all registered NPCs.

@@ -55,7 +55,7 @@ class BukkitNpc (
     override val npcUuid: UUID,
     override val nameTagId: Int,
     override val nameTagUuid: UUID,
-    override val internalName: String
+    override val uniqueName: String
 ) : Npc {
     override fun spawn(uuid: UUID) {
         val packetEvents = PacketEvents.getAPI()
@@ -65,7 +65,7 @@ class BukkitNpc (
         val user = playerManager.getUser(player)
 
         val displayName = this.getPropertyValue(NpcProperty.Internal.DISPLAYNAME, Component::class) ?: return
-        val profile = UserProfile(npcUuid, internalName)
+        val profile = UserProfile(npcUuid, uniqueName)
 
         val skinValue = this.getPropertyValue(NpcProperty.Internal.SKIN_TEXTURE, String::class) ?: return
         val skinSignature = this.getPropertyValue(NpcProperty.Internal.SKIN_SIGNATURE, String::class) ?: return
@@ -92,7 +92,7 @@ class BukkitNpc (
         user.sendPacket(createEntityMetadataPacket(id))
 
         user.sendPacket(createTeamCreatePacket("npc_$id", displayName))
-        user.sendPacket(createTeamAddEntityPacket("npc_$id", internalName))
+        user.sendPacket(createTeamAddEntityPacket("npc_$id", uniqueName))
 
         user.sendPacket(createNametagSpawnPacket(nameTagId, nameTagUuid, location.toLocation()))
         user.sendPacket(createNametagMetadataPacket(nameTagId, displayName))
@@ -145,9 +145,9 @@ class BukkitNpc (
         val player = Bukkit.getPlayer(uuid) ?: return
         val user = PacketEvents.getAPI().playerManager.getUser(player)
 
-        val rotationType = if (this.getPropertyValue(NpcProperty.Internal.ROTATION_TYPE, Boolean::class) ?: error("Rotation type is not set for NPC: $internalName")) NpcRotationType.PER_PLAYER else NpcRotationType.FIXED
+        val rotationType = if (this.getPropertyValue(NpcProperty.Internal.ROTATION_TYPE, Boolean::class) ?: error("Rotation type is not set for NPC: $uniqueName")) NpcRotationType.PER_PLAYER else NpcRotationType.FIXED
         val fixedRotation = this.getPropertyValue(NpcProperty.Internal.ROTATION_FIXED, NpcRotation::class) ?: BukkitNpcRotation(0f, 0f)
-        val location = this.getPropertyValue(NpcProperty.Internal.LOCATION, NpcLocation::class) ?: error("Location is not set for NPC: $internalName")
+        val location = this.getPropertyValue(NpcProperty.Internal.LOCATION, NpcLocation::class) ?: error("Location is not set for NPC: $uniqueName")
 
         val yawPitch: Pair<Float, Float> = when (rotationType) {
             NpcRotationType.FIXED -> {

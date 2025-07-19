@@ -32,7 +32,7 @@ import java.util.UUID
 class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
     override fun createNpc(
         displayName: Component,
-        internalName: String,
+        uniqueName: String,
         skin: NpcSkin,
         location: NpcLocation,
         global: Boolean,
@@ -40,7 +40,7 @@ class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
         fixedRotation: NpcRotation?
     ): NpcCreationResult {
         return npcController.createNpc(
-            internalName,
+            uniqueName,
             displayName,
             skin,
             location,
@@ -111,8 +111,8 @@ class BukkitSurfNpcApi : SurfNpcApi, Services.Fallback {
         return npcController.getNpc(id)
     }
 
-    override fun getNpc(internalName: String): Npc? {
-        return npcController.getNpc(internalName)
+    override fun getNpc(uniqueName: String): Npc? {
+        return npcController.getNpc(uniqueName)
     }
 
     override fun getNpcs(): ObjectList<Npc> {

@@ -21,7 +21,7 @@ class NpcExportCommand(commandName: String) : CommandAPICommand(commandName) {
 
             player.sendText {
                 appendPrefix()
-                success("Der NPC '${npc.internalName}' wurde erfolgreich exportiert.")
+                success("Der NPC '${npc.uniqueName}' wurde erfolgreich exportiert.")
             }
         }
     }

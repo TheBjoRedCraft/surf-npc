@@ -56,7 +56,7 @@ class NpcEditSkinCommand(commandName: String) : CommandAPICommand(commandName) {
                 player.sendText {
                     appendPrefix()
                     success("Die Skin-Daten für den Npc ")
-                    variableValue(npc.internalName)
+                    variableValue(npc.uniqueName)
                     success(" wurden aktualisiert.")
                 }
             }

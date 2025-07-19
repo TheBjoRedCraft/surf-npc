@@ -26,7 +26,7 @@ class NpcArgument(nodeName: String) : CustomArgument<Npc, String>(StringArgument
 }) {
     init {
         replaceSuggestions(ArgumentSuggestions.stringCollection {
-            npcController.getNpcs().map { it.internalName }
+            npcController.getNpcs().map { it.uniqueName }
         })
     }
 }

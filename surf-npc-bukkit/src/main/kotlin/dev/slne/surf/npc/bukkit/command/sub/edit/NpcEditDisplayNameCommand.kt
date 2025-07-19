@@ -36,7 +36,7 @@ class NpcEditDisplayNameCommand(commandName: String) : CommandAPICommand(command
             player.sendText {
                 appendPrefix()
                 success("Der Anzeigename des Npc ")
-                variableValue(npc.internalName)
+                variableValue(npc.uniqueName)
                 success(" wurden aktualisiert.")
             }
         }

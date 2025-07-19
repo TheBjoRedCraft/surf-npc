@@ -19,7 +19,7 @@ package dev.slne.surf.npc.api.npc
      /**
       * The internal name of the NPC.
       */
-     val internalName: String
+     val uniqueName: String
 
      /**
       * The UUID of the NPC.

@@ -22,7 +22,7 @@ class NpcPropertyRemoveCommand(commandName: String) : CommandAPICommand(commandN
             if(!npc.hasProperty(key)) {
                 player.sendText {
                     appendPrefix()
-                    error("Der NPC '${npc.internalName}' besitzt keine Property mit dem Key '${key}'.")
+                    error("Der NPC '${npc.uniqueName}' besitzt keine Property mit dem Key '${key}'.")
                 }
                 return@playerExecutor
             }
@@ -31,7 +31,7 @@ class NpcPropertyRemoveCommand(commandName: String) : CommandAPICommand(commandN
 
             player.sendText {
                 appendPrefix()
-                success("Die Property '${key}' wurde erfolgreich vom NPC '${npc.internalName}' entfernt.")
+                success("Die Property '${key}' wurde erfolgreich vom NPC '${npc.uniqueName}' entfernt.")
             }
         }
     }

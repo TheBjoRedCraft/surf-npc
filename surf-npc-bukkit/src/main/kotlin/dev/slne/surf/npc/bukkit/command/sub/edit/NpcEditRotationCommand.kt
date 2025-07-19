@@ -45,7 +45,7 @@ class NpcEditRotationCommand(commandName: String) : CommandAPICommand(commandNam
             player.sendText {
                 appendPrefix()
                 success("Die Rotation des Npc ")
-                variableValue(npc.internalName)
+                variableValue(npc.uniqueName)
                 success(" wurde auf $rotationType geändert.")
             }
         }

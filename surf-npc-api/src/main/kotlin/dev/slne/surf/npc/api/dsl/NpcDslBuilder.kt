@@ -21,7 +21,7 @@ class NpcDslBuilder {
     /**
      * The internal name of the NPC.
      */
-    lateinit var internalName: String
+    lateinit var uniqueName: String
 
     /**
      * The skin of the NPC.
@@ -136,7 +136,7 @@ fun npc(block: NpcDslBuilder.() -> Unit): NpcCreationResult {
     val builder = NpcDslBuilder().apply(block)
     return surfNpcApi.createNpc(
         displayName = builder.displayName,
-        internalName = builder.internalName,
+        uniqueName = builder.uniqueName,
         skin = builder.skin,
         location = builder.location,
         global = builder.global,

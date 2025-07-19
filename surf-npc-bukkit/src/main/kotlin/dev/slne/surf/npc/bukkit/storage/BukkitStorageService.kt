@@ -40,7 +40,7 @@ class BukkitStorageService : StorageService, Services.Fallback {
                 val uuid = UUID.fromString(config.getString("npc.data.uuid"))
                 val nameTagId = config.getInt("npc.data.nameTagId")
                 val nameTagUuid = UUID.fromString(config.getString("npc.data.nameTagUuid") ?: error("NameTag UUID is missing in NPC config file: ${path.fileName}"))
-                val internalName = config.getString("npc.data.internalName") ?: error("Internal name is missing in NPC config file: ${path.fileName}")
+                val uniqueName = config.getString("npc.data.uniqueName") ?: error("Unique Name is missing in NPC config file: ${path.fileName}")
 
                 val viewers = config.getStringList("npc.data.viewers").map(UUID::fromString).toMutableObjectSet()
 
@@ -51,7 +51,7 @@ class BukkitStorageService : StorageService, Services.Fallback {
                     nameTagUuid = nameTagUuid,
                     viewers = viewers,
                     properties = mutableObject2ObjectMapOf<String, NpcProperty>(),
-                    internalName = internalName
+                    uniqueName = uniqueName
                 )
 
                 val propsSection = config.getConfigurationSection("npc.data.properties") ?: return@forEach
@@ -87,14 +87,14 @@ class BukkitStorageService : StorageService, Services.Fallback {
             .forEach(Files::delete)
 
         npcController.getNpcs().forEach { npc ->
-            val file = npcFolder.resolve("${npc.internalName}.yml").toFile()
+            val file = npcFolder.resolve("${npc.uniqueName}.yml").toFile()
             val config = YamlConfiguration()
 
             config.set("npc.data.id", npc.id)
             config.set("npc.data.uuid", npc.npcUuid.toString())
             config.set("npc.data.nameTagId", npc.nameTagId)
             config.set("npc.data.nameTagUuid", npc.nameTagUuid.toString())
-            config.set("npc.data.internalName", npc.internalName)
+            config.set("npc.data.uniqueName", npc.uniqueName)
 
             config.set("npc.data.viewers", npc.viewers.map(UUID::toString))
 
@@ -121,10 +121,10 @@ class BukkitStorageService : StorageService, Services.Fallback {
 
         val config = YamlConfiguration.loadConfiguration(file)
         try {
-            val internalName = config.getString("npc.data.internalName") ?: error("Internal name is missing in NPC config file: $fileName.yml")
+            val uniqueName = config.getString("npc.data.uniqueName") ?: error("Unique name is missing in NPC config file: $fileName.yml")
 
-            if (npcController.getNpc(internalName) != null) {
-                logger().atWarning().log("NPC with internal name '$internalName' already exists. Skipping import.")
+            if (npcController.getNpc(uniqueName) != null) {
+                logger().atWarning().log("NPC with internal name '$uniqueName' already exists. Skipping import.")
                 return false
             }
 
@@ -142,7 +142,7 @@ class BukkitStorageService : StorageService, Services.Fallback {
                 nameTagUuid = nameTagUuid,
                 viewers = viewers,
                 properties = mutableObject2ObjectMapOf<String, NpcProperty>(),
-                internalName = internalName
+                uniqueName = uniqueName
             )
 
             val propsSection = config.getConfigurationSection("npc.data.properties") ?: return false
@@ -172,14 +172,14 @@ class BukkitStorageService : StorageService, Services.Fallback {
     }
 
     override fun export(npc: Npc) {
-        val file = npcFolder.resolve("${npc.internalName}.yml").toFile()
+        val file = npcFolder.resolve("${npc.uniqueName}.yml").toFile()
         val config = YamlConfiguration()
 
         config.set("npc.data.id", npc.id)
         config.set("npc.data.uuid", npc.npcUuid.toString())
         config.set("npc.data.nameTagId", npc.nameTagId)
         config.set("npc.data.nameTagUuid", npc.nameTagUuid.toString())
-        config.set("npc.data.internalName", npc.internalName)
+        config.set("npc.data.uniqueName", npc.uniqueName)
 
         config.set("npc.data.viewers", npc.viewers.map(UUID::toString))
 
@@ -193,7 +193,7 @@ class BukkitStorageService : StorageService, Services.Fallback {
     }
 
     override fun importAll(): Int {
-        val existingNames = npcController.getNpcs().map { it.internalName }.toSet()
+        val existingNames = npcController.getNpcs().map { it.uniqueName }.toSet()
         val files = Files.list(npcFolder).filter { it.toString().endsWith(".yml") }.toList()
         var importedCount = 0
 
@@ -201,9 +201,9 @@ class BukkitStorageService : StorageService, Services.Fallback {
             val config = YamlConfiguration.loadConfiguration(path.toFile())
 
             try {
-                val internalName = config.getString("npc.data.internalName") ?: error("Internal name is missing in NPC config file: ${path.fileName}")
+                val uniqueName = config.getString("npc.data.uniqueName") ?: error("Unique name is missing in NPC config file: ${path.fileName}")
 
-                if (existingNames.contains(internalName)) {
+                if (existingNames.contains(uniqueName)) {
                     return@forEach
                 }
 
@@ -221,7 +221,7 @@ class BukkitStorageService : StorageService, Services.Fallback {
                     nameTagUuid = nameTagUuid,
                     viewers = viewers,
                     properties = mutableObject2ObjectMapOf<String, NpcProperty>(),
-                    internalName = internalName
+                    uniqueName = uniqueName
                 )
 
                 val propsSection = config.getConfigurationSection("npc.data.properties") ?: return@forEach
@@ -257,14 +257,14 @@ class BukkitStorageService : StorageService, Services.Fallback {
             .forEach(Files::delete)
 
         npcController.getNpcs().forEach { npc ->
-            val file = npcFolder.resolve("${npc.internalName}.yml").toFile()
+            val file = npcFolder.resolve("${npc.uniqueName}.yml").toFile()
             val config = YamlConfiguration()
 
             config.set("npc.data.id", npc.id)
             config.set("npc.data.uuid", npc.npcUuid.toString())
             config.set("npc.data.nameTagId", npc.nameTagId)
             config.set("npc.data.nameTagUuid", npc.nameTagUuid.toString())
-            config.set("npc.data.internalName", npc.internalName)
+            config.set("npc.data.uniqueName", npc.uniqueName)
 
             config.set("npc.data.viewers", npc.viewers.map(UUID::toString))
 

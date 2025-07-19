@@ -36,9 +36,9 @@ class NpcPropertyAddCommand(commandName: String) : CommandAPICommand(commandName
                 appendPrefix()
 
                 if(exists) {
-                    success("Die Property '${key}' wurde erfolgreich dem NPC '${npc.internalName}' neu gesetzt.")
+                    success("Die Property '${key}' wurde erfolgreich dem NPC '${npc.uniqueName}' neu gesetzt.")
                 } else {
-                    success("Die Property '${key}' wurde erfolgreich zum NPC '${npc.internalName}' hinzugefügt.")
+                    success("Die Property '${key}' wurde erfolgreich zum NPC '${npc.uniqueName}' hinzugefügt.")
                 }
             }
         }

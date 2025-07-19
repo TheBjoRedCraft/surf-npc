@@ -49,13 +49,13 @@ A powerful Minecraft plugin for easily creating and managing NPCs with surf func
 
 ### 🔧 General Methods
 
-#### `createNpc(displayName, internalName, skin, location, global, rotationType, fixedRotation)`
+#### `createNpc(displayName, uniqueName, skin, location, global, rotationType, fixedRotation)`
 Creates a new NPC in-game.
 
 | Parameter       | Type               | Description                                      |
 |----------------|--------------------|--------------------------------------------------|
 | `displayName`   | `Component`        | NPC's display name                               |
-| `internalName`  | `String`           | Internal, unique name                            |
+| `uniqueName`  | `String`           | Internal, unique name                            |
 | `skin`          | `SNpcSkinData`     | Skin data (texture, signature, etc.)             |
 | `location`      | `SNpcLocation`     | Spawn position                                   |
 | `global`        | `Boolean`          | Whether the NPC is globally visible              |
@@ -76,12 +76,12 @@ Gets an NPC by internal ID.
 |-----------|--------|----------------|
 | `id`      | `Int`  | Internal NPC ID|
 
-#### `getNpc(internalName)`
+#### `getNpc(uniqueName)`
 Gets an NPC by internal name.
 
 | Parameter      | Type    | Description          |
 |----------------|---------|----------------------|
-| `internalName` | `String`| Internal name of NPC |
+| `uniqueName` | `String`| Internal name of NPC |
 
 #### `getNpcs()`
 Returns a list of all NPCs.

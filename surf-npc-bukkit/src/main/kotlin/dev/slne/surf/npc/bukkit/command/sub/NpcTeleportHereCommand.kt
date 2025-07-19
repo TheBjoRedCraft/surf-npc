@@ -30,7 +30,7 @@ class NpcTeleportHereCommand(commandName: String) : CommandAPICommand(commandNam
                 npc.teleport(targetPlayer)
                 player.sendText {
                     appendPrefix()
-                    success("Der NPC ${npc.internalName} wurde zu ${targetPlayer.name} teleportiert.")
+                    success("Der NPC ${npc.uniqueName} wurde zu ${targetPlayer.name} teleportiert.")
                 }
                 return@playerExecutor
             }
@@ -38,7 +38,7 @@ class NpcTeleportHereCommand(commandName: String) : CommandAPICommand(commandNam
             npc.teleport(player)
             player.sendText {
                 appendPrefix()
-                success("Der NPC ${npc.internalName} wurde zu dir teleportiert.")
+                success("Der NPC ${npc.uniqueName} wurde zu dir teleportiert.")
             }
             return@playerExecutor
         }
