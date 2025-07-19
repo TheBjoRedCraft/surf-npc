@@ -19,7 +19,7 @@ class NpcDslBuilder {
     lateinit var displayName: Component
 
     /**
-     * The internal name of the NPC.
+     * The unique name of the NPC.
      */
     lateinit var uniqueName: String
 

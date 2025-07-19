@@ -17,7 +17,7 @@ package dev.slne.surf.npc.api.npc
      val id: Int
 
      /**
-      * The internal name of the NPC.
+      * The unique name of the NPC.
       */
      val uniqueName: String
 

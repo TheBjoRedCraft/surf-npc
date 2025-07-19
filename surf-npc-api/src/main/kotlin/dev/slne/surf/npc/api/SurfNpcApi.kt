@@ -24,7 +24,7 @@ interface SurfNpcApi {
      * Creates a new NPC.
      *
      * @param displayName The display name of the NPC.
-     * @param uniqueName The internal name of the NPC.
+     * @param uniqueName The unique name of the NPC.
      * @param skin The skin data of the NPC.
      * @param location The location of the NPC.
      * @param global Whether the NPC is global (default: true).
@@ -141,10 +141,10 @@ interface SurfNpcApi {
     fun getNpc(id: Int): Npc?
 
     /**
-     * Retrieves an NPC by its internal name.
+     * Retrieves an NPC by its unique name.
      *
-     * @param uniqueName The internal name of the NPC.
-     * @return The NPC with the specified internal name, or null if not found.
+     * @param uniqueName The unique name of the NPC.
+     * @return The NPC with the specified unique name, or null if not found.
      */
     fun getNpc(uniqueName: String): Npc?
 

@@ -124,7 +124,7 @@ class BukkitStorageService : StorageService, Services.Fallback {
             val uniqueName = config.getString("npc.data.uniqueName") ?: error("Unique name is missing in NPC config file: $fileName.yml")
 
             if (npcController.getNpc(uniqueName) != null) {
-                logger().atWarning().log("NPC with internal name '$uniqueName' already exists. Skipping import.")
+                logger().atWarning().log("NPC with unique name '$uniqueName' already exists. Skipping import.")
                 return false
             }
 

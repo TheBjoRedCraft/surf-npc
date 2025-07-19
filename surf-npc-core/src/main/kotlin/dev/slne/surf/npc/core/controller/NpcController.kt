@@ -23,7 +23,7 @@ interface NpcController {
     /**
      * Creates a new NPC.
      *
-     * @param uniqueName The internal name of the NPC.
+     * @param uniqueName The unique name of the NPC.
      * @param displayName The display name of the NPC.
      * @param skinData The skin data for the NPC.
      * @param location The location where the NPC will be spawned.
@@ -117,9 +117,9 @@ interface NpcController {
     fun getNpc(id: Int): Npc?
 
     /**
-     * Retrieves an NPC by its internal name.
+     * Retrieves an NPC by its unique name.
      *
-     * @param uniqueName The internal name of the NPC.
+     * @param uniqueName The unique name of the NPC.
      * @return The NPC, or null if not found.
      */
     fun getNpc(uniqueName: String): Npc?
