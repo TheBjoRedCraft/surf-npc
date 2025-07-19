@@ -1,76 +1,147 @@
 package dev.slne.surf.npc.api.npc
 
-import dev.slne.surf.npc.api.npc.property.NpcProperty
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap
-import it.unimi.dsi.fastutil.objects.ObjectSet
-import org.bukkit.entity.Player
-import java.util.UUID
-import kotlin.reflect.KClass
+ import dev.slne.surf.npc.api.npc.property.NpcProperty
+ import it.unimi.dsi.fastutil.objects.Object2ObjectMap
+ import it.unimi.dsi.fastutil.objects.ObjectSet
+ import org.bukkit.entity.Player
+ import java.util.UUID
+ import kotlin.reflect.KClass
 
-/**
- * Represents a non-player character (NPC) in the game.
- */
-interface Npc {
-    val id: Int
-    val internalName: String
-    val npcUuid: UUID
-    val nameTagId: Int
-    val nameTagUuid: UUID
-    val properties: Object2ObjectMap<String, NpcProperty>
-    val viewers: ObjectSet<UUID>
+ /**
+  * Represents a non-player character (NPC) in the game.
+  */
+ interface Npc {
+     /**
+      * The unique identifier of the NPC.
+      */
+     val id: Int
 
-    fun spawn(uuid: UUID)
-    fun despawn(uuid: UUID)
+     /**
+      * The internal name of the NPC.
+      */
+     val internalName: String
 
-    fun refresh()
-    fun refreshRotation(uuid: UUID)
+     /**
+      * The UUID of the NPC.
+      */
+     val npcUuid: UUID
 
-    fun delete()
-    fun teleport(player: Player)
+     /**
+      * The unique identifier for the NPC's name tag.
+      */
+     val nameTagId: Int
 
-    fun show()
-    fun hide()
+     /**
+      * The UUID associated with the NPC's name tag.
+      */
+     val nameTagUuid: UUID
 
-    /**
-     * Adds a property to the NPC.
-     *
-     * @param property The property
-     */
-    fun addProperty(property: NpcProperty)
+     /**
+      * A map of properties associated with the NPC.
+      */
+     val properties: Object2ObjectMap<String, NpcProperty>
 
-    /**
-     * Retrieves the value of a property.
-     *
-     * @param key The key of the property.
-     * @return The value of the property.
-     */
-    fun getProperty(key: String): NpcProperty?
-    fun <T : Any> getPropertyValue(key: String, clazz: KClass<T>): T?
+     /**
+      * A set of UUIDs representing players who can view the NPC.
+      */
+     val viewers: ObjectSet<UUID>
 
-    /**
-     * Removes a property from the NPC.
-     *
-     * @param key The key of the property to remove.
-     */
-    fun removeProperty(key: String)
+     /**
+      * Spawns the NPC for a specific player.
+      *
+      * @param uuid The UUID of the player.
+      */
+     fun spawn(uuid: UUID)
 
-    /**
-     * Checks if the NPC has a specific property.
-     *
-     * @param key The key of the property.
-     * @return True if the property exists, false otherwise.
-     */
-    fun hasProperty(key: String): Boolean
+     /**
+      * Despawns the NPC for a specific player.
+      *
+      * @param uuid The UUID of the player.
+      */
+     fun despawn(uuid: UUID)
 
-    /**
-     * Clears all properties from the NPC.
-     */
-    fun clearProperties()
+     /**
+      * Refreshes the NPC's state.
+      */
+     fun refresh()
 
-    /**
-     * Checks if the NPC has any properties.
-     *
-     * @return True if the NPC has properties, false otherwise.
-     */
-    fun hasProperties(): Boolean
-}
+     /**
+      * Refreshes the rotation of the NPC for a specific player.
+      *
+      * @param uuid The UUID of the player.
+      */
+     fun refreshRotation(uuid: UUID)
+
+     /**
+      * Deletes the NPC from the game.
+      */
+     fun delete()
+
+     /**
+      * Teleports the NPC to a player's location.
+      *
+      * @param player The player to teleport the NPC to.
+      */
+     fun teleport(player: Player)
+
+     /**
+      * Makes the NPC visible to all players.
+      */
+     fun show()
+
+     /**
+      * Hides the NPC from all players.
+      */
+     fun hide()
+
+     /**
+      * Adds a property to the NPC.
+      *
+      * @param property The property to add.
+      */
+     fun addProperty(property: NpcProperty)
+
+     /**
+      * Retrieves a property of the NPC by its key.
+      *
+      * @param key The key of the property.
+      * @return The property associated with the key, or null if not found.
+      */
+     fun getProperty(key: String): NpcProperty?
+
+     /**
+      * Retrieves the value of a property by its key and type.
+      *
+      * @param key The key of the property.
+      * @param clazz The class type of the property value.
+      * @return The value of the property, or null if not found.
+      */
+     fun <T : Any> getPropertyValue(key: String, clazz: KClass<T>): T?
+
+     /**
+      * Removes a property from the NPC by its key.
+      *
+      * @param key The key of the property to remove.
+      */
+     fun removeProperty(key: String)
+
+     /**
+      * Checks if the NPC has a specific property.
+      *
+      * @param key The key of the property.
+      * @return True if the property exists, false otherwise.
+      */
+     fun hasProperty(key: String): Boolean
+
+     /**
+      * Clears all properties from the NPC.
+      */
+     fun clearProperties()
+
+     /**
+      * Checks if the NPC has any properties.
+      *
+      * @return True if the NPC has properties, false otherwise.
+      */
+     fun hasProperties(): Boolean
+ }
